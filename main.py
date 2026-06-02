@@ -14,11 +14,12 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Litium Fibra Óptica - API de Ventas y Soporte", version="1.0.0")
 
+# Configuración masiva de CORS para permitir peticiones desde GitHub Pages
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # Permite que cualquier frontend se conecte de forma segura en la nube
     allow_credentials=True,
-    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
@@ -84,7 +85,8 @@ def obtener_tasa_bcv():
     logger.warning(f"Usando tasa de contingencia del sistema: {fallback_seguro}")
     return fallback_seguro
 
-@app.get("/tasa-bcv")
+# Ajustada a /api/tasa para engranar con el frontend
+@app.get("/api/tasa")
 async def get_tasa_bcv():
     try:
         tasa = obtener_tasa_bcv()
@@ -94,19 +96,22 @@ async def get_tasa_bcv():
 
 # 4. MODELO DE DATOS PARA CHAT INTERACTIVO
 class MensajeEstructura(BaseModel):
-    mensaje: str
+    message: str  # Cambiado de 'mensaje' a 'message' para calzar con el JSON enviado por el JS
     historial: list = []
     modo_asesor: str = "ventas"  # Opciones: 'ventas', 'soporte', 'cobertura'
 
 # 5. CORE ENDPOINT - PROCESAMIENTO CON IA GROQ (LIA)
-@app.post("/chat")
+# Ajustada a /api/chat para solventar el error 404 de la consola
+@app.post("/api/chat")
 async def procesar_chat(datos_chat: MensajeEstructura):
     try:
         tasa_bcv = obtener_tasa_bcv()
         api_key_groq = os.environ.get("GROQ_API_KEY")
         if not api_key_groq:
-            # Fallback local de desarrollo por si usas la Key cruda compartida
-            api_key_groq = "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"
+            raise HTTPException(
+                status_code=500, 
+                detail="Error de configuración: GROQ_API_KEY no encontrada en las variables de entorno."
+            )
             
         client = Groq(api_key=api_key_groq)
         
@@ -135,7 +140,7 @@ async def procesar_chat(datos_chat: MensajeEstructura):
 
         prompt_sistema = f"""
         Eres Lia, la asesora virtual inteligente oficial de Litium, la empresa líder en soluciones de conectividad por internet de Fibra Óptica en Caracas y Maracay.
-        Tu tono es impecablemente corporativo, tecnológico, elegante, claro y altamente persuasivo. No eres un bot robótico común, eres una ejecutiva de nivel ejecutivo.
+        Tu tono es impecablemente corporativo, tecnológico, elegante, claro y altamente persuasivo. No eres un bot robótico común, eres una ejecutiva de nivel de negocios.
 
         CONTEXTO ECONÓMICO ACTUAL EN VENEZUELA:
         - Tasa Oficial de Referencia BCV: {tasa_bcv} Bs./$
@@ -153,7 +158,7 @@ async def procesar_chat(datos_chat: MensajeEstructura):
         mensajes_procesamiento = [{"role": "system", "content": prompt_sistema}]
         for m in datos_chat.historial[-8:]:
             mensajes_procesamiento.append(m)
-        mensajes_procesamiento.append({"role": "user", "content": datos_chat.mensaje})
+        mensajes_procesamiento.append({"role": "user", "content": datos_chat.message})
 
         completion = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
@@ -169,9 +174,10 @@ async def procesar_chat(datos_chat: MensajeEstructura):
             "comprar", "contratar", "precio", "cuánto cuesta", "factibilidad", "cobertura", 
             "chacao", "delicias", "falla", "luz roja", "soporte", "interesado", "adquirir", "instalar"
         ]
-        activar_ws = any(palabra in datos_chat.mensaje.lower() or palabra in respuesta_ia.lower() for palabra in disparadores_leads)
+        activar_ws = any(palabra in datos_chat.message.lower() or palabra in respuesta_ia.lower() for palabra in disparadores_leads)
 
-        return {"respuesta": respuesta_ia, "mostrar_whatsapp": activar_ws}
+        # Cambiado a 'reply' y 'whatsapp_button' para emparejar con el JavaScript del frontend
+        return {"reply": respuesta_ia, "whatsapp_button": activar_ws}
 
     except Exception as e:
         logger.error(f"Error crítico en procesamiento de chat para Litium: {e}")
