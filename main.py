@@ -23,39 +23,31 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 2. INVENTARIO MAESTRO COMERCIAL DE LITIUM
+# 2. INVENTARIO MAESTRO COMERCIAL DE LITIUM (Alineado con los planes del frontend)
 PLANES_LITIUM = [
     {
         "id": "l1",
-        "nombre": "Plan Hogar Inicial",
-        "velocidad": "100 Mbps",
+        "nombre": "Plan Hogar",
+        "velocidad": "200 Mbps",
         "precio": 25,
         "emoji": "🌐",
-        "descripcion": "Ideal para navegación básica, redes sociales y tareas escolares."
+        "descripcion": "Ideal para streaming 4K, teletrabajo y navegación familiar sin interrupciones."
     },
     {
         "id": "l2",
-        "nombre": "Plan Hogar Pro",
-        "velocidad": "300 Mbps",
+        "nombre": "Plan Pro",
+        "velocidad": "500 Mbps",
         "precio": 40,
         "emoji": "⚡",
-        "descripcion": "Ideal para streaming en 4K, teletrabajo y sesiones de gaming estables."
+        "descripcion": "Para gamers, creadores de contenido y múltiples dispositivos en simultáneo."
     },
     {
         "id": "l3",
-        "nombre": "Plan Litium Simétrico",
-        "velocidad": "600 Mbps",
-        "precio": 60,
-        "emoji": "🚀",
-        "descripcion": "Ultra velocidad simétrica ideal para creadores de contenido y múltiples dispositivos."
-    },
-    {
-        "id": "l4",
-        "nombre": "Plan Empresarial Dedicado",
+        "nombre": "Plan Corporativo Dedicated",
         "velocidad": "1 Gbps (1000 Mbps)",
-        "precio": 0,
+        "precio": 80,
         "emoji": "🏢",
-        "descripcion": "Enlace dedicado corporativo. Precio a consultar según factibilidad técnica."
+        "descripcion": "Enlace dedicado empresarial con soporte de ingeniería corporativo SLA 99.9%."
     }
 ]
 
@@ -96,12 +88,11 @@ async def get_tasa_bcv():
 
 # 4. MODELO DE DATOS PARA CHAT INTERACTIVO
 class MensajeEstructura(BaseModel):
-    message: str  # Cambiado de 'mensaje' a 'message' para calzar con el JSON enviado por el JS
+    message: str  
     historial: list = []
     modo_asesor: str = "ventas"  # Opciones: 'ventas', 'soporte', 'cobertura'
 
 # 5. CORE ENDPOINT - PROCESAMIENTO CON IA GROQ (LIA)
-# Ajustada a /api/chat para solventar el error 404 de la consola
 @app.post("/api/chat")
 async def procesar_chat(datos_chat: MensajeEstructura):
     try:
@@ -124,23 +115,27 @@ async def procesar_chat(datos_chat: MensajeEstructura):
             contexto_especifico = f"""Tu rol actual es VENTAS. Promueve de forma sutil, corporativa y elegante nuestro catálogo de planes.
             Catálogo Comercial Litium disponible en base de datos:
             {json.dumps(PLANES_LITIUM, ensure_ascii=False)}
-            Instrucción comercial: Explica los beneficios de la alta velocidad y simetría. Si te preguntan por el Plan Empresarial de 1 Gbps, indícales de forma persuasiva que requiere factibilidad personalizada y que un ejecutivo lo cotizará de inmediato por WhatsApp."""
+            Instrucción comercial: Explica los beneficios de la alta velocidad y simetría. Si te preguntan por el Plan Corporativo de 1 Gbps, indícales de forma de asesoría que requiere una breve validación técnica y que un ejecutivo comercial especializado lo guiará de inmediato vía WhatsApp."""
         elif modo == "soporte":
             contexto_especifico = """Tu rol actual es SOPORTE TÉCNICO BÁSICO. Ayuda con empatía corporativa.
             Flujo de diagnóstico de fallas permitido:
             1. Solicita amablemente validar si las luces del módem de fibra (ONT) están en verde o si hay alguna luz roja (LOS) encendida.
             2. Recomienda el reinicio básico de hardware: apagar el router y la ONT por 30 segundos y encenderlos nuevamente.
-            3. Si la falla persiste o reportan rotura de cable de fibra, indícales que recopilarás sus datos para transferirlos al equipo técnico de campo de nivel 2 mediante WhatsApp."""
+            3. Si la falla persiste o reportan rotura de cable de fibra, indícales que recopilarás sus datos mediante el formulario de la página o los transferirás al equipo de soporte técnico de nivel 2 vía WhatsApp."""
         else:
             contexto_especifico = """Tu rol actual es COBERTURA Y FACTIBILIDAD. Nos especializamos en CARACAS y MARACAY.
             Zonas activas de cobertura en nuestra red principal:
             - CARACAS: Chacao, Altamira, Las Mercedes, El Cafetal, La Candelaria, Sabana Grande, Los Dos Caminos, El Hatillo.
             - MARACAY: Las Delicias, El Limón, San Jacinto, Base Aragua, Centro de Maracay, La Soledad.
-            Instrucción operativa: Si el usuario te nombra una zona de estas ciudades, confírmale con total entusiasmo que contamos con nodos troncales activos. Si nombra otra zona o estado, dile que tu sistema requiere las coordenadas exactas o dirección en texto para que el equipo de ingeniería realice la verificación por mapa de cobertura vía WhatsApp."""
+            Instrucción operativa: Si el usuario te nombra una zona de estas ciudades, confírmale con total entusiasmo que contamos con hilos y nodos troncales activos. Si nombra otra zona o estado, indícale amablemente que use el Formulario de Factibilidad Técnica central de la web para mapear las coordenadas exactas de su dirección."""
+
+        # Precalculamos los strings de precios de ejemplo para evitar romper la lógica del f-string
+        ejemplo_calculo_hogar = f"$25 ({25 * tasa_bcv:.2f} Bs.)"
+        ejemplo_calculo_pro = f"$40 ({40 * tasa_bcv:.2f} Bs.)"
 
         prompt_sistema = f"""
         Eres Lia, la asesora virtual inteligente oficial de Litium, la empresa líder en soluciones de conectividad por internet de Fibra Óptica en Caracas y Maracay.
-        Tu tono es impecablemente corporativo, tecnológico, elegante, claro, altamente persuasivo, ejecutivo y empático. Hablas como una gerente de alto nivel, no eres un bot robótico común, eres una ejecutiva de nivel de negocios.
+        Tu tono es impecablemente corporativo, tecnológico, elegante, claro, altamente persuasivo, ejecutivo y empático. Hablas como una gerente de alto nivel, eres una ejecutiva de nivel de negocios.
 
         REGLA DE CÁLCULO MANDATORIA:
         Cada vez que indiques una tarifa en dólares ($), calcula y muestra el contravalor en Bolívares usando la tasa oficial de {tasa_bcv}. Ejemplo: "$40 ({40 * tasa_bcv:.2f} Bs.) ⚡".
@@ -164,12 +159,11 @@ async def procesar_chat(datos_chat: MensajeEstructura):
 
         REGLA DE CÁLCULO ESTRICTA Y MANDATORIA:
         Cada vez que el usuario consulte por el precio de un plan, hagas una cotización o indiques una tarifa en dólares ($), debes obligatoriamente calcular en tiempo real y mostrar el contravalor exacto en Bolívares usando la tasa de {tasa_bcv}.
-        Ejemplo obligatorio de redacción numérica: "El Plan Hogar Pro de 300 Mbps tiene una mensualidad de $40 ({40 * tasa_bcv:.2f} Bs.) ⚡". Haz la multiplicación aritmética exacta.
+        Ejemplo obligatorio de redacción numérica: "El Plan Pro de 500 Mbps tiene una mensualidad de {ejemplo_calculo_pro} ⚡" o "El Plan Hogar de 200 Mbps tiene un costo de {ejemplo_calculo_hogar} 🌐". Haz la multiplicación aritmética exacta.
 
         DIRECTRICES DE OPERACIÓN DE LIA:
-        1. {contexto_especifico}
-        2. Siempre mantén una postura proactiva orientada a la resolución o a la conversión. Usa emojis tecnológicos limpios de forma sofisticada (⚡, 🌐, 🚀, 🏢, 💻).
-        3. Nunca inventes planes, velocidades falsas ni rangos de precios fuera de la estructura corporativa inyectada.
+        1. Siempre mantén una postura proactiva orientada a la resolución o a la conversión. Usa emojis tecnológicos limpios de forma sofisticada (⚡, 🌐, 🚀, 🏢, 💻).
+        2. Nunca inventes planes, velocidades falsas ni rangos de precios fuera de la estructura corporativa inyectada.
         """
 
         mensajes_procesamiento = [{"role": "system", "content": prompt_sistema}]
@@ -193,7 +187,6 @@ async def procesar_chat(datos_chat: MensajeEstructura):
         ]
         activar_ws = any(palabra in datos_chat.message.lower() or palabra in respuesta_ia.lower() for palabra in disparadores_leads)
 
-        # Cambiado a 'reply' y 'whatsapp_button' para emparejar con el JavaScript del frontend
         return {"reply": respuesta_ia, "whatsapp_button": activar_ws}
 
     except Exception as e:
