@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Litium IA - Fibra Óptica de Alta Velocidad</title>
-    <!-- Tailwind CSS para estructura ultra-rápida -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- FontAwesome para iconos tecnológicos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -117,7 +114,7 @@
         .chat-messages-container {
             height: 380px;
             overflow-y: auto;
-            padding-bottom: 50px; /* Evita que el cuadro de texto flotante tape el contenido */
+            padding-bottom: 50px;
         }
 
         /* Personalización de barra de scroll */
@@ -138,10 +135,8 @@
 </head>
 <body class="relative min-h-screen">
 
-    <!-- Líneas de fibra óptica decorativas en el fondo -->
     <div class="fiber-lines"></div>
 
-    <!-- Barra de Navegación Premium -->
     <nav class="relative z-10 border-b border-slate-800 bg-[#060b16]/80 backdrop-blur-md sticky top-0 px-6 py-4 flex justify-between items-center">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-fiber-gradient flex items-center justify-center text-white font-bold text-lg shadow-[0_0_15px_rgba(0,240,255,0.4)]">
@@ -153,7 +148,6 @@
             </div>
         </div>
         
-        <!-- Widget del BCV Integrado -->
         <div class="bg-slate-900/90 border border-slate-800 rounded-full px-4 py-1.5 flex items-center gap-2 text-xs md:text-sm">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             <span class="text-slate-400 font-medium">Tasa Oficial BCV:</span>
@@ -161,19 +155,17 @@
         </div>
     </nav>
 
-    <!-- Contenido Principal: Dashboard de Ventas / Selección de Modo -->
     <main class="relative z-10 max-w-6xl mx-auto px-6 py-12">
         <header class="text-center mb-16">
             <h1 class="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight">
                 Conectividad Simétrica a <span class="text-glow-gradient">Velocidad Láser</span>
             </h1>
             <p class="text-slate-400 max-w-2xl mx-auto text-base md:text-lg">
-                Selecciona la configuración o el entorno de servicio que deseas simular para la atención inteligente.
+                Explora planes de alta fidelidad o gestiona solicitudes con nuestro sistema inteligente.
             </p>
         </header>
 
-        <!-- Filtros/Pestañas del Sistema Operativo -->
-        <div class="flex justify-center gap-4 mb-12">
+        <div class="flex justify-center gap-4 mb-12 flex-wrap">
             <button onclick="switchMode('ventas')" id="btn-ventas" class="mode-tab px-6 py-2.5 rounded-full font-semibold border text-sm transition-all bg-fiber-gradient text-white border-transparent shadow-[0_0_15px_rgba(0,240,255,0.2)]">
                 <i class="fa-solid fa-cart-shopping mr-2"></i> Planes de Venta
             </button>
@@ -185,10 +177,7 @@
             </button>
         </div>
 
-        <!-- Secciones Dinámicas -->
-        <!-- 1. VETAS / PLANES -->
         <div id="view-ventas" class="mode-view grid md:grid-cols-3 gap-8">
-            <!-- Plan Hogar -->
             <div class="plan-card rounded-2xl p-6 flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-start mb-4">
@@ -198,9 +187,8 @@
                     <h3 class="text-3xl font-bold mb-1">200 <span class="text-lg font-medium text-slate-400">Mbps</span></h3>
                     <p class="text-slate-400 text-sm mb-6">Ideal para streaming 4K y teletrabajo sin interrupciones.</p>
                     <ul class="space-y-3 text-sm text-slate-300 mb-8">
-                        <li><i class="fa-solid fa-circle-check text-[#00f0ff] mr-2"></i> Fibra simétrica (Misma subida/bajada)</li>
-                        <li><i class="fa-solid fa-circle-check text-[#00f0ff] mr-2"></i> Router Dual Band de última generación</li>
-                        <li><i class="fa-solid fa-circle-check text-[#00f0ff] mr-2"></i> Soporte prioritario 24/7</li>
+                        <li><i class="fa-solid fa-circle-check text-[#00f0ff] mr-2"></i> Fibra simétrica integrada</li>
+                        <li><i class="fa-solid fa-circle-check text-[#00f0ff] mr-2"></i> Router Dual Band incluido</li>
                     </ul>
                 </div>
                 <div class="border-t border-slate-800/80 pt-4 flex justify-between items-center">
@@ -214,7 +202,6 @@
                 </div>
             </div>
 
-            <!-- Plan Pro -->
             <div class="plan-card rounded-2xl p-6 flex flex-col justify-between border-[#7000ff]/40 shadow-[0_0_20px_rgba(112,0,255,0.1)]">
                 <div>
                     <div class="flex justify-between items-start mb-4">
@@ -222,11 +209,10 @@
                         <i class="fa-solid fa-rocket text-[#00f0ff] text-xl"></i>
                     </div>
                     <h3 class="text-3xl font-bold mb-1">500 <span class="text-lg font-medium text-slate-400">Mbps</span></h3>
-                    <p class="text-slate-400 text-sm mb-6">Para gamers, creadores de contenido y múltiples dispositivos.</p>
+                    <p class="text-slate-400 text-sm mb-6">Para gamers y creadores de contenido exigentes.</p>
                     <ul class="space-y-3 text-sm text-slate-300 mb-8">
-                        <li><i class="fa-solid fa-circle-check text-[#00f0ff] mr-2"></i> Ancho de banda premium ultra-estable</li>
-                        <li><i class="fa-solid fa-circle-check text-[#00f0ff] mr-2"></i> IP Pública Dinámica optimizada</li>
-                        <li><i class="fa-solid fa-circle-check text-[#00f0ff] mr-2"></i> Instalación express bonificada</li>
+                        <li><i class="fa-solid fa-circle-check text-[#00f0ff] mr-2"></i> Ancho de banda optimizado</li>
+                        <li><i class="fa-solid fa-circle-check text-[#00f0ff] mr-2"></i> Instalación express prioritaria</li>
                     </ul>
                 </div>
                 <div class="border-t border-slate-800/80 pt-4 flex justify-between items-center">
@@ -240,7 +226,6 @@
                 </div>
             </div>
 
-            <!-- Plan Empresarial -->
             <div class="plan-card rounded-2xl p-6 flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-start mb-4">
@@ -248,11 +233,10 @@
                         <i class="fa-solid fa-briefcase text-slate-500 text-xl"></i>
                     </div>
                     <h3 class="text-3xl font-bold mb-1">1 <span class="text-lg font-medium text-slate-400">Gbps</span></h3>
-                    <p class="text-slate-400 text-sm mb-6">Ancho de banda masivo para empresas y servidores de alta demanda.</p>
+                    <p class="text-slate-400 text-sm mb-6">Enlace corporativo masivo de máxima estabilidad técnica.</p>
                     <ul class="space-y-3 text-sm text-slate-300 mb-8">
-                        <li><i class="fa-solid fa-circle-check text-[#00f0ff] mr-2"></i> Enlace dedicado corporativo</li>
-                        <li><i class="fa-solid fa-circle-check text-[#00f0ff] mr-2"></i> Acuerdo de Nivel de Servicio (SLA) 99.9%</li>
-                        <li><i class="fa-solid fa-circle-check text-[#00f0ff] mr-2"></i> Soporte de ingeniería asignado</li>
+                        <li><i class="fa-solid fa-circle-check text-[#00f0ff] mr-2"></i> Enlace dedicado exclusivo</li>
+                        <li><i class="fa-solid fa-circle-check text-[#00f0ff] mr-2"></i> Soporte corporativo SLA 99.9%</li>
                     </ul>
                 </div>
                 <div class="border-t border-slate-800/80 pt-4 flex justify-between items-center">
@@ -267,248 +251,17 @@
             </div>
         </div>
 
-        <!-- 2. SOPORTE TÉCNICO -->
-        <div id="view-soporte" class="mode-view hidden max-w-2xl mx-auto bg-[#0d1527] border border-slate-800 rounded-2xl p-8 text-center">
-            <i class="fa-solid fa-screwdriver-wrench text-4xl text-[#00f0ff] mb-4"></i>
-            <h3 class="text-2xl font-bold mb-2">Canal de Soporte Automatizado</h3>
-            <p class="text-slate-400 text-sm mb-6">
-                ¿Presentas intermitencias, lentitud, necesitas configurar tu clave WiFi o quieres reportar un cable dañado? Nuestra IA está calibrada con el manual de ingeniería de Litium.
-            </p>
-            <button onclick="openChatWithContext('Tengo problemas con mi conexión a internet, requiero soporte')" class="bg-fiber-gradient px-6 py-3 rounded-xl font-bold text-sm shadow-md transition-all">
-                Iniciar Diagnóstico de Red
-            </button>
-        </div>
-
-        <!-- 3. COBERTURA -->
-        <div id="view-cobertura" class="mode-view hidden max-w-2xl mx-auto bg-[#0d1527] border border-slate-800 rounded-2xl p-8 text-center">
-            <i class="fa-solid fa-tower-cell text-4xl text-[#7000ff] mb-4 animate-bounce"></i>
-            <h3 class="text-2xl font-bold mb-2">Consulta de Viabilidad Técnica</h3>
-            <p class="text-slate-400 text-sm mb-6">
-                Verifica de inmediato si nuestros hilos de fibra óptica pasan por tu calle, sector o conjunto residencial en Caracas y el resto del país.
-            </p>
-            <button onclick="openChatWithContext('¿Tienen cobertura en mi zona?')" class="bg-slate-800 hover:bg-[#00f0ff] hover:text-slate-950 px-6 py-3 rounded-xl font-bold text-sm transition-all">
-                Consultar Disponibilidad de Zonas
-            </button>
-        </div>
-    </main>
-
-    <!-- Botón Flotante Fijo del Chat Inteligente -->
-    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
-        
-        <!-- Ventana del Chat de Lia -->
-        <div id="chat-window" class="chat-window w-[360px] md:w-[400px] rounded-2xl overflow-hidden mb-4 flex flex-col">
-            <!-- Encabezado del Chat -->
-            <div class="bg-fiber-gradient p-4 flex justify-between items-center text-white shadow-md">
-                <div class="flex items-center gap-3">
-                    <div class="relative">
-                        <div class="w-9 h-9 rounded-full bg-slate-950 flex items-center justify-center text-[#00f0ff] font-bold">
-                            Lia
-                        </div>
-                        <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-[#0d1527]"></span>
-                    </div>
+        <div id="form-container" class="hidden max-w-xl mx-auto bg-[#0d1527] border border-slate-800 rounded-2xl p-6 shadow-2xl mb-8 relative z-20">
+            <div class="text-center mb-6">
+                <h3 id="form-title" class="text-xl font-bold text-white">Formulario de Solicitud</h3>
+                <p id="form-subtitle" class="text-xs text-slate-400">Completa tus datos para agilizar el proceso.</p>
+            </div>
+            <form id="litium-lead-form" onsubmit="submitForm(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Nombre Completo / Razón Social</label>
+                    <input type="text" id="form-name" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-[#00f0ff]" placeholder="Ej. Mauricio Jimenez">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <h4 class="font-bold text-sm tracking-wide">Lia | Asistente Virtual</h4>
-                        <span class="text-[11px] text-cyan-200 block -mt-0.5">Litium Core AI v1.0</span>
-                    </div>
-                </div>
-                <button onclick="toggleChat()" class="text-white/80 hover:text-white transition-all text-sm p-1">
-                    <i class="fa-solid fa-minus text-lg"></i>
-                </button>
-            </div>
-
-            <!-- Contenedor Principal de Mensajes -->
-            <div id="chat-messages" class="chat-messages-container p-4 space-y-4">
-                <!-- Mensaje de Bienvenida de Lia -->
-                <div class="flex gap-2.5 max-w-[85%]">
-                    <div class="w-7 h-7 rounded-full bg-slate-900 border border-cyan-500/30 flex items-center justify-center text-[#00f0ff] text-xs font-bold shrink-0">
-                        L
-                    </div>
-                    <div class="bg-slate-900 border border-slate-800 text-slate-200 text-sm rounded-2xl rounded-tl-none p-3 shadow-sm">
-                        ¡Hola! Soy **Lia**, la inteligencia artificial de **Litium**. ⚡ ¿En qué puedo ayudarte hoy? Si buscas planes, soporte o validar cobertura, indícamelo de una vez.
-                    </div>
-                </div>
-            </div>
-
-            <!-- Caja de Texto Flotante e Inferior -->
-            <div class="p-3 bg-slate-950/90 border-t border-slate-800/80 flex gap-2 items-center">
-                <input type="text" id="user-input" onkeypress="handleKeyPress(event)" placeholder="Escribe tu mensaje aquí..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#00f0ff] transition-all">
-                <button onclick="sendMessage()" class="bg-[#00f0ff] text-slate-950 hover:bg-white w-9 h-9 rounded-xl flex items-center justify-center font-bold shadow-md transition-all shrink-0">
-                    <i class="fa-solid fa-paper-plane text-sm"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Botón de apertura con pulso láser -->
-        <button onclick="toggleChat()" class="chat-pulse-btn w-14 h-14 rounded-full bg-fiber-gradient flex items-center justify-center text-white text-xl shadow-[0_0_20px_rgba(0,240,255,0.4)] transition-all hover:scale-105 active:scale-95">
-            <i class="fa-solid fa-comments"></i>
-        </button>
-    </div>
-
-    <!-- Script de Lógica del Ecosistema -->
-    <script>
-        // Configuración Vital de Enlace
-        const API_BASE_URL = "https://litium-backend-d2pb.onrender.com";
-
-        // Inicialización y consumo de Tasa BCV al cargar la página
-        window.onload = async function() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/tasa`);
-                if (response.ok) {
-                    const data = await response.json();
-                    document.getElementById('bcv-rate').innerText = `Bs. ${data.tasa}`;
-                } else {
-                    document.getElementById('bcv-rate').innerText = "Bs. --";
-                }
-            } catch (error) {
-                console.error("Error al conectar con la API de tasa:", error);
-                document.getElementById('bcv-rate').innerText = "Bs. Temporalmente No Disponible";
-            }
-        };
-
-        // Cambiar pestañas del Dashboard de forma reactiva
-        function switchMode(mode) {
-            document.querySelectorAll('.mode-view').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.mode-tab').forEach(el => {
-                el.classList.remove('bg-fiber-gradient', 'text-white', 'border-transparent', 'shadow-[0_0_15px_rgba(0,240,255,0.2)]');
-                el.classList.add('border-slate-800', 'text-slate-400');
-            });
-
-            document.getElementById(`view-${mode}`).classList.remove('hidden');
-            const activeBtn = document.getElementById(`btn-${mode}`);
-            activeBtn.classList.remove('border-slate-800', 'text-slate-400');
-            activeBtn.classList.add('bg-fiber-gradient', 'text-white', 'border-transparent', 'shadow-[0_0_15px_rgba(0,240,255,0.2)]');
-        }
-
-        // Control de apertura y cierre del chat
-        function toggleChat() {
-            const windowEl = document.getElementById('chat-window');
-            if (windowEl.style.display === 'none' || windowEl.style.display === '') {
-                windowEl.style.display = 'flex';
-                scrollToBottom();
-            } else {
-                windowEl.style.display = 'none';
-            }
-        }
-
-        // Abre el chat inyectando un contexto comercial de forma inmediata
-        function openChatWithContext(message) {
-            const windowEl = document.getElementById('chat-window');
-            windowEl.style.display = 'flex';
-            document.getElementById('user-input').value = message;
-            sendMessage();
-        }
-
-        // Manejar el evento de presionar Enter en el teclado
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        }
-
-        // Enviar mensajes al backend e integrar respuestas de Lia
-        async function sendMessage() {
-            const inputEl = document.getElementById('user-input');
-            const messageText = inputEl.value.trim();
-            if (!messageText) return;
-
-            // Renderizar mensaje del usuario en el chat
-            appendMessage(messageText, 'user');
-            inputEl.value = '';
-
-            // Renderizar burbuja de carga de Lia
-            const loadingId = appendLoadingBubble();
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/chat`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: messageText })
-                });
-
-                // Remover burbuja de carga
-                document.getElementById(loadingId).remove();
-
-                if (response.ok) {
-                    const data = await response.json();
-                    appendMessage(data.reply, 'assistant', data.whatsapp_button);
-                } else {
-                    appendMessage("Lo siento, estoy presentando intermitencias en mi canal de datos. Por favor, reintenta en unos segundos. ⚡", 'assistant');
-                }
-            } catch (error) {
-                console.error("Error en comunicación con Lia:", error);
-                document.getElementById(loadingId).remove();
-                appendMessage("Error de conexión. No logro sincronizar con el nodo de Litium. Verifica tu red.", 'assistant');
-            }
-        }
-
-        // Insertar burbujas de texto estructuradas en el historial del chat
-        function appendMessage(text, sender, showWhatsapp = false) {
-            const container = document.getElementById('chat-messages');
-            const wrapper = document.createElement('div');
-            wrapper.className = `flex gap-2.5 max-w-[85%] ${sender === 'user' ? 'ml-auto justify-end' : ''}`;
-
-            // Convertir texto de Markdown a HTML plano simple (negritas básicas)
-            const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-            if (sender === 'user') {
-                wrapper.innerHTML = `
-                    <div class="bg-fiber-gradient text-white text-sm rounded-2xl rounded-tr-none p-3 shadow-md">
-                        ${formattedText}
-                    </div>
-                `;
-            } else {
-                let htmlContent = `
-                    <div class="w-7 h-7 rounded-full bg-slate-900 border border-cyan-500/30 flex items-center justify-center text-[#00f0ff] text-xs font-bold shrink-0">
-                        L
-                    </div>
-                    <div class="bg-slate-900 border border-slate-800 text-slate-200 text-sm rounded-2xl rounded-tl-none p-3 shadow-sm flex flex-col gap-3">
-                        <div>${formattedText}</div>
-                `;
-
-                // Si la IA detecta intención de compra, incrusta el botón de conversión a WhatsApp
-                if (showWhatsapp) {
-                    htmlContent += `
-                        <a href="https://wa.me/584120000000?text=Hola%20Litium,%20vengo%20del%20asistente%20virtual%20y%20quiero%20concretar%20mi%20plan." target="_blank" class="inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2 px-4 rounded-xl text-xs transition-all tracking-wide shadow-sm">
-                            <i class="fa-brands fa-whatsapp text-sm"></i> Conectar con un Agente Humano
-                        </a>
-                    `;
-                }
-
-                htmlContent += `</div>`;
-                wrapper.innerHTML = htmlContent;
-            }
-
-            container.appendChild(wrapper);
-            scrollToBottom();
-        }
-
-        // Renderizar indicador de escritura flotante
-        function appendLoadingBubble() {
-            const container = document.getElementById('chat-messages');
-            const uniqueId = 'loading-' + Date.now();
-            const wrapper = document.createElement('div');
-            wrapper.id = uniqueId;
-            wrapper.className = 'flex gap-2.5 max-w-[85%]';
-            wrapper.innerHTML = `
-                <div class="w-7 h-7 rounded-full bg-slate-900 border border-cyan-500/30 flex items-center justify-center text-[#00f0ff] text-xs font-bold shrink-0">
-                    L
-                </div>
-                <div class="bg-slate-900 border border-slate-800 text-slate-400 text-sm rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-1.5 shadow-sm">
-                    <span class="w-1.5 h-1.5 bg-[#00f0ff] rounded-full animate-bounce" style="animation-delay: 0s"></span>
-                    <span class="w-1.5 h-1.5 bg-[#00f0ff] rounded-full animate-bounce" style="animation-delay: 0.15s"></span>
-                    <span class="w-1.5 h-1.5 bg-[#00f0ff] rounded-full animate-bounce" style="animation-delay: 0.3s"></span>
-                </div>
-            `;
-            container.appendChild(wrapper);
-            scrollToBottom();
-            return uniqueId;
-        }
-
-        // Auto-scroll para mantener el último mensaje a la vista
-        function scrollToBottom() {
-            const container = document.getElementById('chat-messages');
-            container.scrollTop = container.scrollHeight;
-        }
-    </script>
-</body>
-</html>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">Teléfono de Contacto</label>
+                        <input type="tel" id="form-phone" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-[#00f0ff]"
