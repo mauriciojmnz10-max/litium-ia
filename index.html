@@ -164,3 +164,273 @@
                     <button onclick="openChatWithContext('Hola, quiero información sobre cómo adquirir los Tickets de Conexión')" class="bg-[#ffcc00] text-gray-900 font-extrabold px-6 py-2.5 rounded-full text-xs hover:scale-105 transition-all shadow-md cursor-pointer">
                         Solicitar Tickets <i class="fa-solid fa-ticket ml-1"></i>
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="form-container" class="hidden max-w-xl mx-auto bg-white border border-gray-200 rounded-2xl p-6 shadow-xl mt-12 relative z-20">
+            <div class="text-center mb-4">
+                <h3 id="form-title" class="text-lg font-bold text-gray-900">Formulario de Gestión</h3>
+                <p id="form-subtitle" class="text-xs text-gray-500">Agiliza tu solicitud ingresando tus datos operativos.</p>
+            </div>
+            <form id="litium-lead-form" onsubmit="submitForm(event)" class="space-y-4">
+                <input type="hidden" id="form-context-hidden" value="General">
+                <div>
+                    <label class="block text-[11px] font-bold text-gray-500 mb-1">Nombre Completo / Cédula</label>
+                    <input type="text" id="form-name" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. Mauricio Jimenez">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-500 mb-1">Teléfono Activo</label>
+                        <input type="tel" id="form-phone" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. 04121234567">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-500 mb-1">Ubicación / Sector</label>
+                        <input type="text" id="form-location" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. Caracas, Caricuao">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-gray-500 mb-1">Contexto del Requerimiento</label>
+                    <textarea id="form-details" rows="2" readonly class="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-600 focus:outline-none" placeholder="Datos de análisis interno..."></textarea>
+                </div>
+                <button type="submit" class="w-full bg-[#00a896] hover:bg-[#00c4b4] text-white font-bold py-2.5 rounded-xl text-xs transition-all cursor-pointer">
+                    Enviar Datos Directo al Consultor
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <div class="fixed bottom-6 right-6 z-50">
+        <button onclick="toggleChat()" class="w-14 h-14 bg-gradient-to-br from-[#00c4b4] to-[#00a896] text-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-all cursor-pointer">
+            <i class="fa-solid fa-messages text-xl"></i>
+        </button>
+    </div>
+
+    <div id="chat-window" class="chat-window fixed bottom-24 right-6 w-[92%] sm:w-[380px] h-[480px] rounded-2xl z-50 flex flex-col hidden overflow-hidden">
+        <div class="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 shrink-0">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-[#00a896]/10 flex items-center justify-center border border-[#00a896]/20">
+                    <i class="fa-solid fa-headset text-[#00a896] text-sm"></i>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold text-gray-900">Lia Inteligencia Artificial</h4>
+                    <span id="chat-status" class="text-[9px] text-[#00a896] block font-bold uppercase tracking-wider">Asistente Central Litium</span>
+                </div>
+            </div>
+            <button onclick="toggleChat()" class="text-gray-400 hover:text-gray-600 transition-all cursor-pointer">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div id="chat-messages" class="chat-messages-container p-4 space-y-3 bg-gray-50/50">
+            <div class="flex gap-2 max-w-[85%]">
+                <div class="bg-white border border-gray-200 text-gray-800 text-xs p-3 rounded-2xl rounded-tl-none leading-relaxed shadow-sm">
+                    ¡Hola! Soy Lia. Estoy aquí bajo el ecosistema MultiKAP para asistirte con la fibra óptica de Litium. ¿Qué plan o gestión deseas validar hoy?
+                </div>
+            </div>
+        </div>
+
+        <div class="p-3 bg-white border-t border-gray-200 absolute bottom-0 left-0 w-full shrink-0 z-10">
+            <div class="flex gap-2">
+                <input type="text" id="user-input" onkeypress="handleKeyPress(event)" class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]" placeholder="Escribe un mensaje...">
+                <button id="send-btn" onclick="sendMessage()" class="bg-[#00a896] text-white px-3 py-2 rounded-xl text-xs hover:bg-[#00c4b4] transition-all cursor-pointer">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // URL de producción conectada correctamente a tu backend en Render
+        const BACKEND_URL = "https://litium-backend-d2pb.onrender.com"; 
+        let currentMode = "ventas";
+
+        document.addEventListener("DOMContentLoaded", () => { fetchBcvRate(); });
+
+        async function fetchBcvRate() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/tasa`);
+                const data = await response.json();
+                document.getElementById("bcv-rate").innerText = data && data.tasa ? `Bs. ${parseFloat(data.tasa).toFixed(2)}` : "Bs. 46.85";
+            } catch (error) {
+                console.error("Error cargando tasa:", error);
+                document.getElementById("bcv-rate").innerText = "Bs. 46.85";
+            }
+        }
+
+        function toggleChat() {
+            const chatWin = document.getElementById("chat-window");
+            chatWin.classList.toggle("hidden");
+            if (!chatWin.classList.contains("hidden")) { 
+                chatWin.style.display = "flex"; 
+                scrollChatToBottom(); 
+            }
+        }
+
+        function scrollChatToBottom() {
+            const container = document.getElementById("chat-messages");
+            setTimeout(() => { container.scrollTop = container.scrollHeight; }, 30);
+        }
+
+        function handleKeyPress(event) { if (event.key === "Enter") { sendMessage(); } }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll(".mode-tab").forEach(btn => {
+                btn.classList.remove("bg-white", "text-gray-900", "shadow-md");
+                btn.classList.add("bg-white/10", "text-white", "border", "border-white/20");
+            });
+
+            const activeBtn = document.getElementById(`btn-${mode}`);
+            activeBtn.classList.remove("bg-white/10", "text-white", "border", "border-white/20");
+            activeBtn.classList.add("bg-white", "text-gray-900", "shadow-md");
+
+            const statusLabel = document.getElementById("chat-status");
+            if (mode === "ventas") {
+                statusLabel.innerText = "Asistente Central Litium";
+                appendSystemMessage("Modo activo: Adquisición de Planes. Elige tu velocidad óptima.");
+            } else if (mode === "soporte") {
+                statusLabel.innerText = "Gestión de Pagos y Tickets";
+                appendSystemMessage("Modo activo: Reportar Pagos / Soporte de Averías.");
+            } else {
+                statusLabel.innerText = "Validador Geográfico Litium";
+                appendSystemMessage("Modo activo: Consulta de Cobertura Comercial.");
+            }
+        }
+
+        function openChatWithContext(message) {
+            const chatWin = document.getElementById("chat-window");
+            if (chatWin.classList.contains("hidden")) { toggleChat(); }
+            document.getElementById("user-input").value = message;
+            sendMessage();
+        }
+
+        async function sendMessage() {
+            const inputEl = document.getElementById("user-input");
+            const sendBtn = document.getElementById("send-btn");
+            const text = inputEl.value.trim();
+            if (!text) return;
+
+            appendUserMessage(text);
+            inputEl.value = "";
+            inputEl.disabled = true;
+            sendBtn.disabled = true;
+
+            const typingId = appendTypingIndicator();
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/chat`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: text, mode: currentMode })
+                });
+                const data = await response.json();
+                document.getElementById(typingId)?.remove();
+
+                if (data && data.response) {
+                    appendSystemMessage(data.response);
+                    if (data.show_form) { 
+                        triggerFormDeployment(data.form_title, data.form_subtitle, data.form_context || text); 
+                    }
+                }
+            } catch (error) {
+                console.error(error);
+                document.getElementById(typingId)?.remove();
+                appendSystemMessage("Lia está experimentando una breve pausa técnica. Por favor, reintenta.");
+            } finally {
+                inputEl.disabled = false;
+                sendBtn.disabled = false;
+                inputEl.focus();
+            }
+        }
+
+        function appendUserMessage(text) {
+            const container = document.getElementById("chat-messages");
+            container.insertAdjacentHTML("beforeend", `
+                <div class="flex justify-end max-w-[85%] ml-auto">
+                    <div class="bg-[#00a896] text-white text-xs p-3 rounded-2xl rounded-tr-none leading-relaxed">${text.replace(/\n/g, '<br>')}</div>
+                </div>`);
+            scrollChatToBottom();
+        }
+
+        function appendSystemMessage(text) {
+            const container = document.getElementById("chat-messages");
+            container.insertAdjacentHTML("beforeend", `
+                <div class="flex gap-2 max-w-[85%]">
+                    <div class="bg-white border border-gray-200 text-gray-800 text-xs p-3 rounded-2xl rounded-tl-none leading-relaxed shadow-sm">${text.replace(/\n/g, '<br>')}</div>
+                </div>`);
+            scrollChatToBottom();
+        }
+
+        function appendTypingIndicator() {
+            const id = "typing-" + Date.now();
+            document.getElementById("chat-messages").insertAdjacentHTML("beforeend", `
+                <div id="${id}" class="text-gray-400 text-[11px] pl-2 flex items-center gap-1">
+                    <i class="fa-solid fa-circle-notch animate-spin text-[#00a896]"></i> Lia está analizando...
+                </div>`);
+            scrollChatToBottom();
+            return id;
+        }
+
+        function triggerFormDeployment(title, subtitle, context) {
+            document.getElementById("form-title").innerText = title || "Validación Técnica";
+            document.getElementById("form-subtitle").innerText = subtitle || "Introduce tus datos operativos.";
+            document.getElementById("form-details").value = context || "General";
+            document.getElementById("form-context-hidden").value = context || "General";
+            
+            const container = document.getElementById("form-container");
+            container.classList.remove("hidden");
+            container.scrollIntoView({ behavior: "smooth" });
+        }
+
+        // PROCESADOR UNIFICADO: Envía los leads directamente al endpoint de validación geográfica en Render
+        async function submitForm(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById("form-name").value;
+            const phone = document.getElementById("form-phone").value;
+            const location = document.getElementById("form-location").value;
+            const context = document.getElementById("form-context-hidden").value;
+            
+            document.getElementById("form-container").classList.add("hidden");
+            const typingId = appendTypingIndicator();
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/formulario`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, phone, location, context })
+                });
+                
+                const data = await response.json();
+                document.getElementById(typingId)?.remove();
+
+                // Lia imprime la conclusión de factibilidad en el chat
+                appendSystemMessage(`🤖 **Lia:**\n\n${data.response}`);
+
+                // Inyección del enlace comercial directo si aprueba cobertura técnica
+                if (data.cobertura && data.whatsapp_link) {
+                    inyectarBotonWhatsApp(data.whatsapp_link);
+                }
+            } catch (error) {
+                console.error("Error al despachar formulario:", error);
+                document.getElementById(typingId)?.remove();
+                appendSystemMessage("⚠️ Detalle de red al procesar tu factibilidad geográfica. Por favor intenta de nuevo.");
+            } finally {
+                document.getElementById("litium-lead-form").reset();
+            }
+        }
+
+        function inyectarBotonWhatsApp(url) {
+            const container = document.getElementById("chat-messages");
+            container.insertAdjacentHTML("beforeend", `
+                <div class="flex justify-center my-4">
+                    <a href="${url}" target="_blank" class="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-3 px-5 rounded-xl shadow-lg flex items-center gap-2.5 transition-all transform hover:scale-105 tracking-wide text-[11px] uppercase">
+                        <i class="fa-brands fa-whatsapp text-base"></i> Contactar con un Asesor de Ventas
+                    </a>
+                </div>`);
+            scrollChatToBottom();
+        }
+    </script>
+</body>
+</html>
