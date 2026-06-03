@@ -24,6 +24,14 @@
             background-color: rgba(6, 182, 212, 0.3);
             border-radius: 4px;
         }
+        /* Animación bounce para el indicador de escritura */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        .animate-bounce {
+            animation: bounce 0.6s infinite;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-100 font-sans min-h-screen flex flex-col">
@@ -124,7 +132,7 @@
 
             <!-- INPUT FLOTANTE MULTIKAP (Fijado abajo del contenedor) -->
             <div class="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-slate-800 via-slate-800 to-transparent">
-                <form id="form-chat" class="flex items-center gap-1.5 bg-slate-900 border border-slate-700/80 rounded-lg p-1">
+                <form id="form-chat" class="flex items-center gap-1.5 bg-slate-900 border border-slate-700/80 rounded-lg p-1" onsubmit="event.preventDefault(); return false;">
                     <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." required class="flex-1 bg-transparent text-xs p-2 focus:outline-none text-gray-100">
                     
                     <!-- Botón de Voz por Web Speech API -->
@@ -134,7 +142,7 @@
                         </svg>
                     </button>
                     
-                    <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 p-1.5 rounded transition-colors">
+                    <button type="button" id="chat-send-btn" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 p-1.5 rounded transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                         </svg>
@@ -151,9 +159,9 @@
 
     <!-- LÓGICA JAVASCRIPT CONEXIÓN BACKEND -->
     <script>
-        const API_BASE = "https://litium-backend-d2pb.onrender.com"; // Cambiar a la URL de Render en producción
+        const API_BASE = "https://litium-backend-d2pb.onrender.com";
 
-        // --- 1. POLLING INTELIGENTE DE TELEMETRÍA (Render-friendly) ---
+        // ============ 1. POLLING DE TELEMETRÍA ============
         async function fetchTelemetry() {
             try {
                 const res = await fetch(`${API_BASE}/api/metrics/ruiz_pineda`);
@@ -162,18 +170,15 @@
                 
                 document.getElementById('telemetry-latencia').innerText = `${data.latencia_ms} ms`;
                 document.getElementById('telemetry-senal').innerText = `${data.senal_db} dB`;
-                document.getElementById('telemetry-bandwidth').innerText = `${data.ancho_banda_mbps} Mbps`;[cite: 2]
+                document.getElementById('telemetry-bandwidth').innerText = `${data.ancho_banda_mbps} Mbps`;
             } catch (e) {
                 console.log("Telemetry interface sleeping...");
             }
         }
-        // Consulta segura cada 8 segundos para evitar agotar hilos en Render Free Tier[cite: 2]
-        setInterval(fetchTelemetry, 8000);[cite: 2]
+        setInterval(fetchTelemetry, 8000);
         fetchTelemetry();
 
-        // --- 2. GESTIÓN DEL CHAT INTELIGENTE (CONSUMO API_CHAT) ---[cite: 2]
-        const formChat = document.getElementById('form-chat');
-        const chatInput = document.getElementById('chat-input');
+        // ============ 2. FUNCIONES DEL CHAT ============
         const chatBox = document.getElementById('chat-box');
         const chatMode = document.getElementById('chat-mode');
 
@@ -192,41 +197,30 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        formChat.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const text = chatInput.value.trim();
-            if (!text) return;
+        function showTypingIndicator() {
+            const indicatorId = 'typing-indicator';
+            if (document.getElementById(indicatorId)) return;
+            
+            const wrapper = document.createElement('div');
+            wrapper.id = indicatorId;
+            wrapper.className = 'flex justify-start';
+            wrapper.innerHTML = `
+                <div class="bg-slate-700/40 text-xs rounded-lg p-2.5 flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce" style="animation-delay: 0s"></span>
+                    <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+                    <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></span>
+                    <span class="text-gray-400 text-[10px] ml-1">Lia está escribiendo...</span>
+                </div>
+            `;
+            chatBox.appendChild(wrapper);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
 
-            appendMessage(text, true);
-            chatInput.value = '';
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) indicator.remove();
+        }
 
-            try {
-                const res = await fetch(`${API_BASE}/api/chat`, {[cite: 2]
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: text, mode: chatMode.value })[cite: 2]
-                });
-                const data = await res.json();[cite: 2]
-
-                appendMessage(data.response);[cite: 2]
-                
-                // Sí el backend levanta el flag de formulario, lo mostramos[cite: 2]
-                if (data.show_form) {[cite: 2]
-                    document.getElementById('form-lead-container').classList.remove('hidden');[cite: 2]
-                    document.getElementById('lead-title').innerText = data.form_title;[cite: 2]
-                    document.getElementById('lead-subtitle').innerText = data.form_subtitle;[cite: 2]
-                    document.getElementById('lead-context').value = data.form_context;[cite: 2]
-                }
-
-                // Síntesis de voz automática (Lia te habla de vuelta gratis)[cite: 2]
-                speakText(data.response);[cite: 2]
-
-            } catch (err) {
-                appendMessage("Error en la conexión asíncrona del Core.");
-            }
-        });
-
-        // --- 3. SÍNTESIS Y RECONOCIMIENTO DE VOZ (Nativo Web API) ---[cite: 2]
         function speakText(text) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
@@ -237,6 +231,54 @@
             }
         }
 
+        async function sendChatMessage() {
+            const inputEl = document.getElementById('chat-input');
+            const text = inputEl.value.trim();
+            if (!text) return;
+
+            appendMessage(text, true);
+            inputEl.value = '';
+            showTypingIndicator();
+
+            try {
+                const res = await fetch(`${API_BASE}/api/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text, mode: chatMode.value })
+                });
+                
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                
+                hideTypingIndicator();
+                appendMessage(data.response);
+                
+                if (data.show_form) {
+                    document.getElementById('form-lead-container').classList.remove('hidden');
+                    document.getElementById('lead-title').innerText = data.form_title;
+                    document.getElementById('lead-subtitle').innerText = data.form_subtitle;
+                    document.getElementById('lead-context').value = data.form_context;
+                }
+                
+                speakText(data.response);
+                
+            } catch (err) {
+                hideTypingIndicator();
+                appendMessage("⚠️ Error de conexión con el servidor. Intenta de nuevo.");
+                console.error(err);
+            }
+        }
+
+        // Event listeners del chat
+        document.getElementById('chat-send-btn').addEventListener('click', sendChatMessage);
+        document.getElementById('chat-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendChatMessage();
+            }
+        });
+
+        // ============ 3. RECONOCIMIENTO DE VOZ ============
         const btnVoice = document.getElementById('btn-voice');
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -250,7 +292,7 @@
 
             recognition.onresult = (event) => {
                 const text = event.results[0][0].transcript;
-                chatInput.value = text;
+                document.getElementById('chat-input').value = text;
                 btnVoice.classList.remove('text-cyan-400');
             };
 
@@ -260,7 +302,7 @@
             btnVoice.style.display = 'none';
         }
 
-        // --- 4. ENVÍO DE FORMULARIO DE LEADS / COBERTURA ---[cite: 2]
+        // ============ 4. FORMULARIO DE LEADS ============
         document.getElementById('form-lead').addEventListener('submit', async (e) => {
             e.preventDefault();
             const divRes = document.getElementById('lead-response');
@@ -273,27 +315,30 @@
             };
 
             try {
-                const res = await fetch(`${API_BASE}/api/formulario`, {[cite: 2]
+                const res = await fetch(`${API_BASE}/api/formulario`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                const data = await res.json();[cite: 2]
+                const data = await res.json();
 
                 divRes.classList.remove('hidden', 'text-green-400', 'text-yellow-400');
-                divRes.classList.add(data.cobertura ? 'text-green-400' : 'text-yellow-400');[cite: 2]
+                divRes.classList.add(data.cobertura ? 'text-green-400' : 'text-yellow-400');
                 
-                if (data.cobertura && data.whatsapp_link) {[cite: 2]
-                    divRes.innerHTML = `${data.response} <br><a href="${data.whatsapp_link}" target="_blank" class="underline block mt-2 text-xs font-bold font-mono">IR A WHATSAPP ?</a>`;[cite: 2]
+                if (data.cobertura && data.whatsapp_link) {
+                    divRes.innerHTML = `${data.response} <br><a href="${data.whatsapp_link}" target="_blank" class="underline block mt-2 text-xs font-bold font-mono">👉 IR A WHATSAPP 👈</a>`;
                 } else {
-                    divRes.innerText = data.response;[cite: 2]
+                    divRes.innerText = data.response;
                 }
             } catch (err) {
                 console.error(err);
+                divRes.classList.remove('hidden');
+                divRes.classList.add('text-red-400');
+                divRes.innerText = "Error de conexión con el servidor.";
             }
         });
 
-        // --- 5. ENVÍO EN MULTIPART DE VALIDACIÓN DE PAGO (Cloudinary) ---[cite: 2]
+        // ============ 5. FORMULARIO DE PAGOS (Cloudinary) ============
         const formPago = document.getElementById('form-pago');
         const btnPago = document.getElementById('btn-pago');
         const divPagoRes = document.getElementById('pago-response');
@@ -303,28 +348,28 @@
             btnPago.innerText = "Subiendo Comprobante Directo a Nube...";
             btnPago.disabled = true;
 
-            const formData = new FormData(formPago);[cite: 2]
+            const formData = new FormData(formPago);
 
             try {
-                const res = await fetch(`${API_BASE}/api/pagos/validar`, {[cite: 2]
+                const res = await fetch(`${API_BASE}/api/pagos/validar`, {
                     method: 'POST',
-                    body: formData[cite: 2]
+                    body: formData
                 });
-                const data = await res.json();[cite: 2]
+                const data = await res.json();
 
                 divPagoRes.classList.remove('hidden', 'text-red-400', 'text-green-400');
                 if (res.ok) {
                     divPagoRes.classList.add('text-green-400');
-                    divPagoRes.innerHTML = `? <strong>Éxito:</strong> ${data.message}.<br><span class="text-[10px] break-all">URL Nube: ${data.url}</span>`;[cite: 2]
+                    divPagoRes.innerHTML = `✅ <strong>Éxito:</strong> ${data.message}.<br><span class="text-[10px] break-all">📎 URL Nube: ${data.url}</span>`;
                     formPago.reset();
                 } else {
                     divPagoRes.classList.add('text-red-400');
-                    divPagoRes.innerText = `Error: ${data.detail}`;
+                    divPagoRes.innerText = `❌ Error: ${data.detail || 'Error desconocido'}`;
                 }
             } catch (err) {
                 divPagoRes.classList.remove('hidden');
                 divPagoRes.classList.add('text-red-400');
-                divPagoRes.innerText = "Error crítico de red en pasarela de pagos.";
+                divPagoRes.innerText = "❌ Error crítico de red en pasarela de pagos.";
             } finally {
                 btnPago.innerText = "Procesar y Validar Pago";
                 btnPago.disabled = false;
