@@ -1,23 +1,25 @@
 import os
+import requests
+from bs4 import BeautifulSoup
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
+from groq import Groq  # Importación nativa de tu librería del requirements
 
-# Inicialización de la App
+# Inicialización de la aplicación FastAPI bajo el entorno unificado MultiKAP
 app = FastAPI(
     title="Litium IA Backend",
-    description="Ecosistema de automatización para conectividad de fibra óptica bajo el entorno MultiKAP",
-    version="1.0.0"
+    description="Ecosistema core para Litium utilizando la infraestructura MultiKAP.",
+    version="1.3.0"
 )
 
 # =====================================================================
-# 1. CONFIGURACIÓN DE SEGURIDAD (CORS)
+# CONFIGURACIÓN DE SEGURIDAD (CORS)
 # =====================================================================
-# Añadimos los orígenes autorizados para destruir el error de bloqueo del navegador.
 origins = [
-    "https://mauriciojmnz10-max.github.io",  # Frontend en producción (GitHub Pages)
-    "http://localhost:5500",                # Pruebas locales con Live Server
+    "https://mauriciojmnz10-max.github.io",  # Frontend oficial en GitHub Pages
+    "http://localhost:5500",                # Entorno local con Live Server
     "http://127.0.0.1:5500",
     "http://localhost:3000"
 ]
@@ -26,16 +28,31 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],  # Permite todos los métodos: OPTIONS, GET, POST, etc.
-    allow_headers=["*"],  # Permite todos los headers personalizados
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # =====================================================================
-# 2. MODELOS DE DATOS (Pydantic)
+# CONFIGURACIÓN COMERCIAL Y CONSTANTES
+# =====================================================================
+PLANES_LITIUM = {
+    "hogar": {"velocidad": "200 Mbps", "precio": 25.00},
+    "pro": {"velocidad": "500 Mbps", "precio": 40.00},
+    "corporativo": {"velocidad": "1 Gbps", "precio": 80.00}
+}
+
+# Inicialización opcional del cliente Groq utilizando tus variables de entorno en Render
+# GROQ_API_KEY debe estar configurada en el panel de Render
+GROQ_CLIENT = None
+if os.environ.get("GROQ_API_KEY"):
+    GROQ_CLIENT = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+
+# =====================================================================
+# MODELOS DE CONTROL DE DATOS (Pydantic)
 # =====================================================================
 class ChatRequest(BaseModel):
     message: str
-    mode: str  # 'ventas', 'soporte' o 'cobertura'
+    mode: str
 
 class ChatResponse(BaseModel):
     response: str
@@ -44,16 +61,65 @@ class ChatResponse(BaseModel):
     form_subtitle: Optional[str] = None
     form_context: Optional[str] = None
 
+
 # =====================================================================
-# 3. ENDPOINTS / RUTAS DE LA API
+# EXTRACCIÓN DIRECTA DE INTERNET (Mecanismo Síncrono con Requests)
+# =====================================================================
+def extraer_tasa_bcv_directo() -> float:
+    """
+    Se conecta directamente al portal oficial del Banco Central de Venezuela
+    utilizando requests, procesa el HTML y extrae la tasa del dólar en vivo.
+    """
+    url_bcv = "https://www.bcv.org.ve/"
+    
+    # Headers para simular un navegador real y evitar bloqueos por políticas de seguridad del BCV
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "es-ES,es;q=0.8,en-US;q=0.5"
+    }
+    
+    try:
+        # Realizamos la petición síncrona con un timeout estricto de 8 segundos
+        # verify=False previene fallos si los certificados intermedios del BCV expiran
+        response = requests.get(url_bcv, headers=headers, verify=False, timeout=8.0)
+        
+        if response.status_code != 200:
+            print(f"[Requests BCV] Código de estado inválido: {response.status_code}")
+            return 0.0
+
+        # Procesamiento del árbol HTML con BeautifulSoup
+        soup = BeautifulSoup(response.text, "html.parser")
+        
+        # Localización exacta de las etiquetas contenedoras del valor de la divisa estadounidense
+        contenedor_dolar = soup.find("div", id="dolar")
+        if not contenedor_dolar:
+            print("[Requests BCV] No se encontró el contenedor id='dolar'")
+            return 0.0
+            
+        tag_strong = contenedor_dolar.find("strong")
+        if not tag_strong:
+            print("[Requests BCV] No se encontró la etiqueta strong con el valor")
+            return 0.0
+            
+        # Limpieza de espacios y cambio de coma decimal europea a punto flotante de Python
+        tasa_texto = tag_strong.text.strip()
+        tasa_limpia = tasa_texto.replace(",", ".")
+        
+        return float(tasa_limpia)
+
+    except Exception as e:
+        print(f"[Requests BCV] Error durante la extracción de datos: {str(e)}")
+        return 0.0
+
+
+# =====================================================================
+# ENDPOINTS OPERATIVOS DE LA API
 # =====================================================================
 
 @app.get("/")
-def read_root():
-    """
-    Ruta raíz obligatoria.
-    Evita que Render marque el despliegue con error (404) durante el Health Check.
-    """
+def health_check():
+    """Ruta raíz para que el validador de Render compruebe que el servicio está activo."""
     return {
         "status": "online",
         "ecosystem": "MultiKAP",
@@ -62,24 +128,27 @@ def read_root():
 
 
 @app.get("/api/tasa")
-async def get_tasa_bcv():
+async def get_tasa_cambiaria():
     """
-    Endpoint para proveer la tasa oficial del BCV al navbar del frontend.
-    Modifica el valor de retorno con tu lógica de scraping o consumo automatizado.
+    Endpoint de consulta para el Navbar de tu Frontend.
+    Garantiza una tasa de respaldo si el servidor del BCV sufre una desconexión total.
     """
-    try:
-        # Tasa base simulada (Ajusta con tu scraper o integración real cuando sea necesario)
-        tasa_actual = 36.52
-        return {"tasa": tasa_actual}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error al procesar la tasa cambiaria: {str(e)}")
+    tasa = extraer_tasa_bcv_directo()
+    
+    if tasa > 0.0:
+        return {"tasa": tasa}
+    else:
+        # Fallback de contingencia técnica para evitar bloqueos en cascada en la interfaz
+        tasa_contingencia = 40.55
+        print(f"[Alerta] Aplicando tasa de respaldo: {tasa_contingencia}")
+        return {"tasa": tasa_contingencia}
 
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat_handler(request: ChatRequest):
     """
-    Procesador inteligente de interacciones con Lia.
-    Administra la lógica de negocio segmentada por el modo activo del usuario.
+    Controlador del chat inteligente de Lia. Utiliza segmentación por intenciones
+    y permite la integración directa de los modelos de inferencia de Groq.
     """
     user_message = request.message.strip()
     mode = request.mode.lower()
@@ -88,66 +157,69 @@ async def chat_handler(request: ChatRequest):
         raise HTTPException(status_code=400, detail="El mensaje no puede estar vacío.")
 
     try:
-        # -----------------------------------------------------------------
-        # BLOQUE DE CONTEXTO SE SEGÚN EL MODO SELECCIONADO
-        # -----------------------------------------------------------------
-        # Aquí puedes integrar la llamada a la API de Groq / DeepSeek / Llama.
-        # Pasándole este contexto en el 'system prompt'.
-        
-        system_prompt = ""
         ai_reply = ""
         should_trigger_form = False
-        
-        # Variables de configuración para el formulario si se activa
         f_title = None
         f_subtitle = None
         f_context = None
 
+        # Variables comerciales inyectadas en caliente
+        info_planes = (
+            f"Plan Hogar ({PLANES_LITIUM['hogar']['velocidad']} por ${PLANES_LITIUM['hogar']['precio']:.2f}), "
+            f"Plan Pro ({PLANES_LITIUM['pro']['velocidad']} por ${PLANES_LITIUM['pro']['precio']:.2f}) y "
+            f"Plan Corporativo ({PLANES_LITIUM['corporativo']['velocidad']} por ${PLANES_LITIUM['corporativo']['precio']:.2f})."
+        )
+
+        # -----------------------------------------------------------------
+        # LÓGICA CONVERSACIONAL Y ACCIONADORES DE FORMULARIOS
+        # -----------------------------------------------------------------
         if mode == "ventas":
-            system_prompt = "Eres Lia, asesora comercial de Litium. Tu meta es vender planes de fibra óptica (Hogar 200Mbps por $25, Pro 500Mbps por $40, Corp 1Gbps por $80). Sé persuasiva y concisa."
-            
-            # Lógica de ejemplo: Si el usuario muestra intención directa de contratar, disparamos el formulario
-            intenciones_compra = ["contratar", "adquirir", "comprar", "quiero el plan", "me interesa el plan"]
-            if any(palabra in user_message.lower() for palabra in intenciones_compra):
-                ai_reply = "¡Excelente elección! Para proceder con el alta del servicio y agilizar tu orden en el sistema, por favor completa el formulario que acabo de desplegar en tu pantalla. Uno de nuestros consultores validará la información de inmediato."
+            palabras_cierre = ["contratar", "adquirir", "comprar", "quiero el plan", "me interesa"]
+            if any(palabra in user_message.lower() for palabra in palabras_cierre):
+                ai_reply = "¡Excelente elección! Para registrar tu solicitud de instalación de fibra en nuestro sistema MultiKAP, por favor rellena el formulario de alta que acaba de aparecer en tu pantalla."
                 should_trigger_form = True
-                f_title = "Solicitud de Alta de Servicio"
-                f_subtitle = "Introduce tus datos de contacto para procesar la contratación."
-                f_context = f"El cliente solicita contratación rápida desde el asistente de IA. Mensaje de origen: '{user_message}'"
+                f_title = "Formulario de Contratación"
+                f_subtitle = "Introduce tus datos de contacto para agendar la instalación."
+                f_context = f"Cierre comercial de ventas. Mensaje: '{user_message}'"
             else:
-                ai_reply = "Ofrecemos velocidades simétricas estables ideales para streaming y gaming. ¿Cuál de nuestros planes se adapta mejor a lo que estás buscando hoy?"
+                ai_reply = f"Actualmente ofrecemos navegación simétrica premium: {info_planes} ¿Cuál de estas alternativas prefieres activar para tu conectividad?"
 
         elif mode == "soporte":
-            system_prompt = "Eres Lia de Soporte Técnico de Litium. Ayuda al usuario a diagnosticar problemas de conectividad (luces del router, reinicios, lentitud) con un tono calmado, técnico y eficiente."
-            
-            intenciones_soporte = ["caido", "sin internet", "no navega", "luz roja", "falla", "averia"]
-            if any(palabra in user_message.lower() for palabra in intenciones_soporte):
-                ai_reply = "Entiendo perfectamente la urgencia de tu caso. He abierto una pestaña de asistencia técnica especializada debajo. Completa los datos solicitados para generar tu ticket de soporte prioritario de inmediato."
+            palabras_falla = ["caido", "sin internet", "falla", "averia", "luz roja", "no navega"]
+            if any(palabra in user_message.lower() for palabra in palabras_falla):
+                ai_reply = "Entendido. He abierto un canal de atención de incidencias en tu pantalla. Rellena los datos para generar tu orden técnica prioritaria inmediatamente."
                 should_trigger_form = True
-                f_title = "Reporte de Incidencia Técnica"
-                f_subtitle = "Describe tu falla para asignar un técnico de guardia."
-                f_context = f"Reporte técnico automatizado. El usuario experimenta incidencias: '{user_message}'"
+                f_title = "Apertura de Ticket de Soporte"
+                f_subtitle = "Reporta tu incidencia directamente a nuestro equipo de guardia técnica."
+                f_context = f"Falla de línea reportada: '{user_message}'"
             else:
-                ai_reply = "Por favor, indícame si la luz 'LOS' de tu equipo óptico parpadea en color rojo, o si la lentitud ocurre en todos tus dispositivos para guiarte en el descarte."
+                ai_reply = "Por favor, indícame si el bombillo led marcado como LOS en tu equipo óptico está encendido en color rojo fijo para asistirte en el descarte rápido."
 
         elif mode == "cobertura":
-            system_prompt = "Eres Lia, encargada de verificar la cobertura de fibra de Litium. Tu objetivo es mapear la dirección del usuario."
-            
-            ai_reply = "Actualmente contamos con nodos activos de fibra de alta velocidad en sectores estratégicos de Caracas (como Caricuao, Ruiz Pineda, Los Telares) y zonas céntricas de Cumaná. Por favor, indícame tu calle o punto de referencia exacto, o rellena el formulario de factibilidad si deseas que verifiquemos tu zona de forma manual."
-            
-            # El modo cobertura puede ofrecer el formulario opcionalmente si el usuario lo pide
-            if "verificar" in user_message.lower() or "vivo en" in user_message.lower():
+            ai_reply = "Disponemos de cobertura activa en sectores de Caracas (Caricuao, Ruiz Pineda, Los Telares) y zonas de Cumaná. Indícame tu dirección o abre el formulario adjunto para proceder con un estudio de factibilidad detallado."
+            palabras_cobertura = ["verificar", "cobertura", "vivo en", "saber si llega"]
+            if any(palabra in user_message.lower() for palabra in palabras_cobertura):
                 should_trigger_form = True
-                f_title = "Estudio de Factibilidad Óptica"
-                f_subtitle = "Comprobaremos si nuestros hilos de fibra llegan a tu dirección exacta."
-                f_context = f"Validación geográfica solicitada para la dirección: '{user_message}'"
-
+                f_title = "Estudio de Factibilidad Técnica"
+                f_subtitle = "Verificamos si disponemos de puertos libres en tu zona residencial."
+                f_context = f"Solicitud geográfica para la ubicación: '{user_message}'"
         else:
-            ai_reply = "Disculpa, no reconozco el modo de operación seleccionado. ¿Podrías indicarme si deseas consultar planes, reportar una falla o validar tu cobertura?"
+            ai_reply = "Por favor, selecciona una pestaña válida (Planes, Soporte o Cobertura) para poder procesar tu requerimiento de forma exacta."
 
         # -----------------------------------------------------------------
-        # RETORNO ESTRUCTURADO HACIA EL FRONTEND
+        # BLOQUE OPCIONAL: LLAMADA A TU CLIENTE DE GROQ (SI ESTÁ CONFIGURADO)
         # -----------------------------------------------------------------
+        # Si prefieres que Groq genere el texto final en lugar de usar las respuestas estáticas:
+        # if GROQ_CLIENT:
+        #     completion = GROQ_CLIENT.chat.completions.create(
+        #         model="llama3-8b-8192",
+        #         messages=[
+        #             {"role": "system", "content": f"Eres Lia de Litium IA. Contexto actual: {info_planes}. Modo activo: {mode}."},
+        #             {"role": "user", "content": user_message}
+        #         ]
+        #     )
+        #     ai_reply = completion.choices[0].message.content
+
         return ChatResponse(
             response=ai_reply,
             show_form=should_trigger_form,
@@ -157,4 +229,4 @@ async def chat_handler(request: ChatRequest):
         )
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error en el motor de IA del Chat: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Fallo crítico en el motor conversacional: {str(e)}")
