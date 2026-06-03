@@ -12,12 +12,12 @@
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #060b16;
+            background-color: #0b111e;
             color: #f3f4f6;
             overflow-x: hidden;
         }
 
-        /* Efecto de fondo: Impulsos de líneas de luz (MultiKAP Theme) */
+        /* Efecto de fondo: Impulsos de líneas de luz adaptadas a la identidad Litium */
         .fiber-lines {
             position: fixed;
             top: 0;
@@ -26,10 +26,10 @@
             height: 100%;
             pointer-events: none;
             z-index: 0;
-            opacity: 0.15;
+            opacity: 0.12;
             background: 
-                linear-gradient(90deg, transparent 49%, #00f0ff 50%, transparent 51%) 0 0 / 200px 100%,
-                linear-gradient(90deg, transparent 39%, #7000ff 40%, transparent 41%) 0 0 / 350px 100%;
+                linear-gradient(90deg, transparent 49%, #00cbb4 50%, transparent 51%) 0 0 / 200px 100%,
+                linear-gradient(90deg, transparent 39%, #00a896 40%, transparent 41%) 0 0 / 350px 100%;
             animation: flowLines 20s linear infinite;
         }
 
@@ -38,10 +38,10 @@
             to { background-position: 1000px 0, -1000px 0; }
         }
 
-        /* Tarjetas de Planes con efecto LED */
+        /* Tarjetas de Planes con el verde corporativo de Litium */
         .plan-card {
-            background: linear-gradient(145deg, #0d1527, #080e1a);
-            border: 1px solid rgba(0, 240, 255, 0.1);
+            background: linear-gradient(145deg, #111a2e, #0b111e);
+            border: 1px solid rgba(0, 203, 180, 0.15);
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
             position: relative;
             overflow: hidden;
@@ -54,7 +54,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(0, 203, 180, 0.2), transparent);
             transition: 0.5s;
         }
 
@@ -64,22 +64,22 @@
 
         .plan-card:hover {
             transform: translateY(-8px);
-            border-color: #00f0ff;
-            box-shadow: 0 10px 30px -10px rgba(0, 240, 255, 0.3);
+            border-color: #00cbb4;
+            box-shadow: 0 10px 30px -10px rgba(0, 203, 180, 0.3);
         }
 
-        /* Gradientes Líquidos del Tema MultiKAP */
+        /* Gradientes Líquidos del Tema MultiKAP unificados con Litium */
         .text-glow-gradient {
-            background: linear-gradient(135deg, #00f0ff 0%, #7000ff 100%);
+            background: linear-gradient(135deg, #00cbb4 0%, #007a8c 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .bg-fiber-gradient {
-            background: linear-gradient(135deg, #00f0ff 0%, #7000ff 100%);
+            background: linear-gradient(135deg, #00cbb4 0%, #007a8c 100%);
         }
 
-        /* Pulso expansivo del botón del Chat */
+        /* Pulso expansivo del botón del Chat en tono menta */
         .chat-pulse-btn {
             position: relative;
         }
@@ -90,7 +90,7 @@
             height: 100%;
             top: 0;
             left: 0;
-            background: #00f0ff;
+            background: #00cbb4;
             border-radius: 50%;
             z-index: -1;
             animation: pulseGlow 2s infinite;
@@ -105,16 +105,16 @@
         /* Configuración Estructural Fija de la Ventana del Chat */
         .chat-window {
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            background: rgba(13, 21, 39, 0.95);
+            background: rgba(17, 26, 46, 0.96);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 240, 255, 0.2);
+            border: 1px solid rgba(0, 203, 180, 0.25);
         }
 
         /* Área interna con scroll independiente y espacio de seguridad inferior */
         .chat-messages-container {
             flex: 1;
             overflow-y: auto;
-            padding-bottom: 65px; /* Evita que los últimos mensajes queden ocultos bajo la caja flotante */
+            padding-bottom: 65px; /* Mantiene la separación de la caja flotante */
         }
 
         /* Personalización de barra de scroll */
@@ -122,14 +122,14 @@
             width: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #060b16;
+            background: #0b111e;
         }
         ::-webkit-scrollbar-thumb {
-            background: #1e293b;
+            background: #1f2d4d;
             border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #00f0ff;
+            background: #00cbb4;
         }
     </style>
 </head>
@@ -138,21 +138,21 @@
     <div class="fiber-lines"></div>
 
     <!-- Barra de Navegación -->
-    <nav class="relative z-50 border-b border-slate-800 bg-[#060b16]/80 backdrop-blur-md sticky top-0 px-6 py-4 flex justify-between items-center">
+    <nav class="relative z-50 border-b border-slate-800 bg-[#0b111e]/80 backdrop-blur-md sticky top-0 px-6 py-4 flex justify-between items-center">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-fiber-gradient flex items-center justify-center text-white font-bold text-lg shadow-[0_0_15px_rgba(0,240,255,0.4)]">
+            <div class="w-10 h-10 rounded-xl bg-fiber-gradient flex items-center justify-center text-slate-950 font-black text-xl shadow-[0_0_15px_rgba(0,203,180,0.4)]">
                 L
             </div>
             <div>
                 <span class="text-xl font-bold tracking-wider text-white">LITIUM</span>
-                <span class="text-xs block text-[#00f0ff] font-semibold tracking-widest -mt-1">FIBRA ÓPTICA</span>
+                <span class="text-xs block text-[#00cbb4] font-semibold tracking-widest -mt-1">FIBRA ÓPTICA</span>
             </div>
         </div>
         
         <div class="bg-slate-900/90 border border-slate-800 rounded-full px-4 py-1.5 flex items-center gap-2 text-xs md:text-sm">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             <span class="text-slate-400 font-medium">Tasa Oficial BCV:</span>
-            <span id="bcv-rate" class="text-[#00f0ff] font-bold">Cargando...</span>
+            <span id="bcv-rate" class="text-[#00cbb4] font-bold">Cargando...</span>
         </div>
     </nav>
 
@@ -169,7 +169,7 @@
 
         <!-- Pestañas de Modos de Navegación -->
         <div class="flex justify-center gap-4 mb-12 flex-wrap">
-            <button onclick="switchMode('ventas')" id="btn-ventas" class="mode-tab px-6 py-2.5 rounded-full font-semibold border text-sm transition-all bg-fiber-gradient text-white border-transparent shadow-[0_0_15px_rgba(0,240,255,0.2)]">
+            <button onclick="switchMode('ventas')" id="btn-ventas" class="mode-tab px-6 py-2.5 rounded-full font-semibold border text-sm transition-all bg-fiber-gradient text-slate-950 border-transparent shadow-[0_0_15px_rgba(0,203,180,0.2)]">
                 <i class="fa-solid fa-cart-shopping mr-2"></i> Planes de Venta
             </button>
             <button onclick="switchMode('soporte')" id="btn-soporte" class="mode-tab px-6 py-2.5 rounded-full font-semibold border text-sm transition-all border-slate-800 text-slate-400 hover:text-white hover:border-slate-600">
@@ -186,14 +186,14 @@
             <div class="plan-card rounded-2xl p-6 flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-start mb-4">
-                        <span class="text-xs font-bold uppercase tracking-widest text-[#00f0ff] bg-[#00f0ff]/10 px-2.5 py-1 rounded-md">Plan Hogar</span>
+                        <span class="text-xs font-bold uppercase tracking-widest text-[#00cbb4] bg-[#00cbb4]/10 px-2.5 py-1 rounded-md">Plan Hogar</span>
                         <i class="fa-solid fa-house text-slate-500 text-xl"></i>
                     </div>
                     <h3 class="text-3xl font-bold mb-1">200 <span class="text-lg font-medium text-slate-400">Mbps</span></h3>
                     <p class="text-slate-400 text-sm mb-6">Ideal para streaming 4K y teletrabajo sin interrupciones.</p>
                     <ul class="space-y-3 text-sm text-slate-300 mb-8">
-                        <li><i class="fa-solid fa-circle-check text-[#00f0ff] mr-2"></i> Fibra simétrica integrada</li>
-                        <li><i class="fa-solid fa-circle-check text-[#00f0ff] mr-2"></i> Router Dual Band incluido</li>
+                        <li><i class="fa-solid fa-circle-check text-[#00cbb4] mr-2"></i> Fibra simétrica integrada</li>
+                        <li><i class="fa-solid fa-circle-check text-[#00cbb4] mr-2"></i> Router Dual Band incluido</li>
                     </ul>
                 </div>
                 <div class="border-t border-slate-800/80 pt-4 flex justify-between items-center">
@@ -201,24 +201,24 @@
                         <span class="text-xs text-slate-500 block">Mensualidad</span>
                         <span class="text-xl font-bold text-white">$25.00</span>
                     </div>
-                    <button onclick="openChatWithContext('Hola, me interesa contratar el Plan Hogar de 200 Mbps')" class="bg-slate-800 hover:bg-[#00f0ff] hover:text-slate-950 px-4 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer">
+                    <button onclick="openChatWithContext('Hola, me interesa contratar el Plan Hogar de 200 Mbps')" class="bg-slate-800 hover:bg-[#00cbb4] hover:text-slate-950 px-4 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer">
                         Consultar
                     </button>
                 </div>
             </div>
 
             <!-- Plan Pro -->
-            <div class="plan-card rounded-2xl p-6 flex flex-col justify-between border-[#7000ff]/40 shadow-[0_0_20px_rgba(112,0,255,0.1)]">
+            <div class="plan-card rounded-2xl p-6 flex flex-col justify-between border-[#00cbb4]/40 shadow-[0_0_20px_rgba(0,203,180,0.1)]">
                 <div>
                     <div class="flex justify-between items-start mb-4">
-                        <span class="text-xs font-bold uppercase tracking-widest text-[#7000ff] bg-[#7000ff]/10 px-2.5 py-1 rounded-md">Más Vendido</span>
-                        <i class="fa-solid fa-rocket text-[#00f0ff] text-xl"></i>
+                        <span class="text-xs font-bold uppercase tracking-widest text-slate-950 bg-[#00cbb4] px-2.5 py-1 rounded-md">Más Vendido</span>
+                        <i class="fa-solid fa-rocket text-[#00cbb4] text-xl"></i>
                     </div>
                     <h3 class="text-3xl font-bold mb-1">500 <span class="text-lg font-medium text-slate-400">Mbps</span></h3>
                     <p class="text-slate-400 text-sm mb-6">Para gamers y creadores de contenido exigentes.</p>
                     <ul class="space-y-3 text-sm text-slate-300 mb-8">
-                        <li><i class="fa-solid fa-circle-check text-[#00f0ff] mr-2"></i> Ancho de banda optimizado</li>
-                        <li><i class="fa-solid fa-circle-check text-[#00f0ff] mr-2"></i> Instalación express prioritaria</li>
+                        <li><i class="fa-solid fa-circle-check text-[#00cbb4] mr-2"></i> Ancho de banda optimizado</li>
+                        <li><i class="fa-solid fa-circle-check text-[#00cbb4] mr-2"></i> Instalación express prioritaria</li>
                     </ul>
                 </div>
                 <div class="border-t border-slate-800/80 pt-4 flex justify-between items-center">
@@ -226,7 +226,7 @@
                         <span class="text-xs text-slate-500 block">Mensualidad</span>
                         <span class="text-xl font-bold text-white">$40.00</span>
                     </div>
-                    <button onclick="openChatWithContext('Hola, quiero más información sobre el Plan Pro de 500 Mbps')" class="bg-fiber-gradient text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:opacity-90 cursor-pointer">
+                    <button onclick="openChatWithContext('Hola, quiero más información sobre el Plan Pro de 500 Mbps')" class="bg-fiber-gradient text-slate-950 px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:opacity-90 cursor-pointer">
                         Adquirir
                     </button>
                 </div>
@@ -236,14 +236,14 @@
             <div class="plan-card rounded-2xl p-6 flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-start mb-4">
-                        <span class="text-xs font-bold uppercase tracking-widest text-[#00f0ff] bg-[#00f0ff]/10 px-2.5 py-1 rounded-md">Corporativo</span>
+                        <span class="text-xs font-bold uppercase tracking-widest text-[#00cbb4] bg-[#00cbb4]/10 px-2.5 py-1 rounded-md">Corporativo</span>
                         <i class="fa-solid fa-briefcase text-slate-500 text-xl"></i>
                     </div>
                     <h3 class="text-3xl font-bold mb-1">1 <span class="text-lg font-medium text-slate-400">Gbps</span></h3>
                     <p class="text-slate-400 text-sm mb-6">Enlace corporativo masivo de máxima estabilidad técnica.</p>
                     <ul class="space-y-3 text-sm text-slate-300 mb-8">
-                        <li><i class="fa-solid fa-circle-check text-[#00f0ff] mr-2"></i> Enlace dedicado exclusivo</li>
-                        <li><i class="fa-solid fa-circle-check text-[#00f0ff] mr-2"></i> Soporte corporativo SLA 99.9%</li>
+                        <li><i class="fa-solid fa-circle-check text-[#00cbb4] mr-2"></i> Enlace dedicado exclusivo</li>
+                        <li><i class="fa-solid fa-circle-check text-[#00cbb4] mr-2"></i> Soporte corporativo SLA 99.9%</li>
                     </ul>
                 </div>
                 <div class="border-t border-slate-800/80 pt-4 flex justify-between items-center">
@@ -251,7 +251,7 @@
                         <span class="text-xs text-slate-500 block">Mensualidad</span>
                         <span class="text-xl font-bold text-white">$80.00</span>
                     </div>
-                    <button onclick="openChatWithContext('Hola, requiero asesoría técnica para el Plan Corporativo de 1 Gbps')" class="bg-slate-800 hover:bg-[#00f0ff] hover:text-slate-950 px-4 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer">
+                    <button onclick="openChatWithContext('Hola, requiero asesoría técnica para el Plan Corporativo de 1 Gbps')" class="bg-slate-800 hover:bg-[#00cbb4] hover:text-slate-950 px-4 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer">
                         Cotizar
                     </button>
                 </div>
@@ -259,7 +259,7 @@
         </div>
 
         <!-- Sección de Formulario Dinámico -->
-        <div id="form-container" class="hidden max-w-xl mx-auto bg-[#0d1527] border border-slate-800 rounded-2xl p-6 shadow-2xl mt-12 relative z-20">
+        <div id="form-container" class="hidden max-w-xl mx-auto bg-[#111a2e] border border-slate-800 rounded-2xl p-6 shadow-2xl mt-12 relative z-20">
             <div class="text-center mb-6">
                 <h3 id="form-title" class="text-xl font-bold text-white">Formulario de Solicitud</h3>
                 <p id="form-subtitle" class="text-xs text-slate-400">Completa tus datos para agilizar el proceso.</p>
@@ -267,23 +267,23 @@
             <form id="litium-lead-form" onsubmit="submitForm(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-400 mb-1">Nombre Completo / Razón Social</label>
-                    <input type="text" id="form-name" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-[#00f0ff]" placeholder="Ej. Mauricio Jimenez">
+                    <input type="text" id="form-name" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-[#00cbb4]" placeholder="Ej. Mauricio Jimenez">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-slate-400 mb-1">Teléfono de Contacto</label>
-                        <input type="tel" id="form-phone" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-[#00f0ff]" placeholder="Ej. 04121234567">
+                        <input type="tel" id="form-phone" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-[#00cbb4]" placeholder="Ej. 04121234567">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-400 mb-1">Ciudad / Sector</label>
-                        <input type="text" id="form-location" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-[#00f0ff]" placeholder="Ej. Caracas, Caricuao">
+                        <input type="text" id="form-location" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-[#00cbb4]" placeholder="Ej. Caracas, Caricuao">
                     </div>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-400 mb-1">Detalles de la Solicitud</label>
                     <textarea id="form-details" rows="3" readonly class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-sm text-slate-300 focus:outline-none" placeholder="Contexto de la solicitud..."></textarea>
                 </div>
-                <button type="submit" class="w-full bg-fiber-gradient text-white font-bold py-2.5 rounded-xl text-sm hover:opacity-90 transition-all cursor-pointer">
+                <button type="submit" class="w-full bg-fiber-gradient text-slate-950 font-bold py-2.5 rounded-xl text-sm hover:opacity-90 transition-all cursor-pointer">
                     Enviar Datos al Consultor
                 </button>
             </form>
@@ -292,7 +292,7 @@
 
     <!-- Botón Flotante de Activación del Chat (Lia) -->
     <div class="fixed bottom-6 right-6 z-50">
-        <button onclick="toggleChat()" class="chat-pulse-btn w-14 h-14 bg-fiber-gradient text-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-all cursor-pointer">
+        <button onclick="toggleChat()" class="chat-pulse-btn w-14 h-14 bg-fiber-gradient text-slate-950 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-all cursor-pointer">
             <i class="fa-solid fa-comment-dots text-xl"></i>
         </button>
     </div>
@@ -302,12 +302,12 @@
         <!-- Encabezado -->
         <div class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-950/60 shrink-0">
             <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-full bg-[#00f0ff]/20 flex items-center justify-center border border-[#00f0ff]/30">
-                    <i class="fa-solid fa-robot text-[#00f0ff] text-sm"></i>
+                <div class="w-8 h-8 rounded-full bg-[#00cbb4]/20 flex items-center justify-center border border-[#00cbb4]/30">
+                    <i class="fa-solid fa-robot text-[#00cbb4] text-sm"></i>
                 </div>
                 <div>
                     <h4 class="text-sm font-bold text-white">Lia Inteligencia Artificial</h4>
-                    <span id="chat-status" class="text-[10px] text-[#00f0ff] block font-medium">Asistente Operativo Litium</span>
+                    <span id="chat-status" class="text-[10px] text-[#00cbb4] block font-medium">Asistente Operativo Litium</span>
                 </div>
             </div>
             <button onclick="toggleChat()" class="text-slate-400 hover:text-white transition-all cursor-pointer">
@@ -327,8 +327,8 @@
         <!-- Input Box Flotante de Escritura Fijo en el Bottom Absoluto -->
         <div class="p-3 bg-slate-950/90 border-t border-slate-800 absolute bottom-0 left-0 w-full backdrop-blur-md shrink-0 z-10">
             <div class="flex gap-2">
-                <input type="text" id="user-input" onkeypress="handleKeyPress(event)" class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-[#00f0ff]" placeholder="Escribe tu mensaje aquí...">
-                <button onclick="sendMessage()" class="bg-[#00f0ff] text-slate-950 font-bold px-4 py-2 rounded-xl text-xs hover:bg-[#00f0ff]/80 transition-all cursor-pointer">
+                <input type="text" id="user-input" onkeypress="handleKeyPress(event)" class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-[#00cbb4]" placeholder="Escribe tu mensaje aquí...">
+                <button onclick="sendMessage()" class="bg-[#00cbb4] text-slate-950 font-bold px-4 py-2 rounded-xl text-xs hover:bg-[#00cbb4]/80 transition-all cursor-pointer">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </div>
@@ -355,7 +355,7 @@
                     document.getElementById("bcv-rate").innerText = "No disponible";
                 }
             } catch (error) {
-                console.error("Error obteniendo tasa BCV:", error);
+                console.error("Error obtuvo tasa BCV:", error);
                 document.getElementById("bcv-rate").innerText = "Error de conexión";
             }
         }
@@ -391,13 +391,13 @@
             currentMode = mode;
             
             document.querySelectorAll(".mode-tab").forEach(btn => {
-                btn.classList.remove("bg-fiber-gradient", "text-white", "border-transparent", "shadow-[0_0_15px_rgba(0,240,255,0.2)]");
+                btn.classList.remove("bg-fiber-gradient", "text-slate-950", "border-transparent", "shadow-[0_0_15px_rgba(0,203,180,0.2)]");
                 btn.classList.add("border-slate-800", "text-slate-400", "hover:text-white", "hover:border-slate-600");
             });
 
             const activeBtn = document.getElementById(`btn-${mode}`);
             activeBtn.classList.remove("border-slate-800", "text-slate-400", "hover:text-white", "hover:border-slate-600");
-            activeBtn.classList.add("bg-fiber-gradient", "text-white", "border-transparent", "shadow-[0_0_15px_rgba(0,240,255,0.2)]");
+            activeBtn.classList.add("bg-fiber-gradient", "text-slate-950", "border-transparent", "shadow-[0_0_15px_rgba(0,203,180,0.2)]");
 
             const statusLabel = document.getElementById("chat-status");
             const viewVentas = document.getElementById("view-ventas");
@@ -479,7 +479,7 @@
             const container = document.getElementById("chat-messages");
             const msgHtml = `
                 <div class="flex justify-end max-w-[85%] ml-auto">
-                    <div class="bg-[#00f0ff] text-slate-950 text-xs p-3 rounded-2xl rounded-tl-none leading-relaxed font-medium">
+                    <div class="bg-[#00cbb4] text-slate-950 text-xs p-3 rounded-2xl rounded-tl-none leading-relaxed font-medium">
                         ${text}
                     </div>
                 </div>`;
@@ -487,7 +487,6 @@
             scrollChatToBottom();
         }
 
-        // Renderizado del HTML que pueda venir del backend de forma limpia
         function appendSystemMessage(text) {
             const container = document.getElementById("chat-messages");
             const msgHtml = `
@@ -505,7 +504,7 @@
             const id = "typing-" + Date.now();
             const typingHtml = `
                 <div id="${id}" class="flex gap-2 max-w-[85%] items-center text-slate-500 text-xs pl-2">
-                    <i class="fa-solid fa-ellipsis fa-bounce text-[#00f0ff]"></i> <span>Lia está procesando...</span>
+                    <i class="fa-solid fa-ellipsis fa-bounce text-[#00cbb4]"></i> <span>Lia está procesando...</span>
                 </div>`;
             container.insertAdjacentHTML("beforeend", typingHtml);
             scrollChatToBottom();
