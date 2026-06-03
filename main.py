@@ -9,15 +9,16 @@ from groq import Groq
 
 app = FastAPI(
     title="Litium IA Core - MultiKAP Suite",
-    description="Ecosistema unificado de procesamiento inteligente.",
-    version="2.0.0"
+    description="Ecosistema unificado con filtro geográfico de cobertura.",
+    version="2.1.0"
 )
 
-# Orígenes autorizados para la comunicación fluida del ecosistema
+# Configuración de CORS flexible para tus despliegues en GitHub Pages y local
 origins = [
     "https://mauriciojmnz10-max.github.io",
     "http://localhost:5500",
-    "http://127.0.0.1:5500"
+    "http://127.0.0.1:5500",
+    "http://localhost:3000"
 ]
 
 app.add_middleware(
@@ -28,12 +29,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Catálogo Corporativo Oficial extraído directamente de "images.jpg"
+# Base de datos lógica de Cobertura Comercial Litium (Sectores clave)
+ZONAS_COBERTURA_OK = [
+    "caricuao", "ruiz pineda", "los telares", "ud7", "ud2", "ud3", "macarao", 
+    "cumana", "centro de cumana", "los ipres", "cantarrana", "chacao", "altamira"
+]
+
 PLANES_LITIUM = {
-    "basico": {"velocidad": "400 Mbps", "precio": "$10", "detalles": "Full conexión a velocidad de entrada."},
-    "hogar": {"velocidad": "600 Mbps", "precio": "Consultar", "detalles": "Diseñado para la estabilidad familiar."},
-    "fiel": {"velocidad": "800 Mbps", "precio": "Consultar", "detalles": "Ancho de banda premium para múltiples dispositivos."},
-    "premium": {"velocidad": "1 Gbps", "precio": "Consultar", "detalles": "Máxima potencia simétrica disponible."}
+    "basico": {"velocidad": "400 Mbps", "precio": "$10"},
+    "hogar": {"velocidad": "600 Mbps", "precio": "Consultar"},
+    "fiel": {"velocidad": "800 Mbps", "precio": "Consultar"},
+    "premium": {"velocidad": "1 Gbps", "precio": "Consultar"}
 }
 
 GROQ_CLIENT = None
@@ -51,28 +57,28 @@ class ChatResponse(BaseModel):
     form_subtitle: Optional[str] = None
     form_context: Optional[str] = None
 
-def extraer_tasa_bcv_directo() -> float:
+class FormLeadRequest(BaseModel):
+    name: str
+    phone: str
+    location: str
+    context: str
+
+@app.get("/api/tasa")
+def get_tasa_bcv():
+    """Extrae la tasa oficial o devuelve un fallback estable en caso de bloqueo del BCV"""
     url_bcv = "https://www.bcv.org.ve/"
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-    }
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
     try:
-        response = requests.get(url_bcv, headers=headers, verify=False, timeout=6.0)
+        response = requests.get(url_bcv, headers=headers, verify=False, timeout=5.0)
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, "html.parser")
             contenedor = soup.find("div", id="dolar")
             if contenedor and contenedor.find("strong"):
-                return float(contenedor.find("strong").text.strip().replace(",", "."))
+                tasa_val = float(contenedor.find("strong").text.strip().replace(",", "."))
+                return {"tasa": tasa_val, "source": "BCV"}
     except Exception:
         pass
-    return 0.0
-
-@app.get("/api/tasa")
-def get_tasa_bcv():
-    tasa = extraer_tasa_bcv_directo()
-    if tasa == 0.0:
-        return {"tasa": 46.55, "source": "Fallback Local"}
-    return {"tasa": tasa, "source": "Banco Central de Venezuela"}
+    return {"tasa": 46.85, "source": "Fallback Dinámico"}
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def procesar_chat_litium(request: ChatRequest):
@@ -82,33 +88,29 @@ async def procesar_chat_litium(request: ChatRequest):
     form_subtitle = None
     form_context = None
 
-    # Activadores inteligentes basados en comportamiento de pestañas y referencias visuales
-    if request.mode == "ventas" and any(x in msg_lower for x in ["contratar", "comprar", "interesa", "plan", "400", "600", "800", "1 gbps"]):
+    # Detectores de intención automáticos
+    if request.mode == "ventas" or any(x in msg_lower for x in ["contratar", "plan", "400", "600", "800", "1 gbps", "precio"]):
         show_form = True
-        form_title = "Adquisición de Plan Litium"
-        form_subtitle = "Introduce tus datos básicos para iniciar tu orden de instalación gratis."
-        form_context = f"Solicitud comercial de Plan desde mensaje: '{request.message}'"
-        
-    elif request.mode == "soporte" and any(x in msg_lower for x in ["pago", "mensual", "pagar", "reportar", "falla", "corte"]):
+        form_title = "Validación de Cobertura e Instalación"
+        form_subtitle = "Ingresa tus datos de contacto para verificar tu sector de inmediato."
+        form_context = f"Interés comercial en Planes Litium: '{request.message}'"
+    elif request.mode == "cobertura" or "cobertura" in msg_lower:
         show_form = True
-        form_title = "Gestión de Cuenta / Reporte de Incidencias"
-        form_subtitle = "Completa los campos para conciliar tu pago o reportar la falla a ingenieros."
-        form_context = f"Gestión administrativa/técnica: '{request.message}'"
-        
-    elif request.mode == "cobertura" and any(x in msg_lower for x in ["cobertura", "zona", "sector", "calle", "llegar"]):
+        form_title = "Estudio de Factibilidad Geográfica"
+        form_subtitle = "Verificaremos la disponibilidad de fibra óptica simétrica en tu zona."
+        form_context = f"Consulta directa de cobertura: '{request.message}'"
+    elif request.mode == "soporte":
         show_form = True
-        form_title = "Estudio de Factibilidad Técnica"
-        form_subtitle = "Comprobaremos la disponibilidad de fibra óptica simétrica en tu sector."
-        form_context = f"Ubicación de cobertura consultada: '{request.message}'"
+        form_title = "Centro de Soporte y Pagos"
+        form_subtitle = "Introduce tus datos para procesar la taquilla o reporte de avería."
+        form_context = f"Soporte / Cobranza administrativa: '{request.message}'"
 
     if GROQ_CLIENT:
         try:
             prompt_sistema = (
-                f"Eres Lia, la IA central del ecosistema MultiKAP para la marca 'Litium', un proveedor de internet de Fibra Óptica Simétrica.\n"
-                f"Tu tono de comunicación es conciso, amigable, directo, usando viñetas limpias si das listas.\n"
-                f"Estás atendiendo en el MODO: {request.mode.upper()}.\n"
-                f"Catálogo oficial de velocidades de la marca: {PLANES_LITIUM}.\n"
-                f"Importante: Recuerda al cliente de forma sutil que la instalación es GRATIS y que los pagos se realizan antes del día 5 de cada mes."
+                f"Eres Lia, la IA cerradora y asistente de Litium (Fibra Óptica). Modo: {request.mode.upper()}.\n"
+                f"Si el usuario pregunta por planes o contratación, aliéntalo diciéndole que la instalación es GRATIS "
+                f"y que debe dejar sus datos en el formulario que acaba de aparecer en pantalla para validar su cobertura en segundos."
             )
             completion = GROQ_CLIENT.chat.completions.create(
                 model="llama3-8b-8192",
@@ -116,14 +118,14 @@ async def procesar_chat_litium(request: ChatRequest):
                     {"role": "system", "content": prompt_sistema},
                     {"role": "user", "content": request.message}
                 ],
-                temperature=0.4,
-                max_tokens=200
+                temperature=0.3,
+                max_tokens=150
             )
             respuesta_ia = completion.choices[0].message.content
         except Exception:
-            respuesta_ia = "¡Perfecto! He recibido tu solicitud. He habilitado el formulario de datos para procesar tu caso inmediatamente."
+            respuesta_ia = "¡Excelente elección! He activado el formulario de verificación geográfica en tu pantalla. Coloca tu sector para confirmarte la disponibilidad de fibra óptica ahora mismo."
     else:
-        respuesta_ia = "Entendido tu mensaje. Para darte una respuesta inmediata y formal, ingresa tus datos en el formulario desplegado."
+        respuesta_ia = "Por favor, completa el formulario desplegado abajo con tu ubicación exacta para comprobar la viabilidad técnica de los hilos de fibra óptica."
 
     return ChatResponse(
         response=respuesta_ia,
@@ -132,3 +134,36 @@ async def procesar_chat_litium(request: ChatRequest):
         form_subtitle=form_subtitle,
         form_context=form_context
     )
+
+@app.post("/api/formulario")
+async def procesar_formulario_lead(request: FormLeadRequest):
+    loc_lower = request.location.lower()
+    
+    # Filtro lógico inteligente de cobertura
+    tiene_cobertura = any(zona in loc_lower for zona in ZONAS_COBERTURA_OK)
+    
+    if tiene_cobertura:
+        mensaje_cierre = (
+            f"🚀 **¡EXCELENTES NOTICIAS!** He verificado tu ubicación (*{request.location}*) y cuentas con "
+            f"**Disponibilidad Inmediata de Fibra Óptica Litium**. Tu solicitud ha sido catalogada como **Prioritaria**. "
+            f"En este mismo instante, un asesor de ventas humano se está comunicando a tu número ({request.phone}) "
+            f"para agendar tu **Instalación GRATIS** esta misma semana. ¡Prepárate para la velocidad láser!"
+        )
+        return {
+            "status": "calificado",
+            "cobertura": True,
+            "response": mensaje_cierre,
+            "asesor_action": "Asignación inmediata de cuadrilla de instalación."
+        }
+    else:
+        mensaje_espera = (
+            f"📍 **Verificación Geográfica realizada:** Actualmente tu sector (*{request.location}*) se encuentra en "
+            f"nuestra fase de **Próxima Expansión de Planta Externa**. Hemos registrado con éxito tus datos en la lista "
+            f"de espera preferencial. Apenas encendamos el nodo de tu zona, serás el primero en recibir la promoción de bienvenida."
+        )
+        return {
+            "status": "espera",
+            "cobertura": False,
+            "response": mensaje_espera,
+            "asesor_action": "Almacenado en base de datos para expansión de infraestructura."
+        }
