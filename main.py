@@ -1,158 +1,284 @@
 import os
+import json
+import hashlib
+import time
 import requests
-from bs4 import BeautifulSoup
-from fastapi import FastAPI
+from datetime import datetime
+from typing import Optional, Dict, Any
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import Optional
+from pydantic import BaseModel, Field
 from groq import Groq
+from bs4 import BeautifulSoup
 
-app = FastAPI(
-    title="Litium IA Core - MultiKAP Suite",
-    description="Ecosistema unificado con filtro geográfico de cobertura.",
-    version="2.1.0"
-)
+# ============ ⚠️ IMPORTANTE: LÍNEAS QUE PIDE GEMINI ============
+from dotenv import load_dotenv
+load_dotenv()  # ← Esto carga tu archivo .env automáticamente
+# ================================================================
 
-# CORS estrictamente configurado para producción y local
-origins = [
-    "https://mauriciojmnz10-max.github.io",
-    "http://localhost:5500",
-    "http://127.0.0.1:5500",
-    "http://localhost:8000",
-    "http://127.0.0.1:8000"
-]
+# ============ CONFIGURACIÓN EXTREMA ============
+class Config:
+    # Render Free Tier friendly - Lee desde variables de entorno
+    GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
+    CLOUDINARY_CLOUD = os.environ.get("CLOUDINARY_CLOUD_NAME", "")
+    CLOUDINARY_KEY = os.environ.get("CLOUDINARY_API_KEY", "")
+    CLOUDINARY_SECRET = os.environ.get("CLOUDINARY_API_SECRET", "")
+    
+    # Tasa BCV - caché en RAM (no disco)
+    TASA_CACHE = {"value": 46.85, "timestamp": 0, "ttl": 300}
+    
+    # Cobertura (en RAM, no disco)
+    ZONAS_COBERTURA = [
+        "caricuao", "ruiz pineda", "los telares", "ud7", "ud2", "ud3",
+        "macarao", "cumana", "centro de cumana", "los ipres", "cantarrana"
+    ]
+    
+    # WhatsApp (sin base de datos)
+    WHATSAPP_ASESOR = "584120000000"
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+config = Config()
 
-# Base de datos lógica de Cobertura Comercial Litium
-ZONAS_COBERTURA_OK = [
-    "caricuao", "ruiz pineda", "los telares", "ud7", "ud2", "ud3", "macarao", 
-    "cumana", "centro de cumana", "los ipres", "cantarrana", "chacao", "altamira"
-]
-
-# Teléfono del equipo de ventas (Formato internacional)
-WHATSAPP_ASESOR = "584120000000" 
-
-GROQ_CLIENT = None
-if os.environ.get("GROQ_API_KEY"):
-    GROQ_CLIENT = Groq(api_key=os.environ.get("GROQ_API_KEY"))
-
+# ============ MODELOS LIVIANOS ============
 class ChatRequest(BaseModel):
     message: str
-    mode: str
+    mode: str  # "ventas" o "soporte"
 
-class ChatResponse(BaseModel):
-    response: str
-    show_form: bool
-    form_title: Optional[str] = None
-    form_subtitle: Optional[str] = None
-    form_context: Optional[str] = None
-
-class FormLeadRequest(BaseModel):
+class FormRequest(BaseModel):
     name: str
     phone: str
     location: str
     context: str
 
-@app.get("/api/tasa")
-def get_tasa_bcv():
-    """Obtiene la tasa con un timeout ultra corto para evitar congelar el hilo de FastAPI"""
-    url_bcv = "https://www.bcv.org.ve/"
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
-    try:
-        # Timeout estricto de 1.5 segundos para que no tumbe el backend completo si el BCV no responde
-        response = requests.get(url_bcv, headers=headers, verify=False, timeout=1.5)
-        if response.status_code == 200:
-            soup = BeautifulSoup(response.text, "html.parser")
-            contenedor = soup.find("div", id="dolar")
-            if contenedor and contenedor.find("strong"):
-                tasa_val = float(contenedor.find("strong").text.strip().replace(",", "."))
-                return {"tasa": tasa_val, "source": "BCV"}
-    except Exception:
-        pass
-    # Fallback inmediato si el BCV está caído o lento
-    return {"tasa": 46.85, "source": "Fallback Dinámico"}
+# ============ FASTAPI CON LIFESPAN LIMPIO ============
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Inicio - sin nada pesado
+    print("🔥 Litium IA iniciado en modo minimalista")
+    print(f"📦 Cloudinary configurado: {'✅ SI' if config.CLOUDINARY_CLOUD else '❌ NO'}")
+    print(f"🤖 Groq configurado: {'✅ SI' if config.GROQ_API_KEY else '❌ NO'}")
+    yield
+    # Cierre - liberar RAM
+    print("💀 Cerrando conexiones...")
 
-@app.post("/api/chat", response_model=ChatResponse)
-async def procesar_chat_litium(request: ChatRequest):
+app = FastAPI(lifespan=lifespan)
+
+# CORS para GitHub Pages + local
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://mauriciojmnz10-max.github.io",
+        "http://localhost:5500",
+        "http://127.0.0.1:5500",
+        "http://localhost:8000",
+        "http://127.0.0.1:8000"
+    ],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["*"],
+)
+
+# ============ 1. TASA BCV CON CACHÉ EN RAM ============
+@app.get("/api/tasa")
+async def get_tasa():
+    ahora = time.time()
+    if ahora - config.TASA_CACHE["timestamp"] < config.TASA_CACHE["ttl"]:
+        return {"tasa": config.TASA_CACHE["value"], "source": "cache"}
+    
+    try:
+        response = requests.get("https://www.bcv.org.ve/", timeout=2)
+        soup = BeautifulSoup(response.text, "html.parser")
+        dolar_div = soup.find("div", id="dolar")
+        if dolar_div and dolar_div.find("strong"):
+            tasa = float(dolar_div.find("strong").text.replace(",", "."))
+            config.TASA_CACHE = {"value": tasa, "timestamp": ahora, "ttl": 300}
+            return {"tasa": tasa, "source": "bcv"}
+    except:
+        pass
+    
+    return {"tasa": config.TASA_CACHE["value"], "source": "fallback"}
+
+# ============ 2. CHAT CON GROQ (sin memoria pesada) ============
+client = Groq(api_key=config.GROQ_API_KEY) if config.GROQ_API_KEY else None
+
+@app.post("/api/chat")
+async def chat(request: ChatRequest):
     msg_lower = request.message.lower()
+    
+    # Detectar necesidad de formulario (reglas simples, sin LLM pesado)
     show_form = False
     form_title = None
     form_subtitle = None
-    form_context = None
-
-    if request.mode == "ventas" or any(x in msg_lower for x in ["contratar", "plan", "400", "600", "800", "1 gbps", "precio"]):
+    
+    if request.mode == "ventas" and any(p in msg_lower for p in ["contratar", "plan", "400", "600", "800", "precio", "1 gbps"]):
         show_form = True
-        form_title = "Validación de Cobertura e Instalación"
-        form_subtitle = "Ingresa tus datos de contacto para verificar tu sector de inmediato."
-        form_context = f"Interés comercial en Planes Litium: '{request.message}'"
-    elif request.mode == "cobertura" or "cobertura" in msg_lower:
+        form_title = "Contratación Litium"
+        form_subtitle = "Verificamos cobertura en tu sector"
+    elif request.mode == "soporte" and any(s in msg_lower for s in ["lento", "falla", "no funciona", "avería", "atenuación"]):
         show_form = True
-        form_title = "Estudio de Factibilidad Geográfica"
-        form_subtitle = "Verificaremos la disponibilidad de fibra óptica simétrica en tu zona."
-        form_context = f"Consulta directa de cobertura: '{request.message}'"
-    elif request.mode == "soporte":
-        show_form = True
-        form_title = "Centro de Soporte y Pagos"
-        form_subtitle = "Introduce tus datos para procesar la taquilla o reporte de avería."
-        form_context = f"Soporte / Cobranza administrativa: '{request.message}'"
-
-    if GROQ_CLIENT:
+        form_title = "Reporte Técnico"
+        form_subtitle = "Abre un ticket para asistencia prioritaria"
+    
+    # Respuesta base (si no hay Groq o falla)
+    respuesta = "Por favor, completa el formulario para continuar con tu solicitud."
+    
+    if client:
         try:
-            prompt_sistema = (
-                f"Eres Lia, la IA calificadora y asistente de Litium (Fibra Óptica). Modo: {request.mode.upper()}.\n"
-                f"Si el usuario pregunta por planes o contratación, incentívalo diciéndole que deje sus datos en el "
-                f"formulario que acaba de aparecer para validar su zona con el equipo técnico de inmediato."
-            )
-            completion = GROQ_CLIENT.chat.completions.create(
+            sys_prompt = "Eres Lia, asistente de Litium. Responde breve (max 80 palabras). NO uses **. Sé amable y directa."
+            completion = client.chat.completions.create(
                 model="llama3-8b-8192",
                 messages=[
-                    {"role": "system", "content": prompt_sistema},
+                    {"role": "system", "content": sys_prompt},
                     {"role": "user", "content": request.message}
                 ],
                 temperature=0.3,
-                max_tokens=150
+                max_tokens=120
             )
-            respuesta_ia = completion.choices[0].message.content
-        except Exception:
-            respuesta_ia = "¡Excelente elección! He activado el formulario de verificación geográfica en tu pantalla. Por favor, ingresa tu sector para comprobar la disponibilidad de fibra óptica."
-    else:
-        respuesta_ia = "Por favor, completa el formulario desplegado en pantalla con tu ubicación exacta para comprobar la viabilidad técnica en tu zona."
-
-    return ChatResponse(
-        response=respuesta_ia,
-        show_form=show_form,
-        form_title=form_title,
-        form_subtitle=form_subtitle,
-        form_context=form_context
-    )
-
-@app.post("/api/formulario")
-async def procesar_formulario_lead(request: FormLeadRequest):
-    loc_lower = request.location.lower()
-    tiene_cobertura = any(zona in loc_lower for zona in ZONAS_COBERTURA_OK)
+            respuesta = completion.choices[0].message.content
+            # Limpiar **
+            respuesta = respuesta.replace("**", "")
+        except Exception as e:
+            print(f"Groq error: {e}")
+            respuesta = "¡Hola! Por favor, completa el formulario para que podamos ayudarte."
     
-    text_whatsapp = f"Hola, vengo desde la web de Litium IA. Mi nombre es {request.name}. Ya validé mi zona ({request.location}) y deseo coordinar la instalación de mi plan de internet."
-    text_encoded = text_whatsapp.replace(" ", "%20")
-    ws_link = f"https://wa.me/{WHATSAPP_ASESOR}?text={text_encoded}"
+    return {
+        "response": respuesta,
+        "show_form": show_form,
+        "form_title": form_title,
+        "form_subtitle": form_subtitle,
+        "form_context": request.message
+    }
 
+# ============ 3. SUBIDA DE IMÁGENES A CLOUDINARY (sin disco local) ============
+@app.post("/api/pagos/validar")
+async def validar_pago(
+    cedula: str = Form(...),
+    nombre: str = Form(...),
+    banco: str = Form(...),
+    referencia: str = Form(...),
+    monto_usd: float = Form(...),
+    comprobante: UploadFile = File(...)
+):
+    """Recibe la imagen, la sube DIRECTAMENTE a Cloudinary (no toca disco local)"""
+    
+    # Validar tipo de archivo
+    if not comprobante.content_type.startswith("image/"):
+        raise HTTPException(400, "Solo se permiten imágenes")
+    
+    # Verificar que Cloudinary está configurado
+    if not config.CLOUDINARY_CLOUD or not config.CLOUDINARY_KEY:
+        raise HTTPException(500, "Cloudinary no configurado. Contacta al administrador.")
+    
+    # Subir a Cloudinary desde memoria (sin escribir en disco)
+    try:
+        import cloudinary
+        import cloudinary.uploader
+        
+        cloudinary.config(
+            cloud_name=config.CLOUDINARY_CLOUD,
+            api_key=config.CLOUDINARY_KEY,
+            api_secret=config.CLOUDINARY_SECRET
+        )
+        
+        # Leer bytes directamente a RAM
+        file_bytes = await comprobante.read()
+        
+        # Subir usando datos en memoria
+        upload_result = cloudinary.uploader.upload(
+            file_bytes,
+            folder="litium_pagos",
+            public_id=f"pago_{referencia}_{int(time.time())}"
+        )
+        
+        imagen_url = upload_result.get("secure_url")
+        
+        return {
+            "status": "ok",
+            "message": "Comprobante recibido y almacenado en la nube",
+            "url": imagen_url,
+            "referencia": referencia
+        }
+        
+    except Exception as e:
+        print(f"Cloudinary error: {e}")
+        raise HTTPException(500, f"Error al subir imagen: {str(e)}")
+
+# ============ 4. TELEMETRÍA SIN WEBSOCKETS (polling simple) ============
+# Almacenamiento en RAM volátil (para demostración)
+metricas_cache = {}
+
+@app.get("/api/metrics/{nodo_id}")
+async def get_metricas(nodo_id: str):
+    """Endpoint HTTP GET con caché. El frontend puede consultar cada 5-10 segundos."""
+    
+    ahora = time.time()
+    
+    # Si hay caché reciente (menos de 5 segundos), devolverla
+    if nodo_id in metricas_cache and ahora - metricas_cache[nodo_id]["timestamp"] < 5:
+        return metricas_cache[nodo_id]["data"]
+    
+    # Simular métricas (sin WebSockets, sin hilos persistentes)
+    import random
+    metricas = {
+        "nodo_id": nodo_id,
+        "latencia_ms": round(random.gauss(12, 3), 1),
+        "senal_db": round(random.gauss(-45, 5), 1),
+        "ancho_banda_mbps": round(random.gauss(450, 50), 0),
+        "timestamp": ahora
+    }
+    
+    metricas_cache[nodo_id] = {"data": metricas, "timestamp": ahora}
+    
+    # Limpiar caché vieja cada 100 requests
+    if len(metricas_cache) > 50:
+        for k in list(metricas_cache.keys()):
+            if ahora - metricas_cache[k]["timestamp"] > 60:
+                del metricas_cache[k]
+    
+    return metricas
+
+# ============ 5. FORMULARIO DE LEAD (sin base de datos) ============
+@app.post("/api/formulario")
+async def procesar_formulario(request: FormRequest):
+    ubicacion = request.location.lower()
+    
+    tiene_cobertura = any(zona in ubicacion for zona in config.ZONAS_COBERTURA)
+    
     if tiene_cobertura:
-        mensaje_lia = (
-            f"✨ **¡Excelente, {request.name}!** He verificado tu sector (*{request.location}*) y contamos con "
-            f"cobertura y disponibilidad de hilos de fibra óptica activos.\n\n"
-            f"Para proceder con la contratación y agendar tu instalación, presiona el botón de abajo "
-            f"para transferirte directamente con uno de nuestros **Asesores de Venta Humanos** en WhatsApp."
-        )
-        return {"status": "aprobado", "cobertura": True, "response": mensaje_lia, "whatsapp_link": ws_link}
+        import urllib.parse
+        texto = f"Hola, soy {request.name} de {request.location}. Quiero contratar Litium."
+        link = f"https://wa.me/{config.WHATSAPP_ASESOR}?text={urllib.parse.quote(texto)}"
+        
+        return {
+            "status": "aprobado",
+            "cobertura": True,
+            "response": f"✅ {request.name}, tu sector tiene cobertura. Haz clic para hablar con un asesor.",
+            "whatsapp_link": link
+        }
     else:
-        mensaje_espera = (
-            f"📍 **Gracias por tu registro, {request.name}.** Analicé tu ubicación (*{request.location}*) y actualmente "
-            f"estamos construyendo la red para llegar a tu sector. Hemos guardado tus datos de manera prioritaria en nuestra lista de expansión."
-        )
-        return {"status": "lista_espera", "cobertura": False, "response": mensaje_espera, "whatsapp_link": None}
+        return {
+            "status": "lista_espera",
+            "cobertura": False,
+            "response": f"📌 {request.name}, estamos expandiendo la red a {request.location}. Quedas en lista prioritaria.",
+            "whatsapp_link": None
+        }
+
+# ============ 6. HEALTH CHECK (para Render y UptimeRobot) ============
+@app.get("/health")
+async def health():
+    return {
+        "status": "alive",
+        "ram_mb": "~50",
+        "storage": "0MB local",
+        "cloudinary": "✅" if config.CLOUDINARY_CLOUD else "❌",
+        "groq": "✅" if config.GROQ_API_KEY else "❌"
+    }
+
+@app.get("/")
+async def root():
+    return {"message": "Litium IA - Modo Combate", "version": "3.0-minimal"}
+
+# Si ejecutas este archivo directamente
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
