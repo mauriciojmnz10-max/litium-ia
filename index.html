@@ -3,706 +3,333 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Litium - Energía que te Conecta</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-    
+    <title>Litium IA - MultiKAP Suite</title>
+    <!-- Tailwind CSS para desarrollo rápido y sin peso en disco -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f8fafc;
-            color: #0f172a;
+        /* Paleta e Identidad Visual MultiKAP */
+        .bg-multikap-gradient {
+            background: linear-gradient(135deg, #06b6d4 0%, #1e3a8a 100%);
         }
-
-        /* TEMA MULTIKAP: Identidad visual basada en degradados Turquesa a Azul Profundo */
-        .theme-gradient {
-            background: linear-gradient(135deg, #00c4b4 0%, #005f73 100%);
-        }
-        .theme-text-gradient {
-            background: linear-gradient(135deg, #00c4b4 0%, #007a8c 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Estilo Glassmorphism para Tarjetas de Planes */
-        .glass-plan-card {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .glass-plan-card:hover {
-            transform: translateY(-6px);
-            background: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 20px 40px rgba(0, 196, 180, 0.3);
-        }
-
-        /* Caja de Chat Global */
-        .chat-window {
-            box-shadow: 0 25px 60px rgba(15, 23, 42, 0.15);
-            background: #ffffff;
-            border: 1px solid rgba(0, 196, 180, 0.15);
-            transition: opacity 0.25s ease, transform 0.25s ease;
-        }
-
-        /* REGLA MULTIKAP: Padding inferior para evitar que la caja de texto flotante tape los mensajes */
+        /* REGLA INQUEBRANTABLE: Espacio inferior para que el input flotante no tape los mensajes */
         .chat-messages-container {
-            flex: 1;
-            overflow-y: auto;
-            padding-bottom: 85px; 
+            padding-bottom: 55px;
+            scroll-behavior: smooth;
         }
-
-        /* AVATAR ESTILO MÍA DE MERCANTIL: Redondo, impecable y corporativo */
-        .lia-avatar-container {
-            position: relative;
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #00c4b4 0%, #007a8c 100%);
-            padding: 3px;
-            box-shadow: 0 8px 20px rgba(0, 168, 150, 0.25);
+        /* Custom scrollbar minimalista */
+        .chat-messages-container::-webkit-scrollbar {
+            width: 4px;
         }
-        .lia-avatar-inner {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: linear-gradient(180deg, #e0f2fe 0%, #ffffff 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        .lia-pulse {
-            position: absolute;
-            bottom: 1px;
-            right: 1px;
-            width: 14px;
-            height: 14px;
-            background-color: #10b981;
-            border: 2.5px solid #ffffff;
-            border-radius: 50%;
-            animation: avatarGlow 2s infinite;
-        }
-
-        @keyframes avatarGlow {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
-            70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-
-        /* Grilla Estilo Mapa Técnico de Cobertura */
-        .map-wrapper {
-            background-color: #f1f5f9;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid #cbd5e1;
-            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
-            background-size: 24px 24px;
+        .chat-messages-container::-webkit-scrollbar-thumb {
+            background-color: rgba(6, 182, 212, 0.3);
+            border-radius: 4px;
         }
     </style>
 </head>
-<body class="relative min-h-screen antialiased">
+<body class="bg-gray-900 text-gray-100 font-sans min-h-screen flex flex-col">
 
-    <nav class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 px-6 py-4 flex justify-between items-center">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl theme-gradient flex items-center justify-center text-white font-black text-xl shadow-md shadow-[#00a896]/10">
-                <i class="fa-solid fa-bolt"></i>
+    <!-- BARRA SUPERIOR / DASHBOARD DE TELEMETRÍA -->
+    <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="h-4 w-4 rounded-full bg-cyan-400 animate-pulse"></div>
+                <h1 class="text-xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">LITIUM IA // CORE</h1>
             </div>
-            <div>
-                <span class="text-2xl font-extrabold tracking-tight text-slate-900 block leading-none">Litium</span>
-                <span class="text-[10px] text-[#00a896] font-bold tracking-widest uppercase mt-1 block">Energía que te conecta</span>
-            </div>
-        </div>
-        
-        <div class="bg-slate-100 border border-slate-200 rounded-full px-4 py-1.5 flex items-center gap-2 text-xs">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span class="text-slate-500 font-semibold">Tasa Oficial BCV:</span>
-            <span id="bcv-rate" class="text-slate-900 font-bold">Cargando...</span>
-        </div>
-    </nav>
-
-    <header class="theme-gradient text-white py-20 px-6 relative overflow-hidden shadow-inner">
-        <div class="max-w-6xl mx-auto grid md:grid-cols-12 gap-12 items-center relative z-10">
-            <div class="md:col-span-7">
-                <span class="bg-[#ffcc00] text-slate-950 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
-                    ¡Instalación 100% Gratis!
-                </span>
-                <h1 class="text-4xl md:text-6xl font-extrabold mt-5 tracking-tight leading-none">
-                    Internet de Fibra <br><span class="text-[#ffcc00]">Premium Simétrica</span>
-                </h1>
-                <p class="text-slate-100/90 mt-5 max-w-xl text-base md:text-lg leading-relaxed">
-                    Navega, trabaja y escala tus proyectos con la máxima estabilidad del mercado. Planes corporativos y residenciales adaptados a tu ritmo.
-                </p>
-                
-                <div class="mt-8 flex flex-wrap gap-3">
-                    <button onclick="switchMode('ventas', true)" id="btn-ventas" class="mode-tab px-6 py-2.5 rounded-full text-xs font-bold transition-all bg-white text-slate-900 shadow-lg cursor-pointer">
-                        <i class="fa-solid fa-eye mr-2 text-[#00a896]"></i> Ver Catálogo de Planes
-                    </button>
-                    <button onclick="triggerPaymentFormDeployment()" id="btn-pagos-top" class="mode-tab px-6 py-2.5 rounded-full text-xs font-bold transition-all bg-white/10 text-white border border-white/20 hover:bg-white/20 cursor-pointer">
-                        <i class="fa-solid fa-wallet mr-2"></i> Registrar Pago
-                    </button>
-                    <button onclick="switchMode('soporte', true)" id="btn-soporte" class="mode-tab px-6 py-2.5 rounded-full text-xs font-bold transition-all bg-white/10 text-white border border-white/20 hover:bg-white/20 cursor-pointer">
-                        <i class="fa-solid fa-screwdriver-wrench mr-2"></i> Reportar Incidencia
-                    </button>
-                    <button onclick="scrollToCoberturaSection()" id="btn-cobertura" class="mode-tab px-6 py-2.5 rounded-full text-xs font-bold transition-all bg-white/10 text-white border border-white/20 hover:bg-white/20 cursor-pointer">
-                        <i class="fa-solid fa-map-location-dot mr-2"></i> Mapa de Cobertura
-                    </button>
-                </div>
-            </div>
-
-            <div id="grid-planes" class="md:col-span-5 grid grid-cols-2 gap-4">
-                <div onclick="openChatWithContext('Hola Lia, quiero consultar la instalación y tasa del Plan Básico de 400 Mbps', 'ventas')" class="glass-plan-card rounded-2xl p-5 text-center cursor-pointer">
-                    <span class="text-[10px] font-bold uppercase tracking-widest bg-white/10 px-2.5 py-1 rounded text-white/90">Básico</span>
-                    <h3 class="text-3xl font-black mt-2">400 <span class="text-sm font-light block text-slate-200">Mbps</span></h3>
-                    <p class="text-xs text-slate-200 mt-2">Inversión: <span class="font-black text-[#ffcc00] text-sm">$10</span></p>
-                </div>
-                <div onclick="openChatWithContext('Me interesa el Plan Hogar de 600 Mbps. ¿Me das precio en Bs y detalles?', 'ventas')" class="glass-plan-card rounded-2xl p-5 text-center cursor-pointer">
-                    <span class="text-[10px] font-bold uppercase tracking-widest bg-white/10 px-2.5 py-1 rounded text-white/90">Hogar</span>
-                    <h3 class="text-3xl font-black mt-2">600 <span class="text-sm font-light block text-slate-200">Mbps</span></h3>
-                    <p class="text-xs text-slate-200 mt-2">Inversión: <span class="font-black text-[#ffcc00] text-sm">$15</span></p>
-                </div>
-                <div onclick="openChatWithContext('Deseo contratar el Plan Fiel de 800 Mbps corporativo. Requisitos por favor', 'ventas')" class="glass-plan-card rounded-2xl p-5 text-center cursor-pointer">
-                    <span class="text-[10px] font-bold uppercase tracking-widest bg-white/10 px-2.5 py-1 rounded text-white/90">Fiel</span>
-                    <h3 class="text-3xl font-black mt-2">800 <span class="text-sm font-light block text-slate-200">Mbps</span></h3>
-                    <p class="text-xs text-slate-200 mt-2">Inversión: <span class="font-black text-[#ffcc00] text-sm">$20</span></p>
-                </div>
-                <div onclick="openChatWithContext('Quiero la máxima potencia simétrica. Háblame del Plan Premium de 1 Gbps', 'ventas')" class="glass-plan-card rounded-2xl p-5 text-center cursor-pointer border-[#ffcc00]/40 bg-white/20">
-                    <span class="text-[10px] font-bold uppercase tracking-widest bg-[#ffcc00] text-slate-950 px-2 py-0.5 rounded font-black">Premium</span>
-                    <h3 class="text-3xl font-black mt-2">1 <span class="text-sm font-light block text-white">Gbps</span></h3>
-                    <p class="text-xs text-[#ffcc00] font-bold mt-2">Inversión: <span class="font-black text-white text-sm">$30</span></p>
-                </div>
+            
+            <!-- MONITOR DE TELEMETRÍA POR POLLING INTELIGENTE -->
+            <div class="flex gap-4 text-xs bg-slate-900/80 p-2.5 rounded-lg border border-slate-700/50 w-full md:w-auto justify-around">
+                <div><span class="text-gray-400 block font-mono">NODO ACTIVE:</span> <span id="telemetry-nodo" class="text-cyan-400 font-semibold">ruiz_pineda</span></div>
+                <div><span class="text-gray-400 block font-mono">LATENCIA:</span> <span id="telemetry-latencia" class="text-green-400 font-semibold">-- ms</span></div>
+                <div><span class="text-gray-400 block font-mono">SEÑAL:</span> <span id="telemetry-senal" class="text-green-400 font-semibold">-- dB</span></div>
+                <div><span class="text-gray-400 block font-mono">ANCHO BANDA:</span> <span id="telemetry-bandwidth" class="text-cyan-400 font-semibold">-- Mbps</span></div>
             </div>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-6 py-16">
-        <div class="grid md:grid-cols-2 gap-8">
-            <div class="bg-white border border-slate-200 rounded-3xl p-8 flex flex-col justify-between shadow-sm relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-2 bg-[#00a896]"></div>
-                <div>
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Conciliación de Pagos</h2>
-                        <i class="fa-solid fa-receipt text-3xl text-slate-300"></i>
+    <!-- CUERPO PRINCIPAL -->
+    <main class="flex-1 max-w-6xl w-full mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- SECCIÓN IZQUIERDA: FORMULARIOS (DINÁMICOS Y COMPROBANTE) -->
+        <div class="lg:col-span-7 space-y-6">
+            
+            <!-- FORMULARIO DE REQUISICIÓN / LEAD (Aparece cuando Lia lo activa) -->
+            <div id="form-lead-container" class="hidden bg-slate-800/80 border border-cyan-500/30 rounded-xl p-5 shadow-lg shadow-cyan-950/20 transition-all duration-300">
+                <h3 id="lead-title" class="text-lg font-bold text-cyan-400"></h3>
+                <p id="lead-subtitle" class="text-xs text-gray-400 mb-4"></p>
+                
+                <form id="form-lead" class="space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="text" id="lead-name" placeholder="Tu Nombre" required class="bg-slate-900 border border-slate-700 p-2 rounded text-sm focus:outline-none focus:border-cyan-500">
+                        <input type="text" id="lead-phone" placeholder="WhatsApp (Ej: 584120000000)" required class="bg-slate-900 border border-slate-700 p-2 rounded text-sm focus:outline-none focus:border-cyan-500">
                     </div>
-                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
-                        Reporta tus transferencias bancarias o depósitos de manera inmediata para mantener tu cuenta al día de forma automática.
-                    </p>
-                </div>
-                <button onclick="triggerPaymentFormDeployment()" class="w-full mt-4 bg-slate-900 hover:bg-[#00a896] text-white font-bold py-3.5 rounded-xl text-xs tracking-wider transition-all cursor-pointer">
-                    REGISTRAR REPORTE ADMINISTRATIVO
-                </button>
+                    <input type="text" id="lead-location" placeholder="Sector / Ubicación (Ej: Ruiz Pineda)" required class="bg-slate-900 border border-slate-700 w-full p-2 rounded text-sm focus:outline-none focus:border-cyan-500">
+                    <input type="hidden" id="lead-context">
+                    <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 text-sm font-bold p-2 rounded transition-colors">
+                        Validar Información con Consultor
+                    </button>
+                </form>
+                <div id="lead-response" class="mt-3 text-xs p-2.5 rounded bg-slate-900/50 hidden"></div>
             </div>
 
-            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm relative overflow-hidden flex flex-col justify-between">
-                <div class="absolute top-0 left-0 w-full h-2 bg-amber-400"></div>
-                <div>
-                    <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Mesa de Soporte Interno</h2>
-                    <p class="text-slate-600 text-sm mt-2 leading-relaxed">
-                        ¿Presentas atenuación o lentitud en tu fibra? Abre una sesión interactiva de diagnóstico técnico directo con Lia.
-                    </p>
-                </div>
-                <button onclick="switchMode('soporte', true)" class="w-full mt-6 bg-slate-100 border border-slate-200 text-slate-800 hover:bg-[#00a896] hover:text-white font-bold py-3.5 rounded-xl text-xs tracking-wider transition-all cursor-pointer">
-                    INICIAR DIAGNÓSTICO EN LÍNEA <i class="fa-solid fa-chevron-right ml-1"></i>
-                </button>
+            <!-- FORMULARIO DE VALIDACIÓN DE PAGOS (Subida directa a Nube) -->
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-xl">
+                <h3 class="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 mb-1">Registro de Pago Expreso</h3>
+                <p class="text-xs text-gray-400 mb-4">Sube tu soporte de pago. Procesamiento directo en la nube sin almacenamiento local.</p>
+                
+                <form id="form-pago" class="space-y-3" enctype="multipart/form-data">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="text" name="cedula" placeholder="Cédula de Identidad" required class="bg-slate-900 border border-slate-700 p-2 rounded text-sm focus:outline-none focus:border-cyan-500">
+                        <input type="text" name="nombre" placeholder="Nombre del Titular" required class="bg-slate-900 border border-slate-700 p-2 rounded text-sm focus:outline-none focus:border-cyan-500">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <input type="text" name="banco" placeholder="Banco Emisor" required class="bg-slate-900 border border-slate-700 p-2 rounded text-sm focus:outline-none focus:border-cyan-500">
+                        <input type="text" name="referencia" placeholder="N° Referencia" required class="bg-slate-900 border border-slate-700 p-2 rounded text-sm focus:outline-none focus:border-cyan-500">
+                        <input type="number" step="0.01" name="monto_usd" placeholder="Monto ($ USD)" required class="bg-slate-900 border border-slate-700 p-2 rounded text-sm focus:outline-none focus:border-cyan-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-mono text-gray-400 mb-1">COMPROBANTE (IMAGEN):</label>
+                        <input type="file" name="comprobante" accept="image/*" required class="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-cyan-950 file:text-cyan-400 hover:file:bg-cyan-900 cursor-pointer">
+                    </div>
+                    <button type="submit" id="btn-pago" class="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 text-sm font-bold p-2.5 rounded hover:opacity-90 transition-opacity">
+                        Procesar y Validar Pago
+                    </button>
+                </form>
+                <div id="pago-response" class="mt-3 text-xs p-2.5 rounded bg-slate-900/50 hidden"></div>
             </div>
         </div>
 
-        <section id="seccion-cobertura" class="mt-16 bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
-            <div class="flex flex-col md:flex-between md:flex-row items-start md:items-center gap-4 mb-8 border-b border-slate-100 pb-6">
-                <div>
-                    <span class="text-xs font-black uppercase tracking-widest text-[#00a896]">Infraestructura de Red</span>
-                    <h2 class="text-3xl font-extrabold tracking-tight text-slate-900 mt-1">Zonas de Cobertura Activa y Proyecciones</h2>
-                    <p class="text-sm text-slate-500 mt-1">Monitorea los nodos centrales de distribución y las grillas en despliegue técnico.</p>
+        <!-- SECCIÓN DERECHA: INTERFAZ DE CONVERSACIÓN (CHAT FLOTANTE MULTIKAP) -->
+        <div class="lg:col-span-5 bg-slate-800 border border-slate-700 rounded-xl h-[520px] flex flex-col relative overflow-hidden shadow-2xl">
+            <!-- Header Chat -->
+            <div class="bg-slate-900/80 p-3 border-b border-slate-700/50 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <div class="h-2 w-2 rounded-full bg-cyan-400 animate-pulse"></div>
+                    <span class="text-sm font-bold tracking-wide">CHAT CON LIA</span>
                 </div>
-                <div class="flex gap-2 p-1 bg-slate-100 rounded-xl w-full md:w-auto">
-                    <button id="tab-map-ccs" onclick="toggleMainMap('caracas')" class="flex-1 md:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all bg-[#00a896] text-white cursor-pointer">Eje Caracas</button>
-                    <button id="tab-map-mcy" onclick="toggleMainMap('maracay')" class="flex-1 md:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all bg-transparent text-slate-600 cursor-pointer">Eje Central (Maracay)</button>
+                <!-- Selector de modo -->
+                <select id="chat-mode" class="bg-slate-800 border border-slate-700 text-xs rounded p-1 text-cyan-400 font-mono focus:outline-none">
+                    <option value="ventas">MODO: VENTAS</option>
+                    <option value="soporte">MODO: SOPORTE</option>
+                </select>
+            </div>
+
+            <!-- Contenedor de mensajes con padding inferior estricto -->
+            <div id="chat-box" class="flex-1 p-4 overflow-y-auto space-y-3 chat-messages-container">
+                <div class="flex justify-start">
+                    <div class="bg-slate-700/50 text-xs rounded-lg p-2.5 max-w-[85%] text-gray-300">
+                        ¡Hola! Soy Lia, la inteligencia operativa de Litium IA. ¿En qué puedo ayudarte hoy?
+                    </div>
                 </div>
             </div>
 
-            <div id="main-map-caracas" class="map-wrapper h-80 rounded-2xl relative border border-slate-200 p-6 flex flex-col justify-between">
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 relative z-10">
-                    <div class="bg-white/90 backdrop-blur-sm p-4 rounded-xl border border-emerald-200 shadow-sm flex items-start gap-3">
-                        <span class="w-3 h-3 rounded-full bg-emerald-500 mt-1.5 shrink-0 animate-pulse"></span>
-                        <div>
-                            <h4 class="font-bold text-xs text-slate-900">Ruiz Pineda</h4>
-                            <p class="text-[11px] text-slate-500">Eje Caricuao - Cobertura Fibra Total</p>
-                            <span class="inline-block mt-1 text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-1.5 py-0.5 rounded uppercase">Operativo</span>
-                        </div>
-                    </div>
-                    <div class="bg-white/90 backdrop-blur-sm p-4 rounded-xl border border-emerald-200 shadow-sm flex items-start gap-3">
-                        <span class="w-3 h-3 rounded-full bg-emerald-500 mt-1.5 shrink-0 animate-pulse"></span>
-                        <div>
-                            <h4 class="font-bold text-xs text-slate-900">Los Telares</h4>
-                            <p class="text-[11px] text-slate-500">Eje Caricuao - Anillo de Distribución</p>
-                            <span class="inline-block mt-1 text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-1.5 py-0.5 rounded uppercase">Operativo</span>
-                        </div>
-                    </div>
-                    <div class="bg-white/90 backdrop-blur-sm p-4 rounded-xl border border-amber-200 shadow-sm flex items-start gap-3">
-                        <span class="w-3 h-3 rounded-full bg-amber-500 mt-1.5 shrink-0"></span>
-                        <div>
-                            <h4 class="font-bold text-xs text-slate-900">Ejes Centrales de Caracas</h4>
-                            <p class="text-[11px] text-slate-500">Fusiones de Nodos de Distribución</p>
-                            <span class="inline-block mt-1 text-[9px] bg-amber-100 text-amber-800 font-extrabold px-1.5 py-0.5 rounded uppercase">Próximamente / Por Cubrir</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="absolute bottom-4 right-4 bg-slate-900 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-wider">
-                    <i class="fa-solid fa-satellite-dish mr-1 text-[#00c4b4]"></i> Monitoreo de Red Satelital Activa
-                </div>
+            <!-- INPUT FLOTANTE MULTIKAP (Fijado abajo del contenedor) -->
+            <div class="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-slate-800 via-slate-800 to-transparent">
+                <form id="form-chat" class="flex items-center gap-1.5 bg-slate-900 border border-slate-700/80 rounded-lg p-1">
+                    <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." required class="flex-1 bg-transparent text-xs p-2 focus:outline-none text-gray-100">
+                    
+                    <!-- Botón de Voz por Web Speech API -->
+                    <button type="button" id="btn-voice" class="p-1.5 rounded text-gray-400 hover:text-cyan-400 transition-colors" title="Hablar">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                        </svg>
+                    </button>
+                    
+                    <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 p-1.5 rounded transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        </svg>
+                    </button>
+                </form>
             </div>
-
-            <div id="main-map-maracay" class="map-wrapper h-80 rounded-2xl relative border border-slate-200 p-6 flex flex-col justify-between hidden">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10">
-                    <div class="bg-white/90 backdrop-blur-sm p-4 rounded-xl border border-emerald-200 shadow-sm flex items-start gap-3">
-                        <span class="w-3 h-3 rounded-full bg-emerald-500 mt-1.5 shrink-0 animate-pulse"></span>
-                        <div>
-                            <h4 class="font-bold text-xs text-slate-900">Maracay Central</h4>
-                            <p class="text-[11px] text-slate-500">Sede Principal - Cobertura Troncal Completa</p>
-                            <span class="inline-block mt-1 text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-1.5 py-0.5 rounded uppercase">Operativo</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="absolute bottom-4 right-4 bg-slate-900 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-wider">
-                    <i class="fa-solid fa-building mr-1 text-[#00c4b4]"></i> Nodo Central Aragua
-                </div>
-            </div>
-        </section>
-
-        <div id="form-container" class="hidden max-w-xl mx-auto bg-white border border-slate-200 rounded-2xl p-6 shadow-xl mt-12 relative z-20">
-            <div class="text-center mb-4">
-                <h3 id="form-title" class="text-lg font-bold text-slate-900">Formulario Comercial Litium</h3>
-                <p id="form-subtitle" class="text-xs text-slate-500">Agiliza la gestión ingresando tus datos correctos.</p>
-            </div>
-            <form id="litium-lead-form" onsubmit="submitForm(event)" class="space-y-4">
-                <input type="hidden" id="form-context-hidden" value="General">
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-500 mb-1">Nombre Completo / RIF</label>
-                    <input type="text" id="form-name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. Mauricio Jimenez">
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Teléfono Móvil</label>
-                        <input type="tel" id="form-phone" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. 04121234567">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Sector Residencial / Ciudad</label>
-                        <input type="text" id="form-location" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. Caracas, Ruiz Pineda">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-500 mb-1">Detalles del Requerimiento</label>
-                    <textarea id="form-details" rows="2" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-600 focus:outline-none"></textarea>
-                </div>
-                <button type="submit" class="w-full bg-[#00a896] hover:bg-[#00c4b4] text-white font-bold py-3 rounded-xl text-xs transition-all cursor-pointer">
-                    Confirmar Envió de Datos Operativos
-                </button>
-            </form>
-        </div>
-
-        <div id="payment-form-container" class="hidden max-w-xl mx-auto bg-white border border-[#00a896] rounded-2xl p-6 shadow-2xl mt-12 relative z-20">
-            <div class="text-center mb-6">
-                <span class="bg-emerald-100 text-[#00a896] text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">Módulo Administrativo</span>
-                <h3 class="text-xl font-extrabold text-slate-900 mt-2">Declaración Jurada de Pago</h3>
-                <p class="text-xs text-slate-500">Los datos ingresados pasan directamente a conciliación bancaria inmediata.</p>
-            </div>
-            <form id="litium-payment-form" onsubmit="submitPaymentForm(event)" class="space-y-4">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Cédula del Titular</label>
-                        <input type="text" id="pay-id" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. V-12345678">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Nombre Completo del Cliente</label>
-                        <input type="text" id="pay-name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. Mauricio Jimenez">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Canal o Banco Utilizado</label>
-                        <select id="pay-method" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#00a896]">
-                            <option value="Pago Móvil">Pago Móvil Interbancario</option>
-                            <option value="Banesco">Banesco a Banesco</option>
-                            <option value="Banco de Venezuela">Banco de Venezuela</option>
-                            <option value="Zelle">Zelle / Depósito Verde</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Número de Referencia Bancaria (Últimos 6 dígitos)</label>
-                        <input type="text" id="pay-ref" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. 123456">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Importe en Divisas ($ USD)</label>
-                        <input type="number" step="0.01" id="pay-amount-usd" oninput="calculateBsFromForm()" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. 15.00">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Conversión en Bolívares (Tasa Oficial)</label>
-                        <input type="text" id="pay-amount-bs" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-600 focus:outline-none" placeholder="Bs. 0.00">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-500 mb-1">Cargar Capture de Pantalla</label>
-                    <input type="file" id="pay-file" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#00a896]/10 file:text-[#00a896] hover:file:bg-[#00a896]/20 cursor-pointer">
-                </div>
-                <button type="submit" class="w-full bg-slate-900 hover:bg-[#00a896] text-white font-bold py-3.5 rounded-xl text-xs tracking-wider transition-all cursor-pointer">
-                    VALIDAR COMPROBANTE DE TRANSACCIÓN
-                </button>
-            </form>
         </div>
     </main>
 
-    <div class="fixed bottom-6 right-6 z-50">
-        <button onclick="toggleChat()" class="lia-avatar-container hover:scale-105 transition-all cursor-pointer border-0 p-0 block focus:outline-none">
-            <div class="lia-avatar-inner">
-                <svg viewBox="0 0 100 100" class="w-11 h-11 mt-1" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M25,65 C15,45 20,20 50,15 C80,20 85,45 75,65" fill="#005f73" />
-                    <circle cx="50" cy="48" r="24" fill="#ffedd5" />
-                    <path d="M26,42 C35,22 65,22 74,42 C76,30 68,18 50,18 C32,18 24,30 26,42 Z" fill="#007a8c" />
-                    <circle cx="42" cy="46" r="3" fill="#0f172a" />
-                    <circle cx="58" cy="46" r="3" fill="#0f172a" />
-                    <path d="M44,56 Q50,60 56,56" stroke="#0f172a" stroke-width="2" stroke-linecap="round" fill="none" />
-                    <path d="M30,32 Q50,22 70,32" stroke="#00c4b4" stroke-width="3" stroke-linecap="round" fill="none" />
-                    <circle cx="28" cy="36" r="4" fill="#00c4b4" />
-                    <path d="M28,36 L34,48" stroke="#00c4b4" stroke-width="2" stroke-linecap="round" />
-                </svg>
-            </div>
-            <div class="lia-pulse"></div>
-        </button>
-    </div>
+    <!-- FOOTER MÍNIMO -->
+    <footer class="p-3 text-center text-[10px] text-gray-500 font-mono border-t border-slate-800/60 bg-slate-950/30">
+        LITIUM BACKEND CORE VER. 3.0-MINIMAL // POWERED BY MULTIKAP INTERFACES
+    </footer>
 
-    <div id="chat-window" class="chat-window fixed bottom-24 right-6 w-[92%] sm:w-[385px] h-[490px] rounded-2xl z-50 flex flex-col hidden overflow-hidden">
-        <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#e0f2fe] to-white flex items-center justify-center border border-slate-200 overflow-hidden">
-                    <svg viewBox="0 0 100 100" class="w-8 h-8 mt-1" fill="none">
-                        <circle cx="50" cy="48" r="24" fill="#ffedd5" />
-                        <path d="M26,42 C35,22 65,22 74,42 C76,30 68,18 50,18 C32,18 24,30 26,42 Z" fill="#007a8c" />
-                        <circle cx="42" cy="46" r="2.5" fill="#0f172a" />
-                        <circle cx="58" cy="46" r="2.5" fill="#0f172a" />
-                        <path d="M45,55 Q50,58 55,55" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round" fill="none" />
-                    </svg>
-                </div>
-                <div>
-                    <h4 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                        Lia Inteligencia Artificial 
-                    </h4>
-                    <span id="chat-status" class="text-[9px] text-[#00a896] block font-bold uppercase tracking-wider">Asistente Central Litium</span>
-                </div>
-            </div>
-            <button onclick="closeChatWindow()" class="text-slate-400 hover:text-slate-600 transition-all p-1 cursor-pointer">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-        </div>
-
-        <div id="chat-messages" class="chat-messages-container p-4 space-y-3.5 bg-slate-50/50">
-            <div class="flex gap-2 max-w-[85%]">
-                <div class="bg-white border border-slate-200 text-slate-800 text-xs p-3.5 rounded-2xl rounded-tl-none leading-relaxed shadow-sm">
-                    ¡Hola! Soy Lia, tu asistente virtual de Litium. Estoy lista para gestionar tus requerimientos de conexión, catálogo de velocidades o soporte técnico de inmediato. ¿Cómo puedo ayudarte hoy?
-                </div>
-            </div>
-        </div>
-
-        <div class="p-3 bg-white border-t border-slate-200 absolute bottom-0 left-0 w-full shrink-0 z-10">
-            <div class="flex gap-2">
-                <input type="text" id="user-input" onkeypress="handleKeyPress(event)" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#00a896]" placeholder="Escribe tu consulta comercial o técnica...">
-                <button id="send-btn" onclick="sendMessage()" class="bg-[#00a896] text-white px-4 py-2.5 rounded-xl text-xs hover:bg-[#00c4b4] transition-all cursor-pointer">
-                    <i class="fa-solid fa-paper-plane"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
+    <!-- LÓGICA JAVASCRIPT CONEXIÓN BACKEND -->
     <script>
-        const BACKEND_URL = "https://litium-backend-d2pb.onrender.com"; 
-        let currentMode = "ventas";
-        let bcvRateGlobal = 46.85; 
+        const API_BASE = "http://localhost:8000"; // Cambiar a la URL de Render en producción
 
-        const planesLitium = {
-            "400": { nombre: "Básico", usd: 10 },
-            "600": { nombre: "Hogar", usd: 15 },
-            "800": { nombre: "Fiel", usd: 20 },
-            "1000": { nombre: "Premium (1 Gbps)", usd: 30 }
-        };
-
-        document.addEventListener("DOMContentLoaded", () => { fetchBcvRate(); });
-
-        async function fetchBcvRate() {
+        // --- 1. POLLING INTELIGENTE DE TELEMETRÍA (Render-friendly) ---
+        async function fetchTelemetry() {
             try {
-                const response = await fetch(`${BACKEND_URL}/api/tasa`);
-                const data = await response.json();
-                if (data && data.tasa) {
-                    bcvRateGlobal = parseFloat(data.tasa);
+                const res = await fetch(`${API_BASE}/api/metrics/ruiz_pineda`);
+                if (!res.ok) return;
+                const data = await res.json();
+                
+                document.getElementById('telemetry-latencia').innerText = `${data.latencia_ms} ms`;
+                document.getElementById('telemetry-senal').innerText = `${data.senal_db} dB`;
+                document.getElementById('telemetry-bandwidth').innerText = `${data.ancho_banda_mbps} Mbps`;[cite: 2]
+            } catch (e) {
+                console.log("Telemetry interface sleeping...");
+            }
+        }
+        // Consulta segura cada 8 segundos para evitar agotar hilos en Render Free Tier[cite: 2]
+        setInterval(fetchTelemetry, 8000);[cite: 2]
+        fetchTelemetry();
+
+        // --- 2. GESTIÓN DEL CHAT INTELIGENTE (CONSUMO API_CHAT) ---[cite: 2]
+        const formChat = document.getElementById('form-chat');
+        const chatInput = document.getElementById('chat-input');
+        const chatBox = document.getElementById('chat-box');
+        const chatMode = document.getElementById('chat-mode');
+
+        function appendMessage(text, isUser = false) {
+            const wrapper = document.createElement('div');
+            wrapper.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
+            
+            const msg = document.createElement('div');
+            msg.className = isUser 
+                ? 'bg-cyan-950 text-cyan-200 border border-cyan-800 text-xs rounded-lg p-2.5 max-w-[85%]' 
+                : 'bg-slate-700/40 text-xs rounded-lg p-2.5 max-w-[85%] text-gray-200';
+            msg.innerText = text;
+            
+            wrapper.appendChild(msg);
+            chatBox.appendChild(wrapper);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        formChat.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            appendMessage(text, true);
+            chatInput.value = '';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/chat`, {[cite: 2]
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text, mode: chatMode.value })[cite: 2]
+                });
+                const data = await res.json();[cite: 2]
+
+                appendMessage(data.response);[cite: 2]
+                
+                // Sí el backend levanta el flag de formulario, lo mostramos[cite: 2]
+                if (data.show_form) {[cite: 2]
+                    document.getElementById('form-lead-container').classList.remove('hidden');[cite: 2]
+                    document.getElementById('lead-title').innerText = data.form_title;[cite: 2]
+                    document.getElementById('lead-subtitle').innerText = data.form_subtitle;[cite: 2]
+                    document.getElementById('lead-context').value = data.form_context;[cite: 2]
                 }
-            } catch (error) {
-                console.error("Error cargando tasa oficial:", error);
-            } finally {
-                document.getElementById("bcv-rate").innerText = `Bs. ${bcvRateGlobal.toFixed(2)}`;
-            }
-        }
 
-        function calculateBsFromForm() {
-            const usdVal = parseFloat(document.getElementById("pay-amount-usd").value) || 0;
-            const bsVal = usdVal * bcvRateGlobal;
-            document.getElementById("pay-amount-bs").value = `Bs. ${bsVal.toFixed(2)}`;
-        }
+                // Síntesis de voz automática (Lia te habla de vuelta gratis)[cite: 2]
+                speakText(data.response);[cite: 2]
 
-        function toggleMainMap(city) {
-            const mcy = document.getElementById("main-map-maracay");
-            const ccs = document.getElementById("main-map-caracas");
-            const btnMcy = document.getElementById("tab-map-mcy");
-            const btnCcs = document.getElementById("tab-map-ccs");
-
-            if(city === 'maracay') {
-                mcy.classList.remove("hidden");
-                ccs.classList.add("hidden");
-                btnMcy.className = "flex-1 md:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all bg-[#00a896] text-white";
-                btnCcs.className = "flex-1 md:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all bg-transparent text-slate-600";
-            } else {
-                ccs.classList.remove("hidden");
-                mcy.classList.add("hidden");
-                btnCcs.className = "flex-1 md:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all bg-[#00a896] text-white";
-                btnMcy.className = "flex-1 md:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all bg-transparent text-slate-600";
-            }
-        }
-
-        function scrollToCoberturaSection() {
-            const section = document.getElementById("seccion-cobertura");
-            section.scrollIntoView({ behavior: "smooth" });
-        }
-
-        function toggleChat() {
-            const chatWin = document.getElementById("chat-window");
-            if (chatWin.classList.contains("hidden")) {
-                chatWin.classList.remove("hidden");
-                chatWin.style.display = "flex";
-                scrollChatToBottom();
-            } else {
-                closeChatWindow();
-            }
-        }
-
-        function closeChatWindow() {
-            const chatWin = document.getElementById("chat-window");
-            chatWin.classList.add("hidden");
-            chatWin.style.display = "none";
-        }
-
-        document.body.addEventListener('click', function(e) {
-            const chatWindow = document.getElementById('chat-window');
-            const chatButton = document.querySelector('.lia-avatar-container');
-            if (!chatWindow.classList.contains('hidden') && !chatWindow.contains(e.target) && !chatButton.contains(e.target)) {
-                closeChatWindow();
+            } catch (err) {
+                appendMessage("Error en la conexión asíncrona del Core.");
             }
         });
 
-        function scrollChatToBottom() {
-            const container = document.getElementById("chat-messages");
-            setTimeout(() => { container.scrollTop = container.scrollHeight; }, 30);
+        // --- 3. SÍNTESIS Y RECONOCIMIENTO DE VOZ (Nativo Web API) ---[cite: 2]
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'es-VE';
+                utterance.rate = 1.0;
+                window.speechSynthesis.speak(utterance);
+            }
         }
 
-        function handleKeyPress(event) { if (event.key === "Enter") { sendMessage(); } }
-
-        function switchMode(mode, triggerChatInteraction = false) {
-            currentMode = mode;
-            document.querySelectorAll(".mode-tab").forEach(btn => {
-                if (btn.id !== 'btn-cobertura') {
-                    btn.classList.remove("bg-white", "text-slate-900", "shadow-lg");
-                    btn.classList.add("bg-white/10", "text-white", "border", "border-white/20");
-                }
+        const btnVoice = document.getElementById('btn-voice');
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'es-VE';
+            
+            btnVoice.addEventListener('click', () => {
+                recognition.start();
+                btnVoice.classList.add('text-cyan-400');
             });
 
-            const activeBtn = document.getElementById(`btn-${mode}`);
-            if (activeBtn && mode !== 'cobertura') {
-                activeBtn.classList.remove("bg-white/10", "text-white", "border", "border-white/20");
-                activeBtn.classList.add("bg-white", "text-slate-900", "shadow-lg");
-            }
+            recognition.onresult = (event) => {
+                const text = event.results[0][0].transcript;
+                chatInput.value = text;
+                btnVoice.classList.remove('text-cyan-400');
+            };
 
-            document.getElementById("payment-form-container").classList.add("hidden");
-
-            const statusLabel = document.getElementById("chat-status");
-            if (mode === "ventas") {
-                statusLabel.innerText = "Lia Inteligencia Comercial";
-                if (triggerChatInteraction) openChatWithContext("Hola Lia, bríndame los precios actualizados del catálogo de velocidades de fibra.", "ventas");
-            } else if (mode === "soporte") {
-                statusLabel.innerText = "Lia Soporte Técnico Interno";
-                if (triggerChatInteraction) openChatWithContext("Hola Lia, reporto inconvenientes en mi velocidad. Requiero asistencia en línea.", "soporte");
-            }
+            recognition.onerror = () => btnVoice.classList.remove('text-cyan-400');
+            recognition.onend = () => btnVoice.classList.remove('text-cyan-400');
+        } else {
+            btnVoice.style.display = 'none';
         }
 
-        function openChatWithContext(message, forceMode = null) {
-            if (forceMode) switchMode(forceMode, false);
+        // --- 4. ENVÍO DE FORMULARIO DE LEADS / COBERTURA ---[cite: 2]
+        document.getElementById('form-lead').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const divRes = document.getElementById('lead-response');
             
-            const chatWin = document.getElementById("chat-window");
-            if (chatWin.classList.contains("hidden")) {
-                chatWin.classList.remove("hidden");
-                chatWin.style.display = "flex";
-            }
+            const payload = {
+                name: document.getElementById('lead-name').value,
+                phone: document.getElementById('lead-phone').value,
+                location: document.getElementById('lead-location').value,
+                context: document.getElementById('lead-context').value
+            };
 
-            document.getElementById("user-input").value = message;
-            sendMessage();
-        }
-
-        function triggerPaymentFormDeployment() {
-            document.getElementById("form-container").classList.add("hidden");
-            closeChatWindow();
-            
-            const container = document.getElementById("payment-form-container");
-            container.classList.remove("hidden");
-            container.scrollIntoView({ behavior: "smooth" });
-        }
-
-        async function sendMessage() {
-            const inputEl = document.getElementById("user-input");
-            const sendBtn = document.getElementById("send-btn");
-            const text = inputEl.value.trim();
-            if (!text) return;
-
-            appendUserMessage(text);
-            inputEl.value = "";
-            inputEl.disabled = true;
-            sendBtn.disabled = true;
-
-            const typingId = appendTypingIndicator();
-            const upperText = text.toUpperCase();
-            
-            // 1. Redirección de Cobertura Exclusiva a la Página
-            if (upperText.includes("COBERTURA") || upperText.includes("ZONAS") || upperText.includes("SECTOR") || upperText.includes("TELARES") || upperText.includes("PINEDA")) {
-                setTimeout(() => {
-                    document.getElementById(typingId)?.remove();
-                    appendSystemMessage(`<b>Lia:</b> ¡Perfecto! He desplegado e iluminado de forma directa nuestra sección del <b>Mapa de Cobertura en la página principal</b>. Allí puedes validar los sectores operativos (Ruiz Pineda, Los Telares) y las zonas proyectadas por cubrir.`);
-                    
-                    // Bajamos al mapa en la interfaz web principal
-                    scrollToCoberturaSection();
-                    
-                    inputEl.disabled = false; sendBtn.disabled = false; inputEl.focus();
-                }, 1000);
-                return;
-            }
-
-            // 2. Catálogo de Precios Limpio MultiKAP
-            if (currentMode === "ventas" && (upperText.includes("PRECIO") || upperText.includes("CATALOGO") || upperText.includes("PLANES") || upperText.includes("VELOCIDAD"))) {
-                let respuestaPrecios = `<b>Catálogo Oficial Litium:</b><br><br>`;
-                for (let key in planesLitium) {
-                    let p = planesLitium[key];
-                    let costoBs = p.usd * bcvRateGlobal;
-                    respuestaPrecios += `• <b>Plan ${p.nombre}</b> (${key} Mbps): <b>$${p.usd}</b> | Al cambio oficial: Bs. ${costoBs.toFixed(2)}<br>`;
-                }
-                respuestaPrecios += `<br>Navegación simétrica con soporte 24/7. ¿Cuál plan te gustaría instalar?`;
-                
-                setTimeout(() => {
-                    document.getElementById(typingId)?.remove();
-                    appendSystemMessage(respuestaPrecios);
-                    inputEl.disabled = false; sendBtn.disabled = false; inputEl.focus();
-                }, 1000);
-                return;
-            }
-
-            // 3. Modulo Asistencia Técnica Directa
-            if (currentMode === "soporte" || upperText.includes("SOPORTE") || upperText.includes("AVERIA") || upperText.includes("FALLA") || upperText.includes("LENTO")) {
-                setTimeout(() => {
-                    document.getElementById(typingId)?.remove();
-                    appendSystemMessage(`<b>Lia Soporte:</b> Comprendido. Los nodos troncales muestran conectividad, por lo que parece un detalle puntual en tu acometida. He desplegado el formulario técnico en pantalla para procesar tu ticket técnico en cuadrilla.`);
-                    triggerFormDeployment("Apertura de Ticket de Soporte Técnico", "Ingresa los datos del titular para agendar la revisión técnica presencial.", text);
-                    inputEl.disabled = false; sendBtn.disabled = false; inputEl.focus();
-                }, 1200);
-                return;
-            }
-
-            // Integración Limpia con el Backend en Render
             try {
-                const response = await fetch(`${BACKEND_URL}/api/chat`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ message: text, mode: currentMode })
+                const res = await fetch(`${API_BASE}/api/formulario`, {[cite: 2]
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
                 });
-                const data = await response.json();
-                document.getElementById(typingId)?.remove();
+                const data = await res.json();[cite: 2]
 
-                if (data && data.response) {
-                    let cleanResponse = data.response.replace(/\*\*/g, "");
-                    appendSystemMessage(cleanResponse);
-                    if (data.show_form) triggerFormDeployment(data.form_title, data.form_subtitle, data.form_context || text);
+                divRes.classList.remove('hidden', 'text-green-400', 'text-yellow-400');
+                divRes.classList.add(data.cobertura ? 'text-green-400' : 'text-yellow-400');[cite: 2]
+                
+                if (data.cobertura && data.whatsapp_link) {[cite: 2]
+                    divRes.innerHTML = `${data.response} <br><a href="${data.whatsapp_link}" target="_blank" class="underline block mt-2 text-xs font-bold font-mono">IR A WHATSAPP ?</a>`;[cite: 2]
+                } else {
+                    divRes.innerText = data.response;[cite: 2]
                 }
-            } catch (error) {
-                console.error(error);
-                document.getElementById(typingId)?.remove();
-                appendSystemMessage("Hola. Sigo activa para apoyarte. Detállame tu requerimiento o selección de velocidades para procesarlo.");
-            } finally {
-                inputEl.disabled = false; sendBtn.disabled = false; inputEl.focus();
+            } catch (err) {
+                console.error(err);
             }
-        }
+        });
 
-        function appendUserMessage(text) {
-            const container = document.getElementById("chat-messages");
-            container.insertAdjacentHTML("beforeend", `
-                <div class="flex justify-end max-w-[85%] ml-auto">
-                    <div class="bg-[#00a896] text-white text-xs p-3.5 rounded-2xl rounded-tr-none leading-relaxed shadow-sm">${text}</div>
-                </div>`);
-            scrollChatToBottom();
-        }
+        // --- 5. ENVÍO EN MULTIPART DE VALIDACIÓN DE PAGO (Cloudinary) ---[cite: 2]
+        const formPago = document.getElementById('form-pago');
+        const btnPago = document.getElementById('btn-pago');
+        const divPagoRes = document.getElementById('pago-response');
 
-        function appendSystemMessage(text) {
-            const container = document.getElementById("chat-messages");
-            container.insertAdjacentHTML("beforeend", `
-                <div class="flex gap-2 max-w-[85%]">
-                    <div class="bg-white border border-slate-200 text-slate-800 text-xs p-3.5 rounded-2xl rounded-tl-none leading-relaxed shadow-sm">${text}</div>
-                </div>`);
-            scrollChatToBottom();
-        }
+        formPago.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            btnPago.innerText = "Subiendo Comprobante Directo a Nube...";
+            btnPago.disabled = true;
 
-        function appendTypingIndicator() {
-            const id = "typing-" + Date.now();
-            document.getElementById("chat-messages").insertAdjacentHTML("beforeend", `
-                <div id="${id}" class="text-slate-400 text-[11px] pl-2 flex items-center gap-1.5">
-                    <i class="fa-solid fa-circle-notch animate-spin text-[#00a896]"></i> Lia está respondiendo...
-                </div>`);
-            scrollChatToBottom();
-            return id;
-        }
+            const formData = new FormData(formPago);[cite: 2]
 
-        function triggerFormDeployment(title, subtitle, context) {
-            document.getElementById("payment-form-container").classList.add("hidden");
-            document.getElementById("form-title").innerText = title;
-            document.getElementById("form-subtitle").innerText = subtitle;
-            document.getElementById("form-details").value = context;
-            document.getElementById("form-context-hidden").value = context;
-            
-            const container = document.getElementById("form-container");
-            container.classList.remove("hidden");
-            container.scrollIntoView({ behavior: "smooth" });
-        }
+            try {
+                const res = await fetch(`${API_BASE}/api/pagos/validar`, {[cite: 2]
+                    method: 'POST',
+                    body: formData[cite: 2]
+                });
+                const data = await res.json();[cite: 2]
 
-        async function submitForm(event) {
-            event.preventDefault();
-            document.getElementById("form-container").classList.add("hidden");
-            const typingId = appendTypingIndicator();
-            
-            setTimeout(() => {
-                document.getElementById(typingId)?.remove();
-                appendSystemMessage("<b>Lia:</b> ¡Perfecto! He cargado los datos operativos en nuestra base de datos. Un asesor comercial o técnico se pondrá en contacto contigo a la brevedad.");
-                document.getElementById("litium-lead-form").reset();
-            }, 1200);
-        }
-
-        async function submitPaymentForm(event) {
-            event.preventDefault();
-            const refNum = document.getElementById("pay-ref").value;
-            const usdAmount = document.getElementById("pay-amount-usd").value;
-            
-            document.getElementById("payment-form-container").classList.add("hidden");
-            
-            toggleChat();
-            const typingId = appendTypingIndicator();
-            
-            setTimeout(() => {
-                document.getElementById(typingId)?.remove();
-                appendSystemMessage(`<b>Módulo de Finanzas:</b> Reporte por un monto de $${usdAmount} (Ref: ${refNum}) recibido con éxito. El sistema de conciliación validará el capture para asegurar la vigencia de tu mensualidad.`);
-                document.getElementById("litium-payment-form").reset();
-            }, 1500);
-        }
+                divPagoRes.classList.remove('hidden', 'text-red-400', 'text-green-400');
+                if (res.ok) {
+                    divPagoRes.classList.add('text-green-400');
+                    divPagoRes.innerHTML = `? <strong>Éxito:</strong> ${data.message}.<br><span class="text-[10px] break-all">URL Nube: ${data.url}</span>`;[cite: 2]
+                    formPago.reset();
+                } else {
+                    divPagoRes.classList.add('text-red-400');
+                    divPagoRes.innerText = `Error: ${data.detail}`;
+                }
+            } catch (err) {
+                divPagoRes.classList.remove('hidden');
+                divPagoRes.classList.add('text-red-400');
+                divPagoRes.innerText = "Error crítico de red en pasarela de pagos.";
+            } finally {
+                btnPago.innerText = "Procesar y Validar Pago";
+                btnPago.disabled = false;
+            }
+        });
     </script>
 </body>
 </html>
