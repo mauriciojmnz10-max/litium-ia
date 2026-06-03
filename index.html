@@ -114,7 +114,7 @@
         .chat-messages-container {
             flex: 1;
             overflow-y: auto;
-            padding-bottom: 65px; /* Mantiene la separación de la caja flotante */
+            padding-bottom: 75px; /* Altura de seguridad para la caja flotante */
         }
 
         /* Personalización de barra de scroll */
@@ -328,7 +328,7 @@
         <div class="p-3 bg-slate-950/90 border-t border-slate-800 absolute bottom-0 left-0 w-full backdrop-blur-md shrink-0 z-10">
             <div class="flex gap-2">
                 <input type="text" id="user-input" onkeypress="handleKeyPress(event)" class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-[#00cbb4]" placeholder="Escribe tu mensaje aquí...">
-                <button onclick="sendMessage()" class="bg-[#00cbb4] text-slate-950 font-bold px-4 py-2 rounded-xl text-xs hover:bg-[#00cbb4]/80 transition-all cursor-pointer">
+                <button id="send-btn" onclick="sendMessage()" class="bg-[#00cbb4] text-slate-950 font-bold px-4 py-2 rounded-xl text-xs hover:bg-[#00cbb4]/80 transition-all cursor-pointer">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </div>
@@ -438,11 +438,14 @@
         // 5. Envío de Mensajes al Backend de FastAPI
         async function sendMessage() {
             const inputEl = document.getElementById("user-input");
+            const sendBtn = document.getElementById("send-btn");
             const text = inputEl.value.trim();
             if (!text) return;
 
             appendUserMessage(text);
             inputEl.value = "";
+            inputEl.disabled = true;
+            sendBtn.disabled = true;
 
             const typingId = appendTypingIndicator();
 
@@ -471,16 +474,21 @@
                 const indicator = document.getElementById(typingId);
                 if (indicator) indicator.remove();
                 appendSystemMessage("Error de red: No se pudo conectar con Lia.");
+            } finally {
+                inputEl.disabled = false;
+                sendBtn.disabled = false;
+                inputEl.focus();
             }
         }
 
-        // Auxiliares de Renderizado de Mensajes en la Interfaz
+        // Auxiliares de Renderizado de Mensajes en la Interfaz (Soporta saltos de línea)
         function appendUserMessage(text) {
             const container = document.getElementById("chat-messages");
+            const cleanText = text.replace(/\n/g, '<br>');
             const msgHtml = `
                 <div class="flex justify-end max-w-[85%] ml-auto">
-                    <div class="bg-[#00cbb4] text-slate-950 text-xs p-3 rounded-2xl rounded-tl-none leading-relaxed font-medium">
-                        ${text}
+                    <div class="bg-[#00cbb4] text-slate-950 text-xs p-3 rounded-2xl rounded-tr-none leading-relaxed font-medium">
+                        ${cleanText}
                     </div>
                 </div>`;
             container.insertAdjacentHTML("beforeend", msgHtml);
@@ -489,10 +497,11 @@
 
         function appendSystemMessage(text) {
             const container = document.getElementById("chat-messages");
+            const cleanText = text.replace(/\n/g, '<br>');
             const msgHtml = `
                 <div class="flex gap-2 max-w-[85%]">
                     <div class="bg-slate-800 text-slate-200 text-xs p-3 rounded-2xl rounded-tl-none leading-relaxed">
-                        ${text}
+                        ${cleanText}
                     </div>
                 </div>`;
             container.insertAdjacentHTML("beforeend", msgHtml);
