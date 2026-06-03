@@ -1,8 +1,8 @@
 fastapi
-uvicorn[standard]
+uvicorn
 groq
 requests
-pydantic
-python-multipart
-gunicorn
 beautifulsoup4
+python-multipart
+cloudinary
+python-dotenv
