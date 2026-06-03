@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Litium IA - Fibra Óptica de Alta Velocidad</title>
+    <!-- Tailwind CSS v4 -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -16,7 +17,7 @@
             overflow-x: hidden;
         }
 
-        /* Efecto de fondo: Impulsos de líneas de luz (Fibra Óptica) */
+        /* Efecto de fondo: Impulsos de líneas de luz (MultiKAP Theme) */
         .fiber-lines {
             position: fixed;
             top: 0;
@@ -67,7 +68,7 @@
             box-shadow: 0 10px 30px -10px rgba(0, 240, 255, 0.3);
         }
 
-        /* Gradientes Líquidos de Fibra */
+        /* Gradientes Líquidos del Tema MultiKAP */
         .text-glow-gradient {
             background: linear-gradient(135deg, #00f0ff 0%, #7000ff 100%);
             -webkit-background-clip: text;
@@ -78,7 +79,7 @@
             background: linear-gradient(135deg, #00f0ff 0%, #7000ff 100%);
         }
 
-        /* Pulso expansivo del botón del Chat de Lia */
+        /* Pulso expansivo del botón del Chat */
         .chat-pulse-btn {
             position: relative;
         }
@@ -101,20 +102,19 @@
             100% { transform: scale(1.4); opacity: 0; }
         }
 
-        /* Configuración de la Ventana del Chat */
+        /* Configuración Estructural Fija de la Ventana del Chat */
         .chat-window {
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
             background: rgba(13, 21, 39, 0.95);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(0, 240, 255, 0.2);
-            display: none;
         }
 
-        /* REGLA OBLIGATORIA: Contenedor con espacio inferior de 50px para evitar solapamientos */
+        /* Área interna con scroll independiente y espacio de seguridad inferior */
         .chat-messages-container {
-            height: 380px;
+            flex: 1;
             overflow-y: auto;
-            padding-bottom: 50px;
+            padding-bottom: 65px; /* Evita que los últimos mensajes queden ocultos bajo la caja flotante */
         }
 
         /* Personalización de barra de scroll */
@@ -163,7 +163,7 @@
                 Conectividad Simétrica a <span class="text-glow-gradient">Velocidad Láser</span>
             </h1>
             <p class="text-slate-400 max-w-2xl mx-auto text-base md:text-lg">
-                Explora planes de alta fidelidad o gestiona solicitudes con nuestro sistema inteligente.
+                Explora planes de alta fidelidad o gestiona solicitudes con nuestro sistema inteligente bajo el entorno unificado MultiKAP.
             </p>
         </header>
 
@@ -258,7 +258,7 @@
             </div>
         </div>
 
-        <!-- Sección de Formulario Dinámico (Alineado con el flujo de solicitud) -->
+        <!-- Sección de Formulario Dinámico -->
         <div id="form-container" class="hidden max-w-xl mx-auto bg-[#0d1527] border border-slate-800 rounded-2xl p-6 shadow-2xl mt-12 relative z-20">
             <div class="text-center mb-6">
                 <h3 id="form-title" class="text-xl font-bold text-white">Formulario de Solicitud</h3>
@@ -297,10 +297,10 @@
         </button>
     </div>
 
-    <!-- Ventana del Chat de Inteligencia Artificial (Lia) -->
-    <div id="chat-window" class="chat-window fixed bottom-24 right-6 w-[92%] sm:w-[400px] h-[500px] rounded-2xl z-50 flex flex-col hidden">
+    <!-- Ventana del Chat Inmersivo (Lia) -->
+    <div id="chat-window" class="chat-window fixed bottom-24 right-6 w-[92%] sm:w-[400px] h-[500px] rounded-2xl z-50 flex flex-col hidden overflow-hidden">
         <!-- Encabezado -->
-        <div class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-950/60 rounded-t-2xl">
+        <div class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-950/60 shrink-0">
             <div class="flex items-center gap-2.5">
                 <div class="w-8 h-8 rounded-full bg-[#00f0ff]/20 flex items-center justify-center border border-[#00f0ff]/30">
                     <i class="fa-solid fa-robot text-[#00f0ff] text-sm"></i>
@@ -315,7 +315,7 @@
             </button>
         </div>
 
-        <!-- Contenedor de Mensajes (padding-bottom de 50px obligatorio para evitar tapado) -->
+        <!-- Contenedor de Mensajes Autónomo -->
         <div id="chat-messages" class="chat-messages-container p-4 space-y-4">
             <div class="flex gap-2 max-w-[85%]">
                 <div class="bg-slate-800 text-slate-200 text-xs p-3 rounded-2xl rounded-tl-none leading-relaxed">
@@ -324,8 +324,8 @@
             </div>
         </div>
 
-        <!-- Input Box Flotante de Escritura -->
-        <div class="p-3 bg-slate-950/80 border-t border-slate-800 rounded-b-2xl absolute bottom-0 left-0 w-full backdrop-blur-md">
+        <!-- Input Box Flotante de Escritura Fijo en el Bottom Absoluto -->
+        <div class="p-3 bg-slate-950/90 border-t border-slate-800 absolute bottom-0 left-0 w-full backdrop-blur-md shrink-0 z-10">
             <div class="flex gap-2">
                 <input type="text" id="user-input" onkeypress="handleKeyPress(event)" class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-[#00f0ff]" placeholder="Escribe tu mensaje aquí...">
                 <button onclick="sendMessage()" class="bg-[#00f0ff] text-slate-950 font-bold px-4 py-2 rounded-xl text-xs hover:bg-[#00f0ff]/80 transition-all cursor-pointer">
@@ -337,11 +337,9 @@
 
     <!-- JavaScript del Sistema -->
     <script>
-        // Configuración de rutas del Backend en Render
         const BACKEND_URL = "https://litium-ia-backend.onrender.com"; 
         let currentMode = "ventas";
 
-        // Al cargar la página, inicializa la tasa del BCV
         document.addEventListener("DOMContentLoaded", () => {
             fetchBcvRate();
         });
@@ -365,17 +363,22 @@
         // 2. Controladores de la Ventana del Chat
         function toggleChat() {
             const chatWin = document.getElementById("chat-window");
-            if (chatWin.style.display === "flex") {
-                chatWin.style.display = "none";
-            } else {
+            if (chatWin.classList.contains("hidden")) {
+                chatWin.classList.remove("hidden");
                 chatWin.style.display = "flex";
                 scrollChatToBottom();
+            } else {
+                chatWin.classList.add("hidden");
+                chatWin.style.display = "none";
             }
         }
 
         function scrollChatToBottom() {
             const container = document.getElementById("chat-messages");
-            container.scrollTop = container.scrollHeight;
+            // Usamos setTimeout para asegurar que el DOM se haya renderizado antes de calcular el scroll
+            setTimeout(() => {
+                container.scrollTop = container.scrollHeight;
+            }, 50);
         }
 
         function handleKeyPress(event) {
@@ -388,7 +391,6 @@
         function switchMode(mode) {
             currentMode = mode;
             
-            // Actualizar diseño de botones de pestañas
             document.querySelectorAll(".mode-tab").forEach(btn => {
                 btn.classList.remove("bg-fiber-gradient", "text-white", "border-transparent", "shadow-[0_0_15px_rgba(0,240,255,0.2)]");
                 btn.classList.add("border-slate-800", "text-slate-400", "hover:text-white", "hover:border-slate-600");
@@ -398,7 +400,6 @@
             activeBtn.classList.remove("border-slate-800", "text-slate-400", "hover:text-white", "hover:border-slate-600");
             activeBtn.classList.add("bg-fiber-gradient", "text-white", "border-transparent", "shadow-[0_0_15px_rgba(0,240,255,0.2)]");
 
-            // Modificar comportamiento visual y estado del chat
             const statusLabel = document.getElementById("chat-status");
             const viewVentas = document.getElementById("view-ventas");
             const formContainer = document.getElementById("form-container");
@@ -424,13 +425,13 @@
             }
         }
 
-        // 4. Inyección de Contexto desde Tarjetas de Planes (La función que faltaba)
+        // 4. Inyección de Contexto desde Tarjetas de Planes
         function openChatWithContext(message) {
-            // Asegurar que la ventana esté abierta
             const chatWin = document.getElementById("chat-window");
-            chatWin.style.display = "flex";
-            
-            // Colocar el mensaje en el input y enviarlo automáticamente
+            if (chatWin.classList.contains("hidden")) {
+                chatWin.classList.remove("hidden");
+                chatWin.style.display = "flex";
+            }
             document.getElementById("user-input").value = message;
             sendMessage();
         }
@@ -441,11 +442,9 @@
             const text = inputEl.value.trim();
             if (!text) return;
 
-            // Mostrar el mensaje del usuario en la UI
             appendUserMessage(text);
             inputEl.value = "";
 
-            // Mostrar indicador de escritura
             const typingId = appendTypingIndicator();
 
             try {
@@ -456,13 +455,12 @@
                 });
                 const data = await response.json();
                 
-                // Remover indicador de carga
-                document.getElementById(typingId).remove();
+                const indicator = document.getElementById(typingId);
+                if (indicator) indicator.remove();
 
                 if (data && data.response) {
                     appendSystemMessage(data.response);
                     
-                    // Si el backend solicita desplegar el formulario estructurado
                     if (data.show_form) {
                         triggerFormDeployment(data.form_title, data.form_subtitle, data.form_context);
                     }
@@ -471,7 +469,8 @@
                 }
             } catch (error) {
                 console.error("Error en petición de chat:", error);
-                document.getElementById(typingId).remove();
+                const indicator = document.getElementById(typingId);
+                if (indicator) indicator.remove();
                 appendSystemMessage("Error de red: No se pudo conectar con Lia.");
             }
         }
@@ -530,17 +529,13 @@
             const name = document.getElementById("form-name").value;
             const phone = document.getElementById("form-phone").value;
             const location = document.getElementById("form-location").value;
-            const details = document.getElementById("form-details").value;
 
-            // Ocultar el formulario
             document.getElementById("form-container").classList.add("hidden");
 
-            // Notificar éxito dentro de la ventana de chat
             appendSystemMessage(`🎯 **¡Formulario Recibido Exitosamente!**\n\n**Cliente:** ${name}\n**Teléfono:** ${phone}\n**Zona:** ${location}\n\nUn consultor de Litium validará tu caso inmediatamente.`);
             
-            // Limpiar inputs del formulario
             document.getElementById("litium-lead-form").reset();
-            toggleChat();
+            scrollChatToBottom();
         }
     </script>
 </body>
