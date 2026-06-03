@@ -4,356 +4,163 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Litium - Energía que te Conecta</title>
-    <!-- Tailwind CSS para un diseño limpio y rápido -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        /* Animaciones para la interacción de Lia */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f4f4f6;
+            color: #111111;
         }
-        .animate-fade-in {
-            animation: fadeIn 0.3s ease-out forwards;
+
+        /* Temática MultiKAP basada en "images.jpg": Degradados de Turquesa a Azul Profundo */
+        .hero-gradient {
+            background: linear-gradient(135deg, #00c4b4 0%, #007a8c 100%);
         }
-        /* Estilos personalizados para el scroll del chat */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
+
+        /* Estilo Glassmorphism para los Planes calcado de "images.jpg" */
+        .glass-plan-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            transition: all 0.3s ease;
         }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
+        .glass-plan-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.22);
+            box-shadow: 0 15px 30px rgba(0, 168, 150, 0.25);
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
+
+        /* Formas orgánicas de fondo inspiradas en "images (2).jpg" */
+        .arc-bg {
+            border-radius: 150px 150px 0 0;
+            background-color: #00a896;
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+
+        /* Estructura del Chat: Ventana y área interna de mensajes */
+        .chat-window {
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid rgba(0, 168, 150, 0.3);
+        }
+
+        /* REGLA MULTIKAP: Contenedor con padding inferior de seguridad para evitar solapamientos con la caja de texto flotante */
+        .chat-messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 75px; 
+        }
+
+        /* Animación del pulso de red */
+        .pulse-glow {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            50% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.5; }
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen relative pb-[100px]">
+<body class="relative min-h-screen">
 
-    <!-- BARRA SUPERIOR: Tasa e Identidad -->
-    <header class="bg-white border-b border-slate-100 px-6 py-3 flex justify-between items-center sticky top-0 z-40 shadow-sm">
-        <div class="flex items-center gap-3">
-            <!-- Logo Litium -->
-            <div class="bg-[#00A896] p-2 rounded-xl text-white flex items-center justify-center shadow-md shadow-teal-100">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                </svg>
+    <nav class="bg-white/90 backdrop-blur-md border-b border-gray-200 sticky top-0 z-40 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-[#00c4b4] to-[#007a8c] flex items-center justify-center text-white font-extrabold text-lg shadow-sm">
+                <i class="fa-solid fa-wifi"></i>
             </div>
             <div>
-                <span class="text-xl font-black tracking-tight text-slate-900 block leading-none">Litium</span>
-                <span class="text-[10px] text-[#00A896] font-bold tracking-widest uppercase">Energía que te conecta</span>
+                <span class="text-xl font-extrabold tracking-tight text-gray-900">Litium</span>
+                <span class="text-[10px] block text-[#00a896] font-bold tracking-widest -mt-1 uppercase">Energía que te conecta</span>
             </div>
         </div>
+        
+        <div class="bg-gray-100 border border-gray-200 rounded-full px-4 py-1 flex items-center gap-2 text-xs">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 pulse-glow"></span>
+            <span class="text-gray-500 font-medium">Tasa Oficial BCV:</span>
+            <span id="bcv-rate" class="text-gray-900 font-bold">Cargando...</span>
+        </div>
+    </nav>
 
-        <!-- Tasa Oficial BCV Dinámica -->
-        <div class="bg-slate-50 border border-slate-200/60 px-4 py-1.5 rounded-full flex items-center gap-2 text-xs font-medium">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span class="text-slate-500">Tasa Oficial BCV:</span>
-            <span id="tasa-bcv-value" class="text-slate-900 font-bold">Cargando...</span>
+    <header class="hero-gradient text-white py-16 px-6 relative overflow-hidden">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-12 gap-8 items-center relative z-10">
+            <div class="md:col-span-7">
+                <span class="bg-[#ffcc00] text-gray-900 text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                    ¡Instalación GRATIS!
+                </span>
+                <h1 class="text-4xl md:text-6xl font-extrabold mt-4 tracking-tight leading-tight">
+                    Disfruta de <span class="text-[#ffcc00]">full conexión</span> simétrica
+                </h1>
+                <p class="text-white/90 mt-4 max-w-xl text-base md:text-lg">
+                    Conéctate a la red de fibra óptica premium. Navega, trabaja y juega sin interrupciones con planes adaptados a ti.
+                </p>
+                
+                <div class="mt-8 flex flex-wrap gap-3">
+                    <button onclick="switchMode('ventas')" id="btn-ventas" class="mode-tab px-5 py-2 rounded-full text-xs font-bold transition-all bg-white text-gray-900 shadow-md">
+                        <i class="fa-solid fa-rocket mr-1.5 text-[#00a896]"></i> Elige tu Plan
+                    </button>
+                    <button onclick="switchMode('soporte')" id="btn-soporte" class="mode-tab px-5 py-2 rounded-full text-xs font-bold transition-all bg-white/10 text-white border border-white/20 hover:bg-white/20">
+                        <i class="fa-solid fa-headset mr-1.5"></i> Reportar Pago / Soporte
+                    </button>
+                    <button onclick="switchMode('cobertura')" id="btn-cobertura" class="mode-tab px-5 py-2 rounded-full text-xs font-bold transition-all bg-white/10 text-white border border-white/20 hover:bg-white/20">
+                        <i class="fa-solid fa-map-location-dot mr-1.5"></i> Zonas de Cobertura
+                    </button>
+                </div>
+            </div>
+
+            <div id="grid-planes" class="md:col-span-5 grid grid-cols-2 gap-4">
+                <div onclick="openChatWithContext('Hola, me interesa el Plan Básico de 400 Mbps')" class="glass-plan-card rounded-2xl p-4 text-center cursor-pointer">
+                    <span class="text-[10px] font-bold uppercase tracking-widest bg-white/20 px-2 py-0.5 rounded text-white">Básico</span>
+                    <h3 class="text-2xl font-black mt-1">400 <span class="text-xs font-normal">Mbps</span></h3>
+                    <p class="text-xs text-white/80 mt-1">Por solo <span class="font-bold text-[#ffcc00]">$10</span></p>
+                </div>
+                <div onclick="openChatWithContext('Hola, me interesa el Plan Hogar de 600 Mbps')" class="glass-plan-card rounded-2xl p-4 text-center cursor-pointer">
+                    <span class="text-[10px] font-bold uppercase tracking-widest bg-white/20 px-2 py-0.5 rounded text-white">Hogar</span>
+                    <h3 class="text-2xl font-black mt-1">600 <span class="text-xs font-normal">Mbps</span></h3>
+                    <p class="text-xs text-white/80 mt-1">Navegación estable</p>
+                </div>
+                <div onclick="openChatWithContext('Hola, me interesa el Plan Fiel de 800 Mbps')" class="glass-plan-card rounded-2xl p-4 text-center cursor-pointer">
+                    <span class="text-[10px] font-bold uppercase tracking-widest bg-white/20 px-2 py-0.5 rounded text-white">Fiel</span>
+                    <h3 class="text-2xl font-black mt-1">800 <span class="text-xs font-normal">Mbps</span></h3>
+                    <p class="text-xs text-white/80 mt-1">Ultra velocidad</p>
+                </div>
+                <div onclick="openChatWithContext('Hola, me interesa el Plan Premium de 1 Gbps')" class="glass-plan-card rounded-2xl p-4 text-center cursor-pointer border-[#ffcc00]/50 bg-white/20">
+                    <span class="text-[10px] font-bold uppercase tracking-widest bg-[#ffcc00] text-gray-900 px-2 py-0.5 rounded font-black">Premium</span>
+                    <h3 class="text-2xl font-black mt-1">1 <span class="text-xs font-normal">Gbps</span></h3>
+                    <p class="text-xs text-[#ffcc00] font-bold mt-1">Máximo rendimiento</p>
+                </div>
+            </div>
         </div>
     </header>
 
-    <!-- CONTENIDO PRINCIPAL (LANDING) -->
-    <main class="max-w-5xl mx-auto px-6 py-12">
-        <section class="text-center max-w-2xl mx-auto mb-16">
-            <h1 class="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight mb-4">
-                Internet de Fibra Óptica Simétrica <span class="text-[#00A896]">Sin Interrupciones</span>
-            </h1>
-            <p class="text-lg text-slate-600 mb-8">
-                Planes ultra veloces diseñados para streaming, gaming y teletrabajo de alto rendimiento.
-            </p>
-            
-            <!-- Botonera de Acciones Rápidas -->
-            <div class="flex flex-wrap justify-center gap-4">
-                <button onclick="activarFlujoLia('ventas', 'Elegir tu Plan')" class="bg-[#00A896] hover:bg-[#009282] text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-teal-100 transition-all transform hover:-translate-y-0.5 flex items-center gap-2">
-                    🚀 Elige tu Plan
-                </button>
-                <button onclick="activarFlujoLia('soporte', 'Reportar Pago / Soporte')" class="bg-white border border-slate-200 hover:border-slate-300 text-slate-700 font-bold px-6 py-3 rounded-xl shadow-sm transition-all flex items-center gap-2">
-                    🛠️ Reportar Pago / Soporte
-                </button>
-                <button onclick="activarFlujoLia('cobertura', 'Zonas de Cobertura')" class="bg-white border border-slate-200 hover:border-slate-300 text-slate-700 font-bold px-6 py-3 rounded-xl shadow-sm transition-all flex items-center gap-2">
-                    📍 Zonas de Cobertura
-                </button>
-            </div>
-        </section>
-
-        <!-- SECCIÓN DE SELECCIÓN DE PLANES -->
-        <section class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Plan Básico -->
-            <div class="bg-white border-2 border-[#00A896] rounded-2xl p-6 shadow-xl shadow-teal-50/50 relative flex flex-col justify-between">
-                <span class="absolute -top-3 right-4 bg-[#00A896] text-white text-[11px] font-black uppercase px-3 py-1 rounded-full tracking-wider">Popular</span>
+    <main class="max-w-6xl mx-auto px-6 py-16">
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white border border-gray-200 rounded-3xl p-8 flex flex-col justify-between shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-2 bg-[#00a896]"></div>
                 <div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-1">Plan Básico</h3>
-                    <div class="text-4xl font-black text-slate-900 mb-4">400 <span class="text-lg font-bold text-slate-500">Mbps</span></div>
-                    <ul class="space-y-2.5 text-sm text-slate-600 mb-6">
-                        <li class="flex items-center gap-2">✨ Fibra 100% Simétrica</li>
-                        <li class="flex items-center gap-2">⚡ Ideal para 4-6 dispositivos</li>
-                        <li class="flex items-center gap-2">🎁 Instalación Gratuita sujeto a verificación</li>
-                    </ul>
-                </div>
-                <button onclick="solicitarPlan('Plan Básico de 400 Mbps')" class="w-full bg-[#00A896] hover:bg-[#009282] text-white font-bold py-3 rounded-xl transition-colors">
-                    Me interesa este Plan
-                </button>
-            </div>
-        </section>
-    </main>
-
-    <!-- ========================================== -->
-    <!-- INTERFAZ DEL CHAT DE LIA INTELIGENCIA ARTIFICIAL -->
-    <!-- ========================================== -->
-    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
-        
-        <!-- Ventana del Chat -->
-        <div id="chat-window" class="hidden w-[360px] sm:w-[400px] h-[520px] bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col overflow-hidden mb-4 relative animate-fade-in">
-            <!-- Encabezado del Chat -->
-            <div class="bg-white border-b border-slate-100 p-4 flex items-center justify-between z-10 shadow-sm">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-teal-50 border border-teal-100 rounded-full flex items-center justify-center text-[#00A896]">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 002-2H3a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                        </svg>
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">¡No te quedes sin conexión!</h2>
+                        <i class="fa-solid fa-wallet text-3xl text-gray-300"></i>
                     </div>
-                    <div>
-                        <h4 class="font-bold text-slate-900 text-sm leading-tight">Lia Inteligencia Artificial</h4>
-                        <span class="text-[11px] font-bold text-[#00A896] uppercase tracking-wider">Asistente Central Litium</span>
-                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                        Mantén tus cuentas al día y disfruta de tu servicio sin cortes. Recuerda pagar a tiempo antes de los <span class="font-bold text-[#00a896]">5 de cada mes</span>.
+                    </p>
                 </div>
-                <button onclick="toggleChat()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <button onclick="switchMode('soporte'); openChatWithContext('Hola, quiero registrar mi pago mensual')" class="w-full mt-4 bg-gray-900 hover:bg-[#00a896] text-white hover:text-white font-bold py-3 rounded-xl text-xs tracking-wider transition-all cursor-pointer">
+                    REGISTRAR MI PAGO AHORA
                 </button>
             </div>
 
-            <!-- Cuerpo de Mensajes: Con padding-bottom estricto para evitar solapamientos -->
-            <div id="chat-body" class="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50 custom-scrollbar text-sm pb-[65px]">
-                <!-- Mensaje de Bienvenida -->
-                <div class="bg-white border border-slate-100 p-3.5 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] text-slate-700">
-                    ¡Hola! Soy Lia. Estoy aquí para asistirte con la fibra óptica de Litium. ¿Qué plan o gestión deseas realizar el día de hoy?
-                </div>
-            </div>
-
-            <!-- Área de Entrada de Texto Flotante con diseño integrado -->
-            <div class="absolute bottom-3 left-3 right-3 p-2 bg-white/90 backdrop-blur-md border border-slate-100 rounded-2xl flex items-center gap-2 shadow-lg shadow-slate-200/60 z-20">
-                <input type="text" id="chat-input" placeholder="Escribe un mensaje..." class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#00A896] transition-colors" onkeydown="if(event.key === 'Enter') enviarMensajeUsuario()">
-                <button onclick="enviarMensajeUsuario()" class="bg-[#00A896] text-white p-2.5 rounded-xl hover:bg-[#009282] transition-colors shadow-md shadow-teal-100">
-                    <svg class="w-4 h-4 fill-current transform rotate-45" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-                </button>
-            </div>
-        </div>
-
-        <!-- Botón Lanzador Flotante Principal -->
-        <button onclick="toggleChat()" class="bg-[#00A896] hover:bg-[#009282] text-white p-4 rounded-full shadow-xl shadow-teal-200/50 transition-all transform hover:scale-105 flex items-center justify-center relative">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12 3 7.582 7.03 4 12 4s9 3.582 9 8z"/>
-            </svg>
-            <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></span>
-        </button>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- FORMULARIO DE CAPTACIÓN / CALIFICACIÓN DE LEAD -->
-    <!-- ========================================== -->
-    <div id="form-container" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-100">
-            <!-- Header Formulario -->
-            <div class="bg-slate-900 text-white p-5 relative">
-                <button onclick="cerrarFormulario()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-                <h3 id="form-header-title" class="font-bold text-lg text-teal-400">Validación de Cobertura</h3>
-                <p id="form-header-subtitle" class="text-xs text-slate-400 mt-1">Ingresa tus datos para comprobar disponibilidad.</p>
-            </div>
-
-            <!-- Inputs del Formulario -->
-            <form id="litium-lead-form" onsubmit="procesarEnvioFormulario(event)" class="p-5 space-y-4">
-                <input type="hidden" id="form-context-hidden" value="General">
+            <div class="bg-white border border-gray-200 rounded-3xl p-8 shadow-sm relative overflow-hidden flex flex-col justify-between">
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Nombre Completo</label>
-                    <input type="text" id="form-name" required placeholder="Ej. Mauricio Jimenez" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#00A896]">
+                    <h2 class="text-3xl font-black text-[#00a896] tracking-tight">Tickets de <span class="bg-[#ffcc00] text-gray-900 px-2 py-0.5 rounded">Conexión</span></h2>
+                    <p class="text-gray-600 text-sm mt-3 leading-relaxed">
+                        Usa nuestros tickets premium de conectividad para planificar e impulsar el mejor fin de semana en familia con alta fidelidad digital.
+                    </p>
                 </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Teléfono de Contacto</label>
-                    <input type="tel" id="form-phone" required placeholder="Ej. 04121234567" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#00A896]">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Ubicación / Sector Exacto</label>
-                    <input type="text" id="form-location" required placeholder="Ej. Caricuao, Ruiz Pineda" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#00A896]">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Detalles Adicionales</label>
-                    <textarea id="form-details" rows="2" placeholder="Opcional. Ej: Detrás de la pasarela..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#00A896] resize-none"></textarea>
-                </div>
-                <button type="submit" class="w-full bg-[#00A896] hover:bg-[#009282] text-white font-bold py-3 rounded-xl transition-colors shadow-lg shadow-teal-100 mt-2">
-                    Comprobar Disponibilidad Técnica
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- NÚCLEO DE LÓGICA JAVASCRIPT (FRONTEND) -->
-    <!-- ========================================== -->
-    <script>
-        // URL vinculada exactamente a tu servidor activo en Render según image_129679.png
-        const BACKEND_URL = "https://litium-backend-d2pb.onrender.com"; 
-
-        document.addEventListener("DOMContentLoaded", cargarTasaOficial);
-
-        async function cargarTasaOficial() {
-            const contenedorTasa = document.getElementById("tasa-bcv-value");
-            try {
-                const response = await fetch(`${BACKEND_URL}/api/tasa`);
-                if (!response.ok) throw new Error("Respuesta de red inválida");
-                const data = await response.json();
-                contenedorTasa.innerText = `Bs. ${data.tasa.toFixed(2)}`;
-            } catch (error) {
-                console.error("Error cargando tasa:", error);
-                contenedorTasa.innerText = "Bs. 46.85";
-                contenedorTasa.className = "text-slate-500 font-bold";
-            }
-        }
-
-        function toggleChat() {
-            const chatWindow = document.getElementById("chat-window");
-            chatWindow.classList.toggle("hidden");
-        }
-
-        function cerrarFormulario() {
-            document.getElementById("form-container").classList.add("hidden");
-        }
-
-        async function activarFlujoLia(modo, mensajeSimulado) {
-            appendUserMessage(mensajeSimulado);
-            if (document.getElementById("chat-window").classList.contains("hidden")) { toggleChat(); }
-            await consultarLiaAPI(mensajeSimulado, modo);
-        }
-
-        async function solicitarPlan(nombrePlan) {
-            const msg = `Hola, me interesa el ${nombrePlan}`;
-            appendUserMessage(msg);
-            if (document.getElementById("chat-window").classList.contains("hidden")) { toggleChat(); }
-            await consultarLiaAPI(msg, "ventas");
-        }
-
-        async function enviarMensajeUsuario() {
-            const input = document.getElementById("chat-input");
-            const msg = input.value.trim();
-            if (!msg) return;
-
-            appendUserMessage(msg);
-            input.value = "";
-            await consultarLiaAPI(msg, "general");
-        }
-
-        function appendUserMessage(text) {
-            const chatBody = document.getElementById("chat-body");
-            const msgDiv = document.createElement("div");
-            msgDiv.className = "bg-[#00A896] text-white p-3 rounded-2xl rounded-tr-none shadow-sm max-w-[85%] ml-auto text-right animate-fade-in";
-            msgDiv.innerText = text;
-            chatBody.appendChild(msgDiv);
-            chatBody.scrollTop = chatBody.scrollHeight;
-        }
-
-        function appendSystemMessage(text) {
-            const chatBody = document.getElementById("chat-body");
-            const msgDiv = document.createElement("div");
-            msgDiv.className = "bg-white border border-slate-100 p-3.5 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] text-slate-700 animate-fade-in";
-            msgDiv.innerHTML = text.replace(/\n/g, "<br>");
-            chatBody.appendChild(msgDiv);
-            chatBody.scrollTop = chatBody.scrollHeight;
-        }
-
-        function appendTypingIndicator() {
-            const chatBody = document.getElementById("chat-body");
-            const id = "typing-" + Date.now();
-            const indicator = document.createElement("div");
-            indicator.id = id;
-            indicator.className = "text-slate-400 text-xs italic p-1 animate-pulse flex items-center gap-1";
-            indicator.innerHTML = `<span>⚡ Lia está analizando...</span>`;
-            chatBody.appendChild(indicator);
-            chatBody.scrollTop = chatBody.scrollHeight;
-            return id;
-        }
-
-        async function consultarLiaAPI(mensaje, modo) {
-            const typingId = appendTypingIndicator();
-            try {
-                const response = await fetch(`${BACKEND_URL}/api/chat`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ message: mensaje, mode: modo })
-                });
-                if (!response.ok) throw new Error("Error en api de chat");
-                const data = await response.json();
-                document.getElementById(typingId)?.remove();
-
-                appendSystemMessage(data.response);
-
-                if (data.show_form) {
-                    document.getElementById("form-header-title").innerText = data.form_title || "Validación Técnica";
-                    document.getElementById("form-header-subtitle").innerText = data.form_subtitle || "Introduce tu ubicación.";
-                    document.getElementById("form-context-hidden").value = data.form_context || mensaje;
-                    document.getElementById("form-container").classList.remove("hidden");
-                }
-            } catch (e) {
-                console.error(e);
-                document.getElementById(typingId)?.remove();
-                appendSystemMessage("Lia está experimentando una breve pausa técnica. Por favor, reintenta tu consulta.");
-            }
-        }
-
-        async function procesarEnvioFormulario(event) {
-            event.preventDefault();
-            
-            const name = document.getElementById("form-name").value;
-            const phone = document.getElementById("form-phone").value;
-            const location = document.getElementById("form-location").value;
-            const context = document.getElementById("form-context-hidden").value;
-            
-            cerrarFormulario();
-            const typingId = appendTypingIndicator();
-            
-            try {
-                const response = await fetch(`${BACKEND_URL}/api/formulario`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ name, phone, location, context })
-                });
-                
-                if (!response.ok) throw new Error("Error procesando formulario");
-                const data = await response.json();
-                document.getElementById(typingId)?.remove();
-
-                appendSystemMessage(`🤖 **Lia:**\n\n${data.response}`);
-
-                if (data.cobertura && data.whatsapp_link) {
-                    inyectarBotonWhatsApp(data.whatsapp_link);
-                }
-            } catch (error) {
-                console.error("Error al despachar el lead:", error);
-                document.getElementById(typingId)?.remove();
-                appendSystemMessage("⚠️ Hubo un detalle al procesar la factibilidad geográfica en tiempo real.");
-            } finally {
-                document.getElementById("litium-lead-form").reset();
-            }
-        }
-
-        function inyectarBotonWhatsApp(url) {
-            const chatBody = document.getElementById("chat-body");
-            const btnContainer = document.createElement("div");
-            btnContainer.className = "flex justify-center my-4 animate-fade-in";
-            btnContainer.innerHTML = `
-                <a href="${url}" target="_blank" class="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-3 px-5 rounded-xl shadow-lg flex items-center gap-2.5 transition-all transform hover:scale-105 tracking-wide text-xs uppercase">
-                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.713-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.413 9.863-9.849.002-2.634-1.023-5.11-2.885-6.973C16.528 1.861 14.05 .836 11.416.836c-5.44 0-9.866 4.414-9.87 9.851-.001 1.716.453 3.39 1.316 4.873L1.738 21.87l6.502-1.706z"/></svg>
-                    Contactar con un Asesor de Ventas
-                </a>
-            `;
-            chatBody.appendChild(btnContainer);
-            chatBody.scrollTop = chatBody.scrollHeight;
-        }
-    </script>
-</body>
-</html>
+                <div class="mt-6 relative h-28 arc-bg overflow-hidden flex items-center justify-center">
+                    <button onclick="openChatWithContext('Hola, quiero información sobre cómo adquirir los Tickets de Conexión')" class="bg-[#ffcc00] text-gray-900 font-extrabold px-6 py-2.5 rounded-full text-xs hover:scale-105 transition-all shadow-md cursor-pointer">
+                        Solicitar Tickets <i class="fa-solid fa-ticket ml-1"></i>
+                    </button>
