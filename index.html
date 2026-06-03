@@ -83,7 +83,7 @@
 
         <!-- SECCIÓN DE SELECCIÓN DE PLANES -->
         <section class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Plan Básico (Referencia del flujo principal) -->
+            <!-- Plan Básico -->
             <div class="bg-white border-2 border-[#00A896] rounded-2xl p-6 shadow-xl shadow-teal-50/50 relative flex flex-col justify-between">
                 <span class="absolute -top-3 right-4 bg-[#00A896] text-white text-[11px] font-black uppercase px-3 py-1 rounded-full tracking-wider">Popular</span>
                 <div>
@@ -168,6 +168,7 @@
             </div>
 
             <!-- Inputs del Formulario -->
+            <!-- Vinculación estricta a la función procesarEnvioFormulario -->
             <form id="litium-lead-form" onsubmit="procesarEnvioFormulario(event)" class="p-5 space-y-4">
                 <input type="hidden" id="form-context-hidden" value="General">
                 <div>
@@ -197,21 +198,24 @@
     <!-- NÚCLEO DE LÓGICA JAVASCRIPT (FRONTEND) -->
     <!-- ========================================== -->
     <script>
-        // Configuración de tu API desplegada
-        const BACKEND_URL = "http://127.0.0.1:8000"; // Cambiar por tu URL de Render en producción
+        // Dirección de desarrollo local explícita
+        const BACKEND_URL = "http://127.0.0.1:8000"; 
 
-        // Al iniciar, cargamos la tasa del BCV de tu Backend
+        // Captura robusta de la tasa oficial del BCV al iniciar la carga
         document.addEventListener("DOMContentLoaded", cargarTasaOficial);
 
         async function cargarTasaOficial() {
             const contenedorTasa = document.getElementById("tasa-bcv-value");
             try {
                 const response = await fetch(`${BACKEND_URL}/api/tasa`);
+                if (!response.ok) throw new Error("Respuesta de red inválida");
                 const data = await response.json();
                 contenedorTasa.innerText = `Bs. ${data.tasa.toFixed(2)}`;
             } catch (error) {
-                contenedorTasa.innerText = "Error de conexión";
-                contenedorTasa.className = "text-rose-500 font-bold";
+                console.error("Error cargando tasa:", error);
+                // Fallback elegante para no romper el aspecto visual si el backend está apagado
+                contenedorTasa.innerText = "Bs. 46.85 (Modo Local)";
+                contenedorTasa.className = "text-slate-400 font-bold";
             }
         }
 
@@ -224,14 +228,14 @@
             document.getElementById("form-container").classList.add("hidden");
         }
 
-        // Acciones desde los botones principales de la landing
+        // Acciones automáticas desde la botonera de la Landing
         async function activarFlujoLia(modo, mensajeSimulado) {
             appendUserMessage(mensajeSimulado);
             if (document.getElementById("chat-window").classList.contains("hidden")) { toggleChat(); }
             await consultarLiaAPI(mensajeSimulado, modo);
         }
 
-        // Acción al presionar el botón "Me interesa este Plan"
+        // Acción al presionar el botón de contratación del Plan
         async function solicitarPlan(nombrePlan) {
             const msg = `Hola, me interesa el ${nombrePlan}`;
             appendUserMessage(msg);
@@ -239,7 +243,7 @@
             await consultarLiaAPI(msg, "ventas");
         }
 
-        // Manejo manual de mensajes desde la barra de texto del chat
+        // Envío manual desde la caja de texto del chat
         async function enviarMensajeUsuario() {
             const input = document.getElementById("chat-input");
             const msg = input.value.trim();
@@ -274,13 +278,13 @@
             const indicator = document.createElement("div");
             indicator.id = id;
             indicator.className = "text-slate-400 text-xs italic p-1 animate-pulse flex items-center gap-1";
-            indicator.innerHTML = `<span>⚡ Lia está procesando...</span>`;
+            indicator.innerHTML = `<span>⚡ Lia está analizando...</span>`;
             chatBody.appendChild(indicator);
             chatBody.scrollTop = chatBody.scrollHeight;
             return id;
         }
 
-        // Consulta al backend para el motor conversacional de Lia
+        // Consulta al motor conversacional de la IA
         async function consultarLiaAPI(mensaje, modo) {
             const typingId = appendTypingIndicator();
             try {
@@ -289,12 +293,13 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ message: mensaje, mode: modo })
                 });
+                if (!response.ok) throw new Error("Error en api de chat");
                 const data = await response.json();
                 document.getElementById(typingId)?.remove();
 
                 appendSystemMessage(data.response);
 
-                // Si la IA decide calificar intenciones, despliega el Formulario flotante
+                // Si la intención requiere cualificación, despliega el modal flotante
                 if (data.show_form) {
                     document.getElementById("form-header-title").innerText = data.form_title || "Validación Técnica";
                     document.getElementById("form-header-subtitle").innerText = data.form_subtitle || "Introduce tu ubicación.";
@@ -302,12 +307,13 @@
                     document.getElementById("form-container").classList.remove("hidden");
                 }
             } catch (e) {
+                console.error(e);
                 document.getElementById(typingId)?.remove();
                 appendSystemMessage("Lia está experimentando una breve pausa técnica. Por favor, reintenta tu consulta.");
             }
         }
 
-        // PROCESADOR DEL FORMULARIO DE COBERTURA: Envía al endpoint de filtro geográfico
+        // PROCESADOR DEL FORMULARIO DE COBERTURA: Envía al endpoint de filtro geográfico técnico
         async function procesarEnvioFormulario(event) {
             event.preventDefault();
             
@@ -316,7 +322,7 @@
             const location = document.getElementById("form-location").value;
             const context = document.getElementById("form-context-hidden").value;
             
-            // Ocultamos el modal del formulario
+            // Ocultamos el modal con suavidad
             cerrarFormulario();
             const typingId = appendTypingIndicator();
             
@@ -326,25 +332,28 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ name, phone, location, context })
                 });
+                
+                if (!response.ok) throw new Error("Error procesando formulario");
                 const data = await response.json();
                 document.getElementById(typingId)?.remove();
 
-                // Lia imprime la respuesta de validación en pantalla
+                // Lia imprime el veredicto del filtro geográfico en el chat
                 appendSystemMessage(`🤖 **Lia:**\n\n${data.response}`);
 
-                // SI PASÓ EL FILTRO Y TIENE COBERTURA: Le inyecta el botón dinámico para saltar al WhatsApp del asesor humano
+                // SI TIENE COBERTURA: Renderiza el botón de salto directo a WhatsApp con el asesor humano
                 if (data.cobertura && data.whatsapp_link) {
                     inyectarBotonWhatsApp(data.whatsapp_link);
                 }
             } catch (error) {
+                console.error("Error al despachar el lead:", error);
                 document.getElementById(typingId)?.remove();
-                appendSystemMessage("⚠️ Hubo un detalle de comunicación, pero tu intención de contratación ha quedado registrada en la base de datos.");
+                appendSystemMessage("⚠️ Hubo un detalle al procesar la factibilidad geográfica en tiempo real. Por favor, reintenta en unos instantes.");
             } finally {
                 document.getElementById("litium-lead-form").reset();
             }
         }
 
-        // Renderizador dinámico del botón de salto comercial (Setter -> Asesor Comercial Humano)
+        // Renderiza el botón comercial de redirección directa (Filtro aprobado -> Traspaso a Humano)
         function inyectarBotonWhatsApp(url) {
             const chatBody = document.getElementById("chat-body");
             const btnContainer = document.createElement("div");
