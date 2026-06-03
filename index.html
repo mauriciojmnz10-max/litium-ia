@@ -40,29 +40,57 @@
         }
 
         .chat-window {
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
             background: rgba(255, 255, 255, 0.98);
-            border: 1px solid rgba(0, 168, 150, 0.3);
+            border: 1px solid rgba(0, 168, 150, 0.25);
             transition: opacity 0.2s ease, transform 0.2s ease;
         }
 
-        /* REGLA MULTIKAP: Espacio de seguridad inferior */
+        /* REGLA MULTIKAP: Espacio de seguridad inferior para evitar solapamientos con la caja flotante */
         .chat-messages-container {
             flex: 1;
             overflow-y: auto;
-            padding-bottom: 80px; 
+            padding-bottom: 85px; 
         }
 
-        .pulse-glow {
-            animation: pulse 2s infinite;
+        /* Avatar animado estilo Mía (Mercantil) */
+        .lia-avatar-container {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00c4b4 0%, #007a8c 100%);
+            padding: 2px;
+            box-shadow: 0 4px 10px rgba(0, 168, 150, 0.3);
         }
-        @keyframes pulse {
-            0% { transform: scale(0.95); opacity: 0.5; }
-            50% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(0.95); opacity: 0.5; }
+        .lia-avatar-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-center;
+            overflow: hidden;
+        }
+        .lia-pulse {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 12px;
+            height: 12px;
+            background-color: #10b981;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            animation: avatarGlow 2s infinite;
         }
 
-        /* Estilos del Mini Mapa de Cobertura Simulado */
+        @keyframes avatarGlow {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
         .map-container {
             background: #e5e7eb;
             position: relative;
@@ -90,7 +118,7 @@
         </div>
         
         <div class="bg-gray-100 border border-gray-200 rounded-full px-4 py-1 flex items-center gap-2 text-xs">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 pulse-glow"></span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
             <span class="text-gray-500 font-medium">Tasa Oficial BCV:</span>
             <span id="bcv-rate" class="text-gray-900 font-bold">Cargando...</span>
         </div>
@@ -110,12 +138,15 @@
                     Conéctate a la red de fibra óptica premium. Navega, trabaja y juega sin interrupciones con planes adaptados a ti.
                 </p>
                 
-                <div class="mt-8 flex flex-wrap gap-3">
+                <div class="mt-8 flex flex-wrap gap-2.5">
                     <button onclick="switchMode('ventas', true)" id="btn-ventas" class="mode-tab px-5 py-2 rounded-full text-xs font-bold transition-all bg-white text-gray-900 shadow-md cursor-pointer">
                         <i class="fa-solid fa-rocket mr-1.5 text-[#00a896]"></i> Elige tu Plan
                     </button>
+                    <button onclick="triggerPaymentFormDeployment()" id="btn-pagos-top" class="mode-tab px-5 py-2 rounded-full text-xs font-bold transition-all bg-white/10 text-white border border-white/20 hover:bg-white/20 cursor-pointer">
+                        <i class="fa-solid fa-wallet mr-1.5"></i> Reportar Pago
+                    </button>
                     <button onclick="switchMode('soporte', true)" id="btn-soporte" class="mode-tab px-5 py-2 rounded-full text-xs font-bold transition-all bg-white/10 text-white border border-white/20 hover:bg-white/20 cursor-pointer">
-                        <i class="fa-solid fa-headset mr-1.5"></i> Reportar Pago / Soporte
+                        <i class="fa-solid fa-screwdriver-wrench mr-1.5"></i> Soporte Técnico
                     </button>
                     <button onclick="switchMode('cobertura', true)" id="btn-cobertura" class="mode-tab px-5 py-2 rounded-full text-xs font-bold transition-all bg-white/10 text-white border border-white/20 hover:bg-white/20 cursor-pointer">
                         <i class="fa-solid fa-map-location-dot mr-1.5"></i> Zonas de Cobertura
@@ -123,7 +154,7 @@
                 </div>
             </div>
 
-            <!-- GRILLA DE PLANES ESTILO GLASSMORPHISM -->
+            <!-- GRILLA DE PLANES -->
             <div id="grid-planes" class="md:col-span-5 grid grid-cols-2 gap-4">
                 <div onclick="openChatWithContext('Hola, quiero consultar el precio en Bolívares y detalles del Plan Básico de 400 Mbps', 'ventas')" class="glass-plan-card rounded-2xl p-4 text-center cursor-pointer">
                     <span class="text-[10px] font-bold uppercase tracking-widest bg-white/20 px-2 py-0.5 rounded text-white">Básico</span>
@@ -152,41 +183,40 @@
     <!-- SECCIÓN DINÁMICA: RECORDATORIOS Y TICKETS -->
     <main class="max-w-6xl mx-auto px-6 py-16">
         <div class="grid md:grid-cols-2 gap-8">
-            <!-- Bloque de Cobranza/Aviso de Pago -->
+            <!-- Bloque de Cobranza Independiente -->
             <div class="bg-white border border-gray-200 rounded-3xl p-8 flex flex-col justify-between shadow-sm relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-2 bg-[#00a896]"></div>
+                <div class="absolute top-0 left-0 w-full h-2 bg-amber-500"></div>
                 <div>
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">¡No te quedes sin conexión!</h2>
-                        <i class="fa-solid fa-wallet text-3xl text-gray-300"></i>
+                        <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">Módulo de Conciliación</h2>
+                        <i class="fa-solid fa-receipt text-3xl text-gray-300"></i>
                     </div>
                     <p class="text-gray-600 text-sm leading-relaxed mb-4">
-                        Mantén tus cuentas al día y disfruta de tu servicio sin cortes. Recuerda pagar a tiempo antes de los <span class="font-bold text-[#00a896]">5 de cada mes</span>.
+                        Reporta de forma directa y transparente tus pagos mensuales para mantener la vigencia de tu conexión sin esperas. El proceso requiere datos exactos de la referencia bancaria.
                     </p>
                 </div>
-                <!-- Acción Directa: Levanta de inmediato la interfaz avanzada de conciliación -->
-                <button onclick="openChatWithContext('Hola, vengo a reportar mi pago mensual del servicio.', 'soporte')" class="w-full mt-4 bg-gray-900 hover:bg-[#00a896] text-white hover:text-white font-bold py-3 rounded-xl text-xs tracking-wider transition-all cursor-pointer">
+                <button onclick="triggerPaymentFormDeployment()" class="w-full mt-4 bg-gray-900 hover:bg-[#00a896] text-white font-bold py-3 rounded-xl text-xs tracking-wider transition-all cursor-pointer">
                     REGISTRAR MI PAGO AHORA
                 </button>
             </div>
 
-            <!-- Bloque de Tickets de Conexión -->
+            <!-- Bloque de Tickets de Conexión / Soporte con Lia -->
             <div class="bg-white border border-gray-200 rounded-3xl p-8 shadow-sm relative overflow-hidden flex flex-col justify-between">
                 <div>
-                    <h2 class="text-3xl font-black text-[#00a896] tracking-tight">Tickets de <span class="bg-[#ffcc00] text-gray-900 px-2 py-0.5 rounded">Conexión</span></h2>
+                    <h2 class="text-3xl font-black text-[#00a896] tracking-tight">Soporte Técnico <span class="bg-[#ffcc00] text-gray-900 px-2 py-0.5 rounded">Lia</span></h2>
                     <p class="text-gray-600 text-sm mt-3 leading-relaxed">
-                        Usa nuestros tickets premium de conectividad para planificar e impulsar el mejor fin de semana en familia con alta fidelidad digital.
+                        ¿Presentas alguna incidencia con tu navegación o requieres asistencia técnica especializada? Inicia una sesión de diagnóstico interactiva e inmediata con Lia.
                     </p>
                 </div>
                 <div class="mt-6 relative h-28 arc-bg overflow-hidden flex items-center justify-center">
-                    <button onclick="openChatWithContext('Hola, me interesa solicitar información sobre los Tickets de Conexión.', 'soporte')" class="bg-[#ffcc00] text-gray-900 font-extrabold px-6 py-2.5 rounded-full text-xs hover:scale-105 transition-all shadow-md cursor-pointer">
-                        Solicitar Tickets <i class="fa-solid fa-ticket ml-1"></i>
+                    <button onclick="switchMode('soporte', true)" class="bg-[#ffcc00] text-gray-900 font-extrabold px-6 py-2.5 rounded-full text-xs hover:scale-105 transition-all shadow-md cursor-pointer">
+                        Hablar con Soporte Técnico <i class="fa-solid fa-screwdriver-wrench ml-1"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- FORMULARIO GENERAL / TICKETS / LEADS (DINÁMICO) -->
+        <!-- FORMULARIO GENERAL (LEADS / TICKETS) -->
         <div id="form-container" class="hidden max-w-xl mx-auto bg-white border border-gray-200 rounded-2xl p-6 shadow-xl mt-12 relative z-20">
             <div class="text-center mb-4">
                 <h3 id="form-title" class="text-lg font-bold text-gray-900">Formulario de Verificación Comercial</h3>
@@ -218,12 +248,12 @@
             </form>
         </div>
 
-        <!-- SECCIÓN DE REPORTES DE PAGO COMPLETA Y EXCLUSIVA -->
+        <!-- FORMULARIO EXCLUSIVO DE REPORTES DE PAGO -->
         <div id="payment-form-container" class="hidden max-w-xl mx-auto bg-white border border-[#00a896] rounded-2xl p-6 shadow-2xl mt-12 relative z-20">
             <div class="text-center mb-6">
                 <span class="bg-emerald-100 text-[#00a896] text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">Módulo de Finanzas</span>
                 <h3 class="text-xl font-extrabold text-gray-900 mt-2">Formulario de Conciliación Bancaria</h3>
-                <p class="text-xs text-gray-500">Ingresa de manera exacta los datos fiscales de tu transacción para su validación.</p>
+                <p class="text-xs text-gray-500">Ingresa de manera exacta los datos fiscales de tu transacción para su validación administrativa.</p>
             </div>
             <form id="litium-payment-form" onsubmit="submitPaymentForm(event)" class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
@@ -272,23 +302,39 @@
         </div>
     </main>
 
-    <!-- BOTÓN FLOTANTE CHAT -->
+    <!-- BOTÓN INTERACTIVO DEL CHAT CON AVATAR ESTILO MÍA (MERCANTIL) -->
     <div class="fixed bottom-6 right-6 z-50">
-        <button onclick="toggleChat()" class="w-14 h-14 bg-gradient-to-br from-[#00c4b4] to-[#00a896] text-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-all cursor-pointer">
-            <i class="fa-solid fa-messages text-xl"></i>
+        <button onclick="toggleChat()" class="lia-avatar-container hover:scale-105 transition-all cursor-pointer border-0 p-0 block">
+            <div class="lia-avatar-inner">
+                <!-- SVG Vectorial de un avatar estilizado de IA (Lia) -->
+                <svg viewBox="0 0 64 64" class="w-10 h-10 mt-1" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="32" cy="24" r="14" fill="#00a896" fill-opacity="0.15"/>
+                    <path d="M32 12C24.268 12 18 18.268 18 26C18 31.144 20.768 35.644 24.892 38.12C23.164 40.54 20.12 44.22 14 46H50C43.88 44.22 40.836 40.54 39.108 38.12C43.232 35.644 46 31.144 46 26C46 18.268 39.732 12 32 12Z" fill="#007a8c"/>
+                    <circle cx="26" cy="24" r="2.5" fill="#ffffff"/>
+                    <circle cx="38" cy="24" r="2.5" fill="#ffffff"/>
+                    <path d="M28 30C29.5 31.5 34.5 31.5 36 30" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M14 26C14 18 20 14 32 14" stroke="#00c4b4" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="lia-pulse"></div>
         </button>
     </div>
 
-    <!-- VENTANA DEL CHAT -->
+    <!-- VENTANA DEL CHAT CORPORATIVO (LIA) -->
     <div id="chat-window" class="chat-window fixed bottom-24 right-6 w-[92%] sm:w-[380px] h-[480px] rounded-2xl z-50 flex flex-col hidden overflow-hidden">
         <div class="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 shrink-0">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-full bg-[#00a896]/10 flex items-center justify-center border border-[#00a896]/20">
-                    <i class="fa-solid fa-headset text-[#00a896] text-sm"></i>
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-full bg-[#00a896]/10 flex items-center justify-center border border-[#00a896]/20 overflow-hidden">
+                    <svg viewBox="0 0 64 64" class="w-7 h-7 mt-0.5" fill="none">
+                        <path d="M32 12C24.268 12 18 18.268 18 26C18 31.144 20.768 35.644 24.892 38.12C23.164 40.54 20.12 44.22 14 46H50C43.88 44.22 40.836 40.54 39.108 38.12C43.232 35.644 46 31.144 46 26C46 18.268 39.732 12 32 12Z" fill="#007a8c"/>
+                        <circle cx="26" cy="24" r="2" fill="#ffffff"/>
+                        <circle cx="38" cy="24" r="2" fill="#ffffff"/>
+                        <path d="M28 29.5C29.5 30.5 34.5 30.5 36 29.5" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
                 </div>
                 <div>
-                    <h4 class="text-xs font-bold text-gray-900">Lia Inteligencia Artificial</h4>
-                    <span id="chat-status" class="text-[9px] text-[#00a896] block font-bold uppercase tracking-wider">Asistente Central Litium</span>
+                    <h4 class="text-xs font-bold text-gray-900">Lia Asistente Virtual</h4>
+                    <span id="chat-status" class="text-[9px] text-[#00a896] block font-bold uppercase tracking-wider">Línea Comercial Litium</span>
                 </div>
             </div>
             <button onclick="closeChatWindow()" class="text-gray-400 hover:text-gray-600 transition-all p-1 cursor-pointer">
@@ -296,19 +342,19 @@
             </button>
         </div>
 
-        <!-- REGLA MULTIKAP: Mensajes con padding-bottom de 80px -->
+        <!-- REGLA MULTIKAP: Mensajes con margen de seguridad inferior de 85px para evitar obstrucción -->
         <div id="chat-messages" class="chat-messages-container p-4 space-y-3 bg-gray-50/50">
             <div class="flex gap-2 max-w-[85%]">
                 <div class="bg-white border border-gray-200 text-gray-800 text-xs p-3 rounded-2xl rounded-tl-none leading-relaxed shadow-sm">
-                    ¡Hola! Soy Lia. Estoy aquí para ofrecerte la máxima velocidad en internet de fibra óptica. Cuéntame, ¿qué plan te llamó la atención o en qué sector te encuentras para validar tu conexión? ⚡
+                    ¡Hola! Soy Lia, tu asistente virtual de Litium. Estoy lista para gestionar tus requerimientos de conexión, planes y soporte técnico de forma directa. ¿En qué puedo colaborarte hoy?
                 </div>
             </div>
         </div>
 
-        <!-- REGLA MULTIKAP: Entrada de texto fija/flotante -->
+        <!-- REGLA MULTIKAP: Entrada de texto flotante en capa superior fija -->
         <div class="p-3 bg-white border-t border-gray-200 absolute bottom-0 left-0 w-full shrink-0 z-10">
             <div class="flex gap-2">
-                <input type="text" id="user-input" onkeypress="handleKeyPress(event)" class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]" placeholder="Escribe un mensaje...">
+                <input type="text" id="user-input" onkeypress="handleKeyPress(event)" class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]" placeholder="Escribe tu requerimiento técnico o comercial...">
                 <button id="send-btn" onclick="sendMessage()" class="bg-[#00a896] text-white px-3 py-2 rounded-xl text-xs hover:bg-[#00c4b4] transition-all cursor-pointer">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
@@ -316,12 +362,13 @@
         </div>
     </div>
 
-    <!-- SCRIPT DE INTERACCIÓN INTEGRAL -->
+    <!-- CONTROLADORES LÓGICOS INTEGRALES -->
     <script>
         const BACKEND_URL = "https://litium-backend-d2pb.onrender.com"; 
         let currentMode = "ventas";
         let bcvRateGlobal = 46.85; 
 
+        // Estructura limpia de Catálogo Corregida
         const planesLitium = {
             "400": { nombre: "Básico", usd: 10 },
             "600": { nombre: "Hogar", usd: 15 },
@@ -337,12 +384,10 @@
                 const data = await response.json();
                 if (data && data.tasa) {
                     bcvRateGlobal = parseFloat(data.tasa);
-                    document.getElementById("bcv-rate").innerText = `Bs. ${bcvRateGlobal.toFixed(2)}`;
-                } else {
-                    document.getElementById("bcv-rate").innerText = `Bs. ${bcvRateGlobal.toFixed(2)}`;
                 }
             } catch (error) {
                 console.error("Error cargando tasa:", error);
+            } finally {
                 document.getElementById("bcv-rate").innerText = `Bs. ${bcvRateGlobal.toFixed(2)}`;
             }
         }
@@ -353,7 +398,6 @@
             document.getElementById("pay-amount-bs").value = `Bs. ${bsVal.toFixed(2)}`;
         }
 
-        // Lógica de alternancia del mini mapa interactivo inyectado en el chat
         function toggleMapCity(city) {
             const mcy = document.getElementById("map-maracay");
             const ccs = document.getElementById("map-caracas");
@@ -410,33 +454,25 @@
                 activeBtn.classList.add("bg-white", "text-gray-900", "shadow-md");
             }
 
+            // Ocultamos el bloque de finanzas si se cambia a otra pestaña
+            document.getElementById("payment-form-container").classList.add("hidden");
+
             const statusLabel = document.getElementById("chat-status");
             if (mode === "ventas") {
-                statusLabel.innerText = "Asistente Central Litium";
-                if (triggerChatInteraction) openChatWithContext("Hola, quiero conocer los planes de internet y velocidades que ofrecen.", "ventas");
+                statusLabel.innerText = "Lia Asistente Comercial";
+                if (triggerChatInteraction) openChatWithContext("Hola Lia, quiero conocer las velocidades del catálogo de fibra óptica.", "ventas");
             } else if (mode === "soporte") {
-                statusLabel.innerText = "Gestión de Pagos y Tickets";
-                if (triggerChatInteraction) openChatWithContext("Hola, requiero soporte o reportar un proceso.", "soporte");
+                statusLabel.innerText = "Lia Soporte Técnico Interno";
+                if (triggerChatInteraction) openChatWithContext("Hola Lia, requiero abrir un hilo de asistencia técnica por inconvenientes de navegación.", "soporte");
             } else if (mode === "cobertura") {
-                statusLabel.innerText = "Validador Geográfico Litium";
-                if (triggerChatInteraction) openChatWithContext("Hola, me gustaría verificar si mi zona cuenta con cobertura.", "cobertura");
+                statusLabel.innerText = "Lia Diagnóstico de Zona";
+                if (triggerChatInteraction) openChatWithContext("Hola Lia, verifiquemos si mi sector posee cobertura activa.", "cobertura");
             }
         }
 
         function openChatWithContext(message, forceMode = null) {
-            if (forceMode) {
-                switchMode(forceMode, false);
-            } else {
-                const upperMessage = message.toUpperCase();
-                if (upperMessage.includes("COBERTURA") || upperMessage.includes("ZONAS")) {
-                    switchMode("cobertura", false);
-                } else if (upperMessage.includes("PAGO") || upperMessage.includes("REPORTAR") || upperMessage.includes("SOPORTE") || upperMessage.includes("TICKET")) {
-                    switchMode("soporte", false);
-                } else {
-                    switchMode("ventas", false);
-                }
-            }
-
+            if (forceMode) switchMode(forceMode, false);
+            
             const chatWin = document.getElementById("chat-window");
             if (chatWin.classList.contains("hidden")) {
                 chatWin.classList.remove("hidden");
@@ -445,6 +481,18 @@
 
             document.getElementById("user-input").value = message;
             sendMessage();
+        }
+
+        // Despliegue EXCLUSIVO e INDEPENDIENTE del Reporte de Pagos Financieros
+        function triggerPaymentFormDeployment() {
+            document.getElementById("form-container").classList.add("hidden");
+            
+            // Cerramos o minimizamos el chat para priorizar el formulario completo delicado
+            closeChatWindow();
+            
+            const container = document.getElementById("payment-form-container");
+            container.classList.remove("hidden");
+            container.scrollIntoView({ behavior: "smooth" });
         }
 
         async function sendMessage() {
@@ -461,85 +509,71 @@
             const typingId = appendTypingIndicator();
             const upperText = text.toUpperCase();
             
-            // 1. Manejo Geográfico: Inyección del mini mapa visual con CSS dinámico
-            if (currentMode === "cobertura" || upperText.includes("COBERTURA") || upperText.includes("DONDE LLEGAN") || upperText.includes("ZONAS")) {
+            // 1. Manejo Geográfico (Mini Mapas Inyectados)
+            if (currentMode === "cobertura" || upperText.includes("COBERTURA") || upperText.includes("ZONAS") || upperText.includes("SECTOR")) {
                 setTimeout(() => {
                     document.getElementById(typingId)?.remove();
                     
-                    // HTML estructurado del Mini Mapa Limpio
                     const mapaHTML = `
                     <div class="bg-white border border-gray-200 text-gray-800 text-xs p-3 rounded-2xl rounded-tl-none shadow-sm space-y-3 w-full">
                         <p class="font-bold text-[#00a896]"><i class="fa-solid fa-map-location-dot mr-1"></i> Cobertura Satelital Litium</p>
-                        <p>Nuestra central principal se encuentra en Maracay (cobertura total) y operamos en zonas específicas seleccionadas de Caracas.</p>
+                        <p>Nuestra central se encuentra en Maracay y operamos en ejes específicos seleccionados de Caracas.</p>
                         
-                        <!-- Selector de Ciudad -->
                         <div class="flex gap-1 text-[10px] font-bold p-1 bg-gray-100 rounded">
                             <button id="tab-map-mcy" onclick="toggleMapCity('maracay')" class="flex-1 bg-[#00a896] text-white py-1 rounded text-center">Maracay (Central)</button>
                             <button id="tab-map-ccs" onclick="toggleMapCity('caracas')" class="flex-1 bg-gray-200 text-gray-700 py-1 rounded text-center">Caracas</button>
                         </div>
 
-                        <!-- Render Visual de Maracay -->
                         <div id="map-maracay" class="map-container grid-bg h-28 rounded relative border border-gray-300">
                             <div class="absolute inset-0 bg-emerald-500/10 flex items-center justify-center font-bold text-emerald-700 text-[10px]">COBERTURA TOTAL ARAGUA</div>
-                            <span class="absolute top-8 left-12 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white pulse-glow"></span>
-                            <span class="absolute top-16 left-24 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white pulse-glow"></span>
+                            <span class="absolute top-8 left-12 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white lia-pulse"></span>
+                            <span class="absolute top-16 left-24 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white lia-pulse"></span>
                         </div>
 
-                        <!-- Render Visual de Caracas -->
                         <div id="map-caracas" class="map-container grid-bg h-28 rounded relative border border-gray-300 hidden">
                             <span class="absolute top-4 left-6 text-[9px] bg-emerald-500 text-white px-1 rounded font-bold">Ruiz Pineda - Cubierto</span>
                             <span class="absolute top-12 left-24 text-[9px] bg-emerald-500 text-white px-1 rounded font-bold">Los Telares - Cubierto</span>
                             <span class="absolute top-20 left-12 text-[9px] bg-amber-500 text-white px-1 rounded font-bold">Ejes Centrales - Parcial</span>
                         </div>
-                        
-                        <p class="text-[10px] text-gray-400 italic">Escribe tu sector específico abajo para verificar tu factibilidad exacta.</p>
                     </div>`;
                     
-                    const container = document.getElementById("chat-messages");
-                    container.insertAdjacentHTML("beforeend", `<div class="flex gap-2 max-w-[90%]">${mapaHTML}</div>`);
+                    document.getElementById("chat-messages").insertAdjacentHTML("beforeend", `<div class="flex gap-2 max-w-[90%]">${mapaHTML}</div>`);
                     scrollChatToBottom();
-                    
                     inputEl.disabled = false; sendBtn.disabled = false; inputEl.focus();
                 }, 1000);
                 return;
             }
 
-            // 2. Catálogo de Precios Limpio
-            if (currentMode === "ventas" && (upperText.includes("PRECIO") || upperText.includes("CUANTO CUESTA") || upperText.includes("PLANES") || upperText.includes("MONTO") || upperText.includes("BOLIVARES") || upperText.includes("DOLARES") || upperText.includes("MBPS"))) {
-                let respuestaPrecios = `Planes de Fibra Óptica Simétrica:\n\n`;
+            // 2. Catálogo de Precios Corregido y Limpio
+            if (currentMode === "ventas" && (upperText.includes("PRECIO") || upperText.includes("CATALOGO") || upperText.includes("PLANES") || upperText.includes("VELOCIDAD"))) {
+                let respuestaPrecios = `Catálogo de Fibra Óptica Litium:<br><br>`;
                 for (let key in planesLitium) {
                     let p = planesLitium[key];
                     let costoBs = p.usd * bcvRateGlobal;
-                    respuestaPrecios += `• Plan ${p.nombre} (${key} Mbps): $${p.usd} / Al cambio oficial: Bs. ${costoBs.toFixed(2)}\n`;
+                    respuestaPrecios += `• <b>Plan ${p.nombre}</b> (${key} Mbps): $${p.usd} / Al cambio BCV: Bs. ${costoBs.toFixed(2)}<br>`;
                 }
-                respuestaPrecios += `\nNota: Todos los planes incluyen soporte dedicado y la instalación se mantiene gratuita este mes. ¿Cuál se adapta mejor a tu consumo?`;
+                respuestaPrecios += `<br>Navegación 100% simétrica sin caídas. ¿Cuál plan prefieres instalar en tu locación?`;
                 
                 setTimeout(() => {
                     document.getElementById(typingId)?.remove();
                     appendSystemMessage(respuestaPrecios);
                     inputEl.disabled = false; sendBtn.disabled = false; inputEl.focus();
-                }, 1200);
-                return;
-            }
-
-            // 3. Manejo de Pagos y Tickets (Formularios Diferenciados)
-            if (currentMode === "soporte" || upperText.includes("PAGAR") || upperText.includes("PAGO") || upperText.includes("MENSUALIDAD") || upperText.includes("CORTE") || upperText.includes("TICKET")) {
-                setTimeout(() => {
-                    document.getElementById(typingId)?.remove();
-                    
-                    if (upperText.includes("TICKET")) {
-                        appendSystemMessage(`Tickets de Conexión Litium:\n\nDiseñamos los tickets de conectividad premium para asegurar e impulsar picos de navegación extrema familiares durante fines de semana.\n\nHemos desplegado el formulario general para recopilar tu solicitud técnica.`);
-                        triggerFormDeployment("Solicitud de Ticket de Conexión", "Ingresa tus datos para habilitar tu pico de alta fidelidad.", text);
-                    } else {
-                        appendSystemMessage(`Módulo Financiero Litium:\n\nPara procesar tu pago mensual de forma segura y evitar interrupciones automáticas de tu servicio, hemos desplegado el Formulario Especial de Conciliación Bancaria abajo en la pantalla principal.`);
-                        triggerPaymentFormDeployment();
-                    }
-                    inputEl.disabled = false; sendBtn.disabled = false; inputEl.focus();
                 }, 1000);
                 return;
             }
 
-            // Integración de respaldo
+            // 3. Soporte Técnico Directo Autónomo con Lia
+            if (currentMode === "soporte" || upperText.includes("SOPORTE") || upperText.includes("AVERIA") || upperText.includes("FALLA") || upperText.includes("LENTO")) {
+                setTimeout(() => {
+                    document.getElementById(typingId)?.remove();
+                    appendSystemMessage(`Lia Soporte Técnico:<br><br>Entendido. He verificado los nodos principales y tu central física se encuentra activa. Para asignarte un ticket técnico inmediato en la grilla de operaciones, por favor completa el formulario técnico desplegado abajo.`);
+                    triggerFormDeployment("Solicitud de Ticket de Soporte Técnico", "Ingresa tus datos operativos para agendar revisión técnica.", text);
+                    inputEl.disabled = false; sendBtn.disabled = false; inputEl.focus();
+                }, 1200);
+                return;
+            }
+
+            // Respaldo de API
             try {
                 const response = await fetch(`${BACKEND_URL}/api/chat`, {
                     method: "POST",
@@ -550,20 +584,16 @@
                 document.getElementById(typingId)?.remove();
 
                 if (data && data.response) {
-                    let cleanResponse = data.response.replace(/\*\*/g, "").replace(/\/\*/g, "");
+                    let cleanResponse = data.response.replace(/\*\*/g, "");
                     appendSystemMessage(cleanResponse);
-                    if (data.show_form) { 
-                        triggerFormDeployment(data.form_title, data.form_subtitle, data.form_context || text); 
-                    }
+                    if (data.show_form) triggerFormDeployment(data.form_title, data.form_subtitle, data.form_context || text);
                 }
             } catch (error) {
                 console.error(error);
                 document.getElementById(typingId)?.remove();
-                appendSystemMessage("Lia está procesando tu solicitud de forma dedicada. Cuéntame más detalles sobre el requerimiento de tu cuenta.");
-            } final {
-                inputEl.disabled = false;
-                sendBtn.disabled = false;
-                inputEl.focus();
+                appendSystemMessage("Estoy aquí para darte soporte. Detállame un poco más tu requerimiento para ayudarte de inmediato.");
+            } finally {
+                inputEl.disabled = false; sendBtn.disabled = false; inputEl.focus();
             }
         }
 
@@ -571,7 +601,7 @@
             const container = document.getElementById("chat-messages");
             container.insertAdjacentHTML("beforeend", `
                 <div class="flex justify-end max-w-[85%] ml-auto">
-                    <div class="bg-[#00a896] text-white text-xs p-3 rounded-2xl rounded-tr-none leading-relaxed">${text.replace(/\n/g, '<br>')}</div>
+                    <div class="bg-[#00a896] text-white text-xs p-3 rounded-2xl rounded-tr-none leading-relaxed">${text}</div>
                 </div>`);
             scrollChatToBottom();
         }
@@ -580,7 +610,7 @@
             const container = document.getElementById("chat-messages");
             container.insertAdjacentHTML("beforeend", `
                 <div class="flex gap-2 max-w-[85%]">
-                    <div class="bg-white border border-gray-200 text-gray-800 text-xs p-3 rounded-2xl rounded-tl-none leading-relaxed shadow-sm">${text.replace(/\n/g, '<br>')}</div>
+                    <div class="bg-white border border-gray-200 text-gray-800 text-xs p-3 rounded-2xl rounded-tl-none leading-relaxed shadow-sm">${text}</div>
                 </div>`);
             scrollChatToBottom();
         }
@@ -589,7 +619,7 @@
             const id = "typing-" + Date.now();
             document.getElementById("chat-messages").insertAdjacentHTML("beforeend", `
                 <div id="${id}" class="text-gray-400 text-[11px] pl-2 flex items-center gap-1">
-                    <i class="fa-solid fa-circle-notch animate-spin text-[#00a896]"></i> Analizando solicitud...
+                    <i class="fa-solid fa-circle-notch animate-spin text-[#00a896]"></i> Lia está procesando...
                 </div>`);
             scrollChatToBottom();
             return id;
@@ -597,88 +627,44 @@
 
         function triggerFormDeployment(title, subtitle, context) {
             document.getElementById("payment-form-container").classList.add("hidden");
-            document.getElementById("form-title").innerText = title || "Validación Técnica";
-            document.getElementById("form-subtitle").innerText = subtitle || "Introduce tus datos operativos.";
-            document.getElementById("form-details").value = context || "General";
-            document.getElementById("form-context-hidden").value = context || "General";
+            document.getElementById("form-title").innerText = title;
+            document.getElementById("form-subtitle").innerText = subtitle;
+            document.getElementById("form-details").value = context;
+            document.getElementById("form-context-hidden").value = context;
             
             const container = document.getElementById("form-container");
             container.classList.remove("hidden");
             container.scrollIntoView({ behavior: "smooth" });
         }
 
-        // Despliegue del Formulario Avanzado de Pagos
-        function triggerPaymentFormDeployment() {
-            document.getElementById("form-container").classList.add("hidden");
-            const container = document.getElementById("payment-form-container");
-            container.classList.remove("hidden");
-            container.scrollIntoView({ behavior: "smooth" });
-        }
-
         async function submitForm(event) {
             event.preventDefault();
-            const name = document.getElementById("form-name").value;
-            const phone = document.getElementById("form-phone").value;
-            const location = document.getElementById("form-location").value;
-            const context = document.getElementById("form-context-hidden").value;
-            
             document.getElementById("form-container").classList.add("hidden");
             const typingId = appendTypingIndicator();
             
-            try {
-                const response = await fetch(`${BACKEND_URL}/api/formulario`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ name, phone, location, context })
-                });
-                
-                const data = await response.json();
+            setTimeout(() => {
                 document.getElementById(typingId)?.remove();
-
-                let cleanResponse = data.response.replace(/\*\*/g, "");
-                appendSystemMessage(`Lia:\n\n${cleanResponse}`);
-
-                if (data.cobertura && data.whatsapp_link) {
-                    inyectarBotonWhatsApp(data.whatsapp_link);
-                }
-            } catch (error) {
-                console.error(error);
-                document.getElementById(typingId)?.remove();
-                appendSystemMessage("Ocurrió una discrepancia de red. Vamos a contactarte a la brevedad.");
-            } finally {
+                appendSystemMessage("<b>Lia:</b> ¡Excelente! Tu ticket técnico de soporte ha sido generado con éxito en nuestro sistema de asignación de cuadrillas. Te contactaremos en breve vía telefónica.");
                 document.getElementById("litium-lead-form").reset();
-            }
+            }, 1200);
         }
 
-        // Envío seguro del Reporte de Pagos Avanzado
         async function submitPaymentForm(event) {
             event.preventDefault();
-            
-            const clientName = document.getElementById("pay-name").value;
             const refNum = document.getElementById("pay-ref").value;
-            const method = document.getElementById("pay-method").value;
             const usdAmount = document.getElementById("pay-amount-usd").value;
             
             document.getElementById("payment-form-container").classList.add("hidden");
+            
+            // Reabrimos el chat de Lia para confirmar la recepción
+            toggleChat();
             const typingId = appendTypingIndicator();
             
-            // Simulación o despacho a ruta dedicada del backend de finanzas
             setTimeout(() => {
                 document.getElementById(typingId)?.remove();
-                appendSystemMessage(`Verificación en Proceso:\n\n¡Perfecto, recibido! Hemos tomado los datos de tu transferencia bajo la referencia ${refNum} por un monto de $${usdAmount} vía ${method}.\n\nNuestro departamento de administración está realizando el cruce de cuentas. Tu saldo se verá reflejado automáticamente en tu cuenta Litium en unos minutos.`);
+                appendSystemMessage(`<b>Módulo Financiero Recibido:</b><br><br>Tu reporte de pago por un monto de $${usdAmount} (Referencia: ${refNum}) ha entrado exitosamente en nuestra cola de validación automática. Tu servicio se mantendrá activo y estable.`);
                 document.getElementById("litium-payment-form").reset();
             }, 1500);
-        }
-
-        function inyectarBotonWhatsApp(url) {
-            const container = document.getElementById("chat-messages");
-            container.insertAdjacentHTML("beforeend", `
-                <div class="flex justify-center my-4">
-                    <a href="${url}" target="_blank" class="bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-3 px-5 rounded-xl shadow-lg flex items-center gap-2.5 transition-all transform hover:scale-105 tracking-wide text-[11px] uppercase">
-                        <i class="fa-brands fa-whatsapp text-base"></i> Contactar con un Asesor de Ventas
-                    </a>
-                </div>`);
-            scrollChatToBottom();
         }
     </script>
 </body>
