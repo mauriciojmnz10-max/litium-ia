@@ -375,7 +375,6 @@
 
         function scrollChatToBottom() {
             const container = document.getElementById("chat-messages");
-            // Usamos setTimeout para asegurar que el DOM se haya renderizado antes de calcular el scroll
             setTimeout(() => {
                 container.scrollTop = container.scrollHeight;
             }, 50);
@@ -480,7 +479,7 @@
             const container = document.getElementById("chat-messages");
             const msgHtml = `
                 <div class="flex justify-end max-w-[85%] ml-auto">
-                    <div class="bg-[#00f0ff] text-slate-950 text-xs p-3 rounded-2xl rounded-tr-none leading-relaxed font-medium">
+                    <div class="bg-[#00f0ff] text-slate-950 text-xs p-3 rounded-2xl rounded-tl-none leading-relaxed font-medium">
                         ${text}
                     </div>
                 </div>`;
@@ -488,6 +487,7 @@
             scrollChatToBottom();
         }
 
+        // Renderizado del HTML que pueda venir del backend de forma limpia
         function appendSystemMessage(text) {
             const container = document.getElementById("chat-messages");
             const msgHtml = `
