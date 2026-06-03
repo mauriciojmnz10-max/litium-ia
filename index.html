@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Litium - Energía que te Conecta</title>
-    <!-- Tailwind CSS v4 -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -12,62 +11,63 @@
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f4f4f6;
-            color: #111111;
+            background-color: #f8fafc;
+            color: #0f172a;
         }
 
-        /* Temática MultiKAP: Degradados de Turquesa a Azul Profundo */
-        .hero-gradient {
+        /* TEMA MULTIKAP: Identidad visual basada en degradados Turquesa a Azul Profundo */
+        .theme-gradient {
+            background: linear-gradient(135deg, #00c4b4 0%, #005f73 100%);
+        }
+        .theme-text-gradient {
             background: linear-gradient(135deg, #00c4b4 0%, #007a8c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        /* Estilo Glassmorphism para los Planes */
+        /* Estilo Glassmorphism para Tarjetas de Planes */
         .glass-plan-card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .glass-plan-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.22);
-            box-shadow: 0 15px 30px rgba(0, 168, 150, 0.25);
+            transform: translateY(-6px);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 196, 180, 0.3);
         }
 
-        .arc-bg {
-            border-radius: 150px 150px 0 0;
-            background-color: #00a896;
-        }
-
+        /* Caja de Chat Global */
         .chat-window {
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-            background: rgba(255, 255, 255, 0.98);
-            border: 1px solid rgba(0, 168, 150, 0.25);
-            transition: opacity 0.2s ease, transform 0.2s ease;
+            box-shadow: 0 25px 60px rgba(15, 23, 42, 0.15);
+            background: #ffffff;
+            border: 1px solid rgba(0, 196, 180, 0.15);
+            transition: opacity 0.25s ease, transform 0.25s ease;
         }
 
-        /* REGLA MULTIKAP: Espacio de seguridad inferior para evitar solapamientos con la caja flotante */
+        /* REGLA MULTIKAP: Padding inferior para evitar que la caja de texto flotante tape los mensajes */
         .chat-messages-container {
             flex: 1;
             overflow-y: auto;
             padding-bottom: 85px; 
         }
 
-        /* Avatar animado estilo Mía (Mercantil) */
+        /* AVATAR ESTILO MÍA DE MERCANTIL: Redondo, impecable y corporativo */
         .lia-avatar-container {
             position: relative;
-            width: 48px;
-            height: 48px;
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
             background: linear-gradient(135deg, #00c4b4 0%, #007a8c 100%);
-            padding: 2px;
-            box-shadow: 0 4px 10px rgba(0, 168, 150, 0.3);
+            padding: 3px;
+            box-shadow: 0 8px 20px rgba(0, 168, 150, 0.25);
         }
         .lia-avatar-inner {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: #ffffff;
+            background: linear-gradient(180deg, #e0f2fe 0%, #ffffff 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -75,300 +75,351 @@
         }
         .lia-pulse {
             position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 12px;
-            height: 12px;
+            bottom: 1px;
+            right: 1px;
+            width: 14px;
+            height: 14px;
             background-color: #10b981;
-            border: 2px solid #ffffff;
+            border: 2.5px solid #ffffff;
             border-radius: 50%;
             animation: avatarGlow 2s infinite;
         }
 
         @keyframes avatarGlow {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
+            70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
             100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
 
-        .map-container {
-            background: #e5e7eb;
+        /* Grilla Estilo Mapa Técnico de Cobertura */
+        .map-wrapper {
+            background-color: #f1f5f9;
             position: relative;
             overflow: hidden;
-            border: 1px solid #d1d5db;
-        }
-        .grid-bg {
-            background-image: linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
-            background-size: 20px 20px;
+            border: 1px solid #cbd5e1;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
         }
     </style>
 </head>
-<body class="relative min-h-screen">
+<body class="relative min-h-screen antialiased">
 
-    <!-- BARRA DE NAVEGACIÓN COMPACTA -->
-    <nav class="bg-white/90 backdrop-blur-md border-b border-gray-200 sticky top-0 z-40 px-6 py-4 flex justify-between items-center">
-        <div class="flex items-center gap-2">
-            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-[#00c4b4] to-[#007a8c] flex items-center justify-center text-white font-extrabold text-lg shadow-sm">
-                <i class="fa-solid fa-wifi"></i>
+    <nav class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl theme-gradient flex items-center justify-center text-white font-black text-xl shadow-md shadow-[#00a896]/10">
+                <i class="fa-solid fa-bolt"></i>
             </div>
             <div>
-                <span class="text-xl font-extrabold tracking-tight text-gray-900">Litium</span>
-                <span class="text-[10px] block text-[#00a896] font-bold tracking-widest -mt-1 uppercase">Energía que te conecta</span>
+                <span class="text-2xl font-extrabold tracking-tight text-slate-900 block leading-none">Litium</span>
+                <span class="text-[10px] text-[#00a896] font-bold tracking-widest uppercase mt-1 block">Energía que te conecta</span>
             </div>
         </div>
         
-        <div class="bg-gray-100 border border-gray-200 rounded-full px-4 py-1 flex items-center gap-2 text-xs">
-            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-            <span class="text-gray-500 font-medium">Tasa Oficial BCV:</span>
-            <span id="bcv-rate" class="text-gray-900 font-bold">Cargando...</span>
+        <div class="bg-slate-100 border border-slate-200 rounded-full px-4 py-1.5 flex items-center gap-2 text-xs">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-slate-500 font-semibold">Tasa Oficial BCV:</span>
+            <span id="bcv-rate" class="text-slate-900 font-bold">Cargando...</span>
         </div>
     </nav>
 
-    <!-- SECCIÓN HERO -->
-    <header class="hero-gradient text-white py-16 px-6 relative overflow-hidden">
-        <div class="max-w-6xl mx-auto grid md:grid-cols-12 gap-8 items-center relative z-10">
+    <header class="theme-gradient text-white py-20 px-6 relative overflow-hidden shadow-inner">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-12 gap-12 items-center relative z-10">
             <div class="md:col-span-7">
-                <span class="bg-[#ffcc00] text-gray-900 text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
-                    ¡Instalación GRATIS!
+                <span class="bg-[#ffcc00] text-slate-950 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                    ¡Instalación 100% Gratis!
                 </span>
-                <h1 class="text-4xl md:text-6xl font-extrabold mt-4 tracking-tight leading-tight">
-                    Disfruta de <span class="text-[#ffcc00]">full conexión</span> simétrica
+                <h1 class="text-4xl md:text-6xl font-extrabold mt-5 tracking-tight leading-none">
+                    Internet de Fibra <br><span class="text-[#ffcc00]">Premium Simétrica</span>
                 </h1>
-                <p class="text-white/90 mt-4 max-w-xl text-base md:text-lg">
-                    Conéctate a la red de fibra óptica premium. Navega, trabaja y juega sin interrupciones con planes adaptados a ti.
+                <p class="text-slate-100/90 mt-5 max-w-xl text-base md:text-lg leading-relaxed">
+                    Navega, trabaja y escala tus proyectos con la máxima estabilidad del mercado. Planes corporativos y residenciales adaptados a tu ritmo.
                 </p>
                 
-                <div class="mt-8 flex flex-wrap gap-2.5">
-                    <button onclick="switchMode('ventas', true)" id="btn-ventas" class="mode-tab px-5 py-2 rounded-full text-xs font-bold transition-all bg-white text-gray-900 shadow-md cursor-pointer">
-                        <i class="fa-solid fa-rocket mr-1.5 text-[#00a896]"></i> Elige tu Plan
+                <div class="mt-8 flex flex-wrap gap-3">
+                    <button onclick="switchMode('ventas', true)" id="btn-ventas" class="mode-tab px-6 py-2.5 rounded-full text-xs font-bold transition-all bg-white text-slate-900 shadow-lg cursor-pointer">
+                        <i class="fa-solid fa-eye mr-2 text-[#00a896]"></i> Ver Catálogo de Planes
                     </button>
-                    <button onclick="triggerPaymentFormDeployment()" id="btn-pagos-top" class="mode-tab px-5 py-2 rounded-full text-xs font-bold transition-all bg-white/10 text-white border border-white/20 hover:bg-white/20 cursor-pointer">
-                        <i class="fa-solid fa-wallet mr-1.5"></i> Reportar Pago
+                    <button onclick="triggerPaymentFormDeployment()" id="btn-pagos-top" class="mode-tab px-6 py-2.5 rounded-full text-xs font-bold transition-all bg-white/10 text-white border border-white/20 hover:bg-white/20 cursor-pointer">
+                        <i class="fa-solid fa-wallet mr-2"></i> Registrar Pago
                     </button>
-                    <button onclick="switchMode('soporte', true)" id="btn-soporte" class="mode-tab px-5 py-2 rounded-full text-xs font-bold transition-all bg-white/10 text-white border border-white/20 hover:bg-white/20 cursor-pointer">
-                        <i class="fa-solid fa-screwdriver-wrench mr-1.5"></i> Soporte Técnico
+                    <button onclick="switchMode('soporte', true)" id="btn-soporte" class="mode-tab px-6 py-2.5 rounded-full text-xs font-bold transition-all bg-white/10 text-white border border-white/20 hover:bg-white/20 cursor-pointer">
+                        <i class="fa-solid fa-screwdriver-wrench mr-2"></i> Reportar Incidencia
                     </button>
-                    <button onclick="switchMode('cobertura', true)" id="btn-cobertura" class="mode-tab px-5 py-2 rounded-full text-xs font-bold transition-all bg-white/10 text-white border border-white/20 hover:bg-white/20 cursor-pointer">
-                        <i class="fa-solid fa-map-location-dot mr-1.5"></i> Zonas de Cobertura
+                    <button onclick="scrollToCoberturaSection()" id="btn-cobertura" class="mode-tab px-6 py-2.5 rounded-full text-xs font-bold transition-all bg-white/10 text-white border border-white/20 hover:bg-white/20 cursor-pointer">
+                        <i class="fa-solid fa-map-location-dot mr-2"></i> Mapa de Cobertura
                     </button>
                 </div>
             </div>
 
-            <!-- GRILLA DE PLANES -->
             <div id="grid-planes" class="md:col-span-5 grid grid-cols-2 gap-4">
-                <div onclick="openChatWithContext('Hola, quiero consultar el precio en Bolívares y detalles del Plan Básico de 400 Mbps', 'ventas')" class="glass-plan-card rounded-2xl p-4 text-center cursor-pointer">
-                    <span class="text-[10px] font-bold uppercase tracking-widest bg-white/20 px-2 py-0.5 rounded text-white">Básico</span>
-                    <h3 class="text-2xl font-black mt-1">400 <span class="text-xs font-normal">Mbps</span></h3>
-                    <p class="text-xs text-white/80 mt-1">Por solo <span class="font-bold text-[#ffcc00]">$10</span></p>
+                <div onclick="openChatWithContext('Hola Lia, quiero consultar la instalación y tasa del Plan Básico de 400 Mbps', 'ventas')" class="glass-plan-card rounded-2xl p-5 text-center cursor-pointer">
+                    <span class="text-[10px] font-bold uppercase tracking-widest bg-white/10 px-2.5 py-1 rounded text-white/90">Básico</span>
+                    <h3 class="text-3xl font-black mt-2">400 <span class="text-sm font-light block text-slate-200">Mbps</span></h3>
+                    <p class="text-xs text-slate-200 mt-2">Inversión: <span class="font-black text-[#ffcc00] text-sm">$10</span></p>
                 </div>
-                <div onclick="openChatWithContext('Me interesa el Plan Hogar de 600 Mbps. ¿Cuánto sería al cambio actual y qué incluye?', 'ventas')" class="glass-plan-card rounded-2xl p-4 text-center cursor-pointer">
-                    <span class="text-[10px] font-bold uppercase tracking-widest bg-white/20 px-2 py-0.5 rounded text-white">Hogar</span>
-                    <h3 class="text-2xl font-black mt-1">600 <span class="text-xs font-normal">Mbps</span></h3>
-                    <p class="text-xs text-white/80 mt-1">Por solo <span class="font-bold text-[#ffcc00]">$15</span></p>
+                <div onclick="openChatWithContext('Me interesa el Plan Hogar de 600 Mbps. ¿Me das precio en Bs y detalles?', 'ventas')" class="glass-plan-card rounded-2xl p-5 text-center cursor-pointer">
+                    <span class="text-[10px] font-bold uppercase tracking-widest bg-white/10 px-2.5 py-1 rounded text-white/90">Hogar</span>
+                    <h3 class="text-3xl font-black mt-2">600 <span class="text-sm font-light block text-slate-200">Mbps</span></h3>
+                    <p class="text-xs text-slate-200 mt-2">Inversión: <span class="font-black text-[#ffcc00] text-sm">$15</span></p>
                 </div>
-                <div onclick="openChatWithContext('Deseo contratar el Plan Fiel de 800 Mbps. ¿Tienen cobertura en mi zona y cuáles son los métodos de pago?', 'ventas')" class="glass-plan-card rounded-2xl p-4 text-center cursor-pointer">
-                    <span class="text-[10px] font-bold uppercase tracking-widest bg-white/20 px-2 py-0.5 rounded text-white">Fiel</span>
-                    <h3 class="text-2xl font-black mt-1">800 <span class="text-xs font-normal">Mbps</span></h3>
-                    <p class="text-xs text-white/80 mt-1">Por solo <span class="font-bold text-[#ffcc00]">$20</span></p>
+                <div onclick="openChatWithContext('Deseo contratar el Plan Fiel de 800 Mbps corporativo. Requisitos por favor', 'ventas')" class="glass-plan-card rounded-2xl p-5 text-center cursor-pointer">
+                    <span class="text-[10px] font-bold uppercase tracking-widest bg-white/10 px-2.5 py-1 rounded text-white/90">Fiel</span>
+                    <h3 class="text-3xl font-black mt-2">800 <span class="text-sm font-light block text-slate-200">Mbps</span></h3>
+                    <p class="text-xs text-slate-200 mt-2">Inversión: <span class="font-black text-[#ffcc00] text-sm">$20</span></p>
                 </div>
-                <div onclick="openChatWithContext('Quiero la máxima velocidad. Háblame del Plan Premium de 1 Gbps', 'ventas')" class="glass-plan-card rounded-2xl p-4 text-center cursor-pointer border-[#ffcc00]/50 bg-white/20">
-                    <span class="text-[10px] font-bold uppercase tracking-widest bg-[#ffcc00] text-gray-900 px-2 py-0.5 rounded font-black">Premium</span>
-                    <h3 class="text-2xl font-black mt-1">1 <span class="text-xs font-normal">Gbps</span></h3>
-                    <p class="text-xs text-[#ffcc00] font-bold mt-1">Por solo <span class="font-bold text-white">$30</span></p>
+                <div onclick="openChatWithContext('Quiero la máxima potencia simétrica. Háblame del Plan Premium de 1 Gbps', 'ventas')" class="glass-plan-card rounded-2xl p-5 text-center cursor-pointer border-[#ffcc00]/40 bg-white/20">
+                    <span class="text-[10px] font-bold uppercase tracking-widest bg-[#ffcc00] text-slate-950 px-2 py-0.5 rounded font-black">Premium</span>
+                    <h3 class="text-3xl font-black mt-2">1 <span class="text-sm font-light block text-white">Gbps</span></h3>
+                    <p class="text-xs text-[#ffcc00] font-bold mt-2">Inversión: <span class="font-black text-white text-sm">$30</span></p>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- SECCIÓN DINÁMICA: RECORDATORIOS Y TICKETS -->
     <main class="max-w-6xl mx-auto px-6 py-16">
         <div class="grid md:grid-cols-2 gap-8">
-            <!-- Bloque de Cobranza Independiente -->
-            <div class="bg-white border border-gray-200 rounded-3xl p-8 flex flex-col justify-between shadow-sm relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-2 bg-amber-500"></div>
+            <div class="bg-white border border-slate-200 rounded-3xl p-8 flex flex-col justify-between shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-2 bg-[#00a896]"></div>
                 <div>
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">Módulo de Conciliación</h2>
-                        <i class="fa-solid fa-receipt text-3xl text-gray-300"></i>
+                        <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Conciliación de Pagos</h2>
+                        <i class="fa-solid fa-receipt text-3xl text-slate-300"></i>
                     </div>
-                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
-                        Reporta de forma directa y transparente tus pagos mensuales para mantener la vigencia de tu conexión sin esperas. El proceso requiere datos exactos de la referencia bancaria.
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                        Reporta tus transferencias bancarias o depósitos de manera inmediata para mantener tu cuenta al día de forma automática.
                     </p>
                 </div>
-                <button onclick="triggerPaymentFormDeployment()" class="w-full mt-4 bg-gray-900 hover:bg-[#00a896] text-white font-bold py-3 rounded-xl text-xs tracking-wider transition-all cursor-pointer">
-                    REGISTRAR MI PAGO AHORA
+                <button onclick="triggerPaymentFormDeployment()" class="w-full mt-4 bg-slate-900 hover:bg-[#00a896] text-white font-bold py-3.5 rounded-xl text-xs tracking-wider transition-all cursor-pointer">
+                    REGISTRAR REPORTE ADMINISTRATIVO
                 </button>
             </div>
 
-            <!-- Bloque de Tickets de Conexión / Soporte con Lia -->
-            <div class="bg-white border border-gray-200 rounded-3xl p-8 shadow-sm relative overflow-hidden flex flex-col justify-between">
+            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm relative overflow-hidden flex flex-col justify-between">
+                <div class="absolute top-0 left-0 w-full h-2 bg-amber-400"></div>
                 <div>
-                    <h2 class="text-3xl font-black text-[#00a896] tracking-tight">Soporte Técnico <span class="bg-[#ffcc00] text-gray-900 px-2 py-0.5 rounded">Lia</span></h2>
-                    <p class="text-gray-600 text-sm mt-3 leading-relaxed">
-                        ¿Presentas alguna incidencia con tu navegación o requieres asistencia técnica especializada? Inicia una sesión de diagnóstico interactiva e inmediata con Lia.
+                    <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Mesa de Soporte Interno</h2>
+                    <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+                        ¿Presentas atenuación o lentitud en tu fibra? Abre una sesión interactiva de diagnóstico técnico directo con Lia.
                     </p>
                 </div>
-                <div class="mt-6 relative h-28 arc-bg overflow-hidden flex items-center justify-center">
-                    <button onclick="switchMode('soporte', true)" class="bg-[#ffcc00] text-gray-900 font-extrabold px-6 py-2.5 rounded-full text-xs hover:scale-105 transition-all shadow-md cursor-pointer">
-                        Hablar con Soporte Técnico <i class="fa-solid fa-screwdriver-wrench ml-1"></i>
-                    </button>
-                </div>
+                <button onclick="switchMode('soporte', true)" class="w-full mt-6 bg-slate-100 border border-slate-200 text-slate-800 hover:bg-[#00a896] hover:text-white font-bold py-3.5 rounded-xl text-xs tracking-wider transition-all cursor-pointer">
+                    INICIAR DIAGNÓSTICO EN LÍNEA <i class="fa-solid fa-chevron-right ml-1"></i>
+                </button>
             </div>
         </div>
 
-        <!-- FORMULARIO GENERAL (LEADS / TICKETS) -->
-        <div id="form-container" class="hidden max-w-xl mx-auto bg-white border border-gray-200 rounded-2xl p-6 shadow-xl mt-12 relative z-20">
+        <section id="seccion-cobertura" class="mt-16 bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+            <div class="flex flex-col md:flex-between md:flex-row items-start md:items-center gap-4 mb-8 border-b border-slate-100 pb-6">
+                <div>
+                    <span class="text-xs font-black uppercase tracking-widest text-[#00a896]">Infraestructura de Red</span>
+                    <h2 class="text-3xl font-extrabold tracking-tight text-slate-900 mt-1">Zonas de Cobertura Activa y Proyecciones</h2>
+                    <p class="text-sm text-slate-500 mt-1">Monitorea los nodos centrales de distribución y las grillas en despliegue técnico.</p>
+                </div>
+                <div class="flex gap-2 p-1 bg-slate-100 rounded-xl w-full md:w-auto">
+                    <button id="tab-map-ccs" onclick="toggleMainMap('caracas')" class="flex-1 md:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all bg-[#00a896] text-white cursor-pointer">Eje Caracas</button>
+                    <button id="tab-map-mcy" onclick="toggleMainMap('maracay')" class="flex-1 md:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all bg-transparent text-slate-600 cursor-pointer">Eje Central (Maracay)</button>
+                </div>
+            </div>
+
+            <div id="main-map-caracas" class="map-wrapper h-80 rounded-2xl relative border border-slate-200 p-6 flex flex-col justify-between">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 relative z-10">
+                    <div class="bg-white/90 backdrop-blur-sm p-4 rounded-xl border border-emerald-200 shadow-sm flex items-start gap-3">
+                        <span class="w-3 h-3 rounded-full bg-emerald-500 mt-1.5 shrink-0 animate-pulse"></span>
+                        <div>
+                            <h4 class="font-bold text-xs text-slate-900">Ruiz Pineda</h4>
+                            <p class="text-[11px] text-slate-500">Eje Caricuao - Cobertura Fibra Total</p>
+                            <span class="inline-block mt-1 text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-1.5 py-0.5 rounded uppercase">Operativo</span>
+                        </div>
+                    </div>
+                    <div class="bg-white/90 backdrop-blur-sm p-4 rounded-xl border border-emerald-200 shadow-sm flex items-start gap-3">
+                        <span class="w-3 h-3 rounded-full bg-emerald-500 mt-1.5 shrink-0 animate-pulse"></span>
+                        <div>
+                            <h4 class="font-bold text-xs text-slate-900">Los Telares</h4>
+                            <p class="text-[11px] text-slate-500">Eje Caricuao - Anillo de Distribución</p>
+                            <span class="inline-block mt-1 text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-1.5 py-0.5 rounded uppercase">Operativo</span>
+                        </div>
+                    </div>
+                    <div class="bg-white/90 backdrop-blur-sm p-4 rounded-xl border border-amber-200 shadow-sm flex items-start gap-3">
+                        <span class="w-3 h-3 rounded-full bg-amber-500 mt-1.5 shrink-0"></span>
+                        <div>
+                            <h4 class="font-bold text-xs text-slate-900">Ejes Centrales de Caracas</h4>
+                            <p class="text-[11px] text-slate-500">Fusiones de Nodos de Distribución</p>
+                            <span class="inline-block mt-1 text-[9px] bg-amber-100 text-amber-800 font-extrabold px-1.5 py-0.5 rounded uppercase">Próximamente / Por Cubrir</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="absolute bottom-4 right-4 bg-slate-900 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-wider">
+                    <i class="fa-solid fa-satellite-dish mr-1 text-[#00c4b4]"></i> Monitoreo de Red Satelital Activa
+                </div>
+            </div>
+
+            <div id="main-map-maracay" class="map-wrapper h-80 rounded-2xl relative border border-slate-200 p-6 flex flex-col justify-between hidden">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10">
+                    <div class="bg-white/90 backdrop-blur-sm p-4 rounded-xl border border-emerald-200 shadow-sm flex items-start gap-3">
+                        <span class="w-3 h-3 rounded-full bg-emerald-500 mt-1.5 shrink-0 animate-pulse"></span>
+                        <div>
+                            <h4 class="font-bold text-xs text-slate-900">Maracay Central</h4>
+                            <p class="text-[11px] text-slate-500">Sede Principal - Cobertura Troncal Completa</p>
+                            <span class="inline-block mt-1 text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-1.5 py-0.5 rounded uppercase">Operativo</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="absolute bottom-4 right-4 bg-slate-900 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-wider">
+                    <i class="fa-solid fa-building mr-1 text-[#00c4b4]"></i> Nodo Central Aragua
+                </div>
+            </div>
+        </section>
+
+        <div id="form-container" class="hidden max-w-xl mx-auto bg-white border border-slate-200 rounded-2xl p-6 shadow-xl mt-12 relative z-20">
             <div class="text-center mb-4">
-                <h3 id="form-title" class="text-lg font-bold text-gray-900">Formulario de Verificación Comercial</h3>
-                <p id="form-subtitle" class="text-xs text-gray-500">Agiliza tu solicitud ingresando tus datos operativos.</p>
+                <h3 id="form-title" class="text-lg font-bold text-slate-900">Formulario Comercial Litium</h3>
+                <p id="form-subtitle" class="text-xs text-slate-500">Agiliza la gestión ingresando tus datos correctos.</p>
             </div>
             <form id="litium-lead-form" onsubmit="submitForm(event)" class="space-y-4">
                 <input type="hidden" id="form-context-hidden" value="General">
                 <div>
-                    <label class="block text-[11px] font-bold text-gray-500 mb-1">Nombre Completo / Cédula</label>
-                    <input type="text" id="form-name" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. Mauricio Jimenez">
+                    <label class="block text-[11px] font-bold text-slate-500 mb-1">Nombre Completo / RIF</label>
+                    <input type="text" id="form-name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. Mauricio Jimenez">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-[11px] font-bold text-gray-500 mb-1">Teléfono Activo</label>
-                        <input type="tel" id="form-phone" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. 04121234567">
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Teléfono Móvil</label>
+                        <input type="tel" id="form-phone" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. 04121234567">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-bold text-gray-500 mb-1">Ubicación / Sector Específico</label>
-                        <input type="text" id="form-location" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. Caracas, Ruiz Pineda">
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Sector Residencial / Ciudad</label>
+                        <input type="text" id="form-location" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. Caracas, Ruiz Pineda">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold text-gray-500 mb-1">Contexto del Requerimiento</label>
-                    <textarea id="form-details" rows="2" readonly class="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-600 focus:outline-none"></textarea>
+                    <label class="block text-[11px] font-bold text-slate-500 mb-1">Detalles del Requerimiento</label>
+                    <textarea id="form-details" rows="2" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-600 focus:outline-none"></textarea>
                 </div>
-                <button type="submit" class="w-full bg-[#00a896] hover:bg-[#00c4b4] text-white font-bold py-2.5 rounded-xl text-xs transition-all cursor-pointer">
-                    Enviar Datos Directo al Consultor
+                <button type="submit" class="w-full bg-[#00a896] hover:bg-[#00c4b4] text-white font-bold py-3 rounded-xl text-xs transition-all cursor-pointer">
+                    Confirmar Envió de Datos Operativos
                 </button>
             </form>
         </div>
 
-        <!-- FORMULARIO EXCLUSIVO DE REPORTES DE PAGO -->
         <div id="payment-form-container" class="hidden max-w-xl mx-auto bg-white border border-[#00a896] rounded-2xl p-6 shadow-2xl mt-12 relative z-20">
             <div class="text-center mb-6">
-                <span class="bg-emerald-100 text-[#00a896] text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">Módulo de Finanzas</span>
-                <h3 class="text-xl font-extrabold text-gray-900 mt-2">Formulario de Conciliación Bancaria</h3>
-                <p class="text-xs text-gray-500">Ingresa de manera exacta los datos fiscales de tu transacción para su validación administrativa.</p>
+                <span class="bg-emerald-100 text-[#00a896] text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">Módulo Administrativo</span>
+                <h3 class="text-xl font-extrabold text-slate-900 mt-2">Declaración Jurada de Pago</h3>
+                <p class="text-xs text-slate-500">Los datos ingresados pasan directamente a conciliación bancaria inmediata.</p>
             </div>
             <form id="litium-payment-form" onsubmit="submitPaymentForm(event)" class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-[11px] font-bold text-gray-500 mb-1">Cédula / RIF del Titular</label>
-                        <input type="text" id="pay-id" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. V-12345678">
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Cédula del Titular</label>
+                        <input type="text" id="pay-id" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. V-12345678">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-bold text-gray-500 mb-1">Nombre del Cliente Asociado</label>
-                        <input type="text" id="pay-name" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. Mauricio Jimenez">
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Nombre Completo del Cliente</label>
+                        <input type="text" id="pay-name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. Mauricio Jimenez">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-[11px] font-bold text-gray-500 mb-1">Banco Emisor / Método</label>
-                        <select id="pay-method" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]">
-                            <option value="Pago Móvil">Pago Móvil</option>
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Canal o Banco Utilizado</label>
+                        <select id="pay-method" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#00a896]">
+                            <option value="Pago Móvil">Pago Móvil Interbancario</option>
                             <option value="Banesco">Banesco a Banesco</option>
                             <option value="Banco de Venezuela">Banco de Venezuela</option>
-                            <option value="Zelle / Divisas">Depósito en Divisas / Zelle</option>
+                            <option value="Zelle">Zelle / Depósito Verde</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-[11px] font-bold text-gray-500 mb-1">Número de Referencia (Últimos 6 dígitos)</label>
-                        <input type="text" id="pay-ref" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. 987654">
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Número de Referencia Bancaria (Últimos 6 dígitos)</label>
+                        <input type="text" id="pay-ref" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. 123456">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-[11px] font-bold text-gray-500 mb-1">Monto Pagado ($ USD)</label>
-                        <input type="number" step="0.01" id="pay-amount-usd" oninput="calculateBsFromForm()" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. 15.00">
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Importe en Divisas ($ USD)</label>
+                        <input type="number" step="0.01" id="pay-amount-usd" oninput="calculateBsFromForm()" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. 15.00">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-bold text-gray-500 mb-1">Equivalente en Bolívares (BCV)</label>
-                        <input type="text" id="pay-amount-bs" readonly class="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-600 focus:outline-none" placeholder="Bs. 0.00">
+                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Conversión en Bolívares (Tasa Oficial)</label>
+                        <input type="text" id="pay-amount-bs" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-600 focus:outline-none" placeholder="Bs. 0.00">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold text-gray-500 mb-1">Adjuntar Comprobante / Capture de Pantalla</label>
-                    <input type="file" id="pay-file" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#00a896]/10 file:text-[#00a896] hover:file:bg-[#00a896]/20 cursor-pointer">
+                    <label class="block text-[11px] font-bold text-slate-500 mb-1">Cargar Capture de Pantalla</label>
+                    <input type="file" id="pay-file" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#00a896]/10 file:text-[#00a896] hover:file:bg-[#00a896]/20 cursor-pointer">
                 </div>
-                <button type="submit" class="w-full bg-gray-900 hover:bg-[#00a896] text-white font-bold py-3 rounded-xl text-xs transition-all cursor-pointer tracking-wider">
-                    PROCESAR Y VALIDAR PAGO INMEDIATO
+                <button type="submit" class="w-full bg-slate-900 hover:bg-[#00a896] text-white font-bold py-3.5 rounded-xl text-xs tracking-wider transition-all cursor-pointer">
+                    VALIDAR COMPROBANTE DE TRANSACCIÓN
                 </button>
             </form>
         </div>
     </main>
 
-    <!-- BOTÓN INTERACTIVO DEL CHAT CON AVATAR ESTILO MÍA (MERCANTIL) -->
     <div class="fixed bottom-6 right-6 z-50">
-        <button onclick="toggleChat()" class="lia-avatar-container hover:scale-105 transition-all cursor-pointer border-0 p-0 block">
+        <button onclick="toggleChat()" class="lia-avatar-container hover:scale-105 transition-all cursor-pointer border-0 p-0 block focus:outline-none">
             <div class="lia-avatar-inner">
-                <!-- SVG Vectorial de un avatar estilizado de IA (Lia) -->
-                <svg viewBox="0 0 64 64" class="w-10 h-10 mt-1" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="32" cy="24" r="14" fill="#00a896" fill-opacity="0.15"></circle>
-                    <path d="M32 12C24.268 12 18 18.268 18 26C18 31.144 20.768 35.644 24.892 38.12C23.164 40.54 20.12 44.22 14 46H50C43.88 44.22 40.836 40.54 39.108 38.12C43.232 35.644 46 31.144 46 26C46 18.268 39.732 12 32 12Z" fill="#007a8c"></path>
-                    <circle cx="26" cy="24" r="2.5" fill="#ffffff"></circle>
-                    <circle cx="38" cy="24" r="2.5" fill="#ffffff"></circle>
-                    <path d="M28 30C29.5 31.5 34.5 31.5 36 30" stroke="#ffffff" stroke-width="2" stroke-linecap="round"></path>
-                    <path d="M14 26C14 18 20 14 32 14" stroke="#00c4b4" stroke-width="1.5" stroke-linecap="round"></path>
+                <svg viewBox="0 0 100 100" class="w-11 h-11 mt-1" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M25,65 C15,45 20,20 50,15 C80,20 85,45 75,65" fill="#005f73" />
+                    <circle cx="50" cy="48" r="24" fill="#ffedd5" />
+                    <path d="M26,42 C35,22 65,22 74,42 C76,30 68,18 50,18 C32,18 24,30 26,42 Z" fill="#007a8c" />
+                    <circle cx="42" cy="46" r="3" fill="#0f172a" />
+                    <circle cx="58" cy="46" r="3" fill="#0f172a" />
+                    <path d="M44,56 Q50,60 56,56" stroke="#0f172a" stroke-width="2" stroke-linecap="round" fill="none" />
+                    <path d="M30,32 Q50,22 70,32" stroke="#00c4b4" stroke-width="3" stroke-linecap="round" fill="none" />
+                    <circle cx="28" cy="36" r="4" fill="#00c4b4" />
+                    <path d="M28,36 L34,48" stroke="#00c4b4" stroke-width="2" stroke-linecap="round" />
                 </svg>
             </div>
             <div class="lia-pulse"></div>
         </button>
     </div>
 
-    <!-- VENTANA DEL CHAT CORPORATIVO (LIA) -->
-    <div id="chat-window" class="chat-window fixed bottom-24 right-6 w-[92%] sm:w-[380px] h-[480px] rounded-2xl z-50 flex flex-col hidden overflow-hidden">
-        <div class="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 shrink-0">
-            <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 rounded-full bg-[#00a896]/10 flex items-center justify-center border border-[#00a896]/20 overflow-hidden">
-                    <svg viewBox="0 0 64 64" class="w-7 h-7 mt-0.5" fill="none">
-                        <path d="M32 12C24.268 12 18 18.268 18 26C18 31.144 20.768 35.644 24.892 38.12C23.164 40.54 20.12 44.22 14 46H50C43.88 44.22 40.836 40.54 39.108 38.12C43.232 35.644 46 31.144 46 26C46 18.268 39.732 12 32 12Z" fill="#007a8c"></path>
-                        <circle cx="26" cy="24" r="2" fill="#ffffff"></circle>
-                        <circle cx="38" cy="24" r="2" fill="#ffffff"></circle>
-                        <path d="M28 29.5C29.5 30.5 34.5 30.5 36 29.5" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"></path>
+    <div id="chat-window" class="chat-window fixed bottom-24 right-6 w-[92%] sm:w-[385px] h-[490px] rounded-2xl z-50 flex flex-col hidden overflow-hidden">
+        <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#e0f2fe] to-white flex items-center justify-center border border-slate-200 overflow-hidden">
+                    <svg viewBox="0 0 100 100" class="w-8 h-8 mt-1" fill="none">
+                        <circle cx="50" cy="48" r="24" fill="#ffedd5" />
+                        <path d="M26,42 C35,22 65,22 74,42 C76,30 68,18 50,18 C32,18 24,30 26,42 Z" fill="#007a8c" />
+                        <circle cx="42" cy="46" r="2.5" fill="#0f172a" />
+                        <circle cx="58" cy="46" r="2.5" fill="#0f172a" />
+                        <path d="M45,55 Q50,58 55,55" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round" fill="none" />
                     </svg>
                 </div>
                 <div>
-                    <h4 class="text-xs font-bold text-gray-900">Lia Asistente Virtual</h4>
-                    <span id="chat-status" class="text-[9px] text-[#00a896] block font-bold uppercase tracking-wider">Línea Comercial Litium</span>
+                    <h4 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                        Lia Inteligencia Artificial 
+                    </h4>
+                    <span id="chat-status" class="text-[9px] text-[#00a896] block font-bold uppercase tracking-wider">Asistente Central Litium</span>
                 </div>
             </div>
-            <button onclick="closeChatWindow()" class="text-gray-400 hover:text-gray-600 transition-all p-1 cursor-pointer">
-                <i class="fa-solid fa-xmark text-base"></i>
+            <button onclick="closeChatWindow()" class="text-slate-400 hover:text-slate-600 transition-all p-1 cursor-pointer">
+                <i class="fa-solid fa-xmark text-lg"></i>
             </button>
         </div>
 
-        <!-- REGLA MULTIKAP: Mensajes con margen de seguridad inferior de 85px para evitar obstrucción -->
-        <div id="chat-messages" class="chat-messages-container p-4 space-y-3 bg-gray-50/50">
+        <div id="chat-messages" class="chat-messages-container p-4 space-y-3.5 bg-slate-50/50">
             <div class="flex gap-2 max-w-[85%]">
-                <div class="bg-white border border-gray-200 text-gray-800 text-xs p-3 rounded-2xl rounded-tl-none leading-relaxed shadow-sm">
-                    ¡Hola! Soy Lia, tu asistente virtual de Litium. Estoy lista para gestionar tus requerimientos de conexión, planes y soporte técnico de forma directa. ¿En qué puedo colaborarte hoy?
+                <div class="bg-white border border-slate-200 text-slate-800 text-xs p-3.5 rounded-2xl rounded-tl-none leading-relaxed shadow-sm">
+                    ¡Hola! Soy Lia, tu asistente virtual de Litium. Estoy lista para gestionar tus requerimientos de conexión, catálogo de velocidades o soporte técnico de inmediato. ¿Cómo puedo ayudarte hoy?
                 </div>
             </div>
         </div>
 
-        <!-- REGLA MULTIKAP: Entrada de texto flotante en capa superior fija -->
-        <div class="p-3 bg-white border-t border-gray-200 absolute bottom-0 left-0 w-full shrink-0 z-10">
+        <div class="p-3 bg-white border-t border-slate-200 absolute bottom-0 left-0 w-full shrink-0 z-10">
             <div class="flex gap-2">
-                <input type="text" id="user-input" onkeypress="handleKeyPress(event)" class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]" placeholder="Escribe tu requerimiento técnico o comercial...">
-                <button id="send-btn" onclick="sendMessage()" class="bg-[#00a896] text-white px-3 py-2 rounded-xl text-xs hover:bg-[#00c4b4] transition-all cursor-pointer">
+                <input type="text" id="user-input" onkeypress="handleKeyPress(event)" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#00a896]" placeholder="Escribe tu consulta comercial o técnica...">
+                <button id="send-btn" onclick="sendMessage()" class="bg-[#00a896] text-white px-4 py-2.5 rounded-xl text-xs hover:bg-[#00c4b4] transition-all cursor-pointer">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- CONTROLADORES LÓGICOS INTEGRALES -->
     <script>
         const BACKEND_URL = "https://litium-backend-d2pb.onrender.com"; 
         let currentMode = "ventas";
         let bcvRateGlobal = 46.85; 
 
-        // Estructura limpia de Catálogo Corregida
         const planesLitium = {
             "400": { nombre: "Básico", usd: 10 },
             "600": { nombre: "Hogar", usd: 15 },
@@ -386,7 +437,7 @@
                     bcvRateGlobal = parseFloat(data.tasa);
                 }
             } catch (error) {
-                console.error("Error cargando tasa:", error);
+                console.error("Error cargando tasa oficial:", error);
             } finally {
                 document.getElementById("bcv-rate").innerText = `Bs. ${bcvRateGlobal.toFixed(2)}`;
             }
@@ -398,23 +449,28 @@
             document.getElementById("pay-amount-bs").value = `Bs. ${bsVal.toFixed(2)}`;
         }
 
-        function toggleMapCity(city) {
-            const mcy = document.getElementById("map-maracay");
-            const ccs = document.getElementById("map-caracas");
+        function toggleMainMap(city) {
+            const mcy = document.getElementById("main-map-maracay");
+            const ccs = document.getElementById("main-map-caracas");
             const btnMcy = document.getElementById("tab-map-mcy");
             const btnCcs = document.getElementById("tab-map-ccs");
 
             if(city === 'maracay') {
                 mcy.classList.remove("hidden");
                 ccs.classList.add("hidden");
-                btnMcy.className = "flex-1 bg-[#00a896] text-white py-1 rounded text-center transition-all";
-                btnCcs.className = "flex-1 bg-gray-200 text-gray-700 py-1 rounded text-center transition-all";
+                btnMcy.className = "flex-1 md:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all bg-[#00a896] text-white";
+                btnCcs.className = "flex-1 md:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all bg-transparent text-slate-600";
             } else {
                 ccs.classList.remove("hidden");
                 mcy.classList.add("hidden");
-                btnCcs.className = "flex-1 bg-[#00a896] text-white py-1 rounded text-center transition-all";
-                btnMcy.className = "flex-1 bg-gray-200 text-gray-700 py-1 rounded text-center transition-all";
+                btnCcs.className = "flex-1 md:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all bg-[#00a896] text-white";
+                btnMcy.className = "flex-1 md:flex-none px-6 py-2 rounded-lg text-xs font-bold transition-all bg-transparent text-slate-600";
             }
+        }
+
+        function scrollToCoberturaSection() {
+            const section = document.getElementById("seccion-cobertura");
+            section.scrollIntoView({ behavior: "smooth" });
         }
 
         function toggleChat() {
@@ -434,6 +490,14 @@
             chatWin.style.display = "none";
         }
 
+        document.body.addEventListener('click', function(e) {
+            const chatWindow = document.getElementById('chat-window');
+            const chatButton = document.querySelector('.lia-avatar-container');
+            if (!chatWindow.classList.contains('hidden') && !chatWindow.contains(e.target) && !chatButton.contains(e.target)) {
+                closeChatWindow();
+            }
+        });
+
         function scrollChatToBottom() {
             const container = document.getElementById("chat-messages");
             setTimeout(() => { container.scrollTop = container.scrollHeight; }, 30);
@@ -444,29 +508,27 @@
         function switchMode(mode, triggerChatInteraction = false) {
             currentMode = mode;
             document.querySelectorAll(".mode-tab").forEach(btn => {
-                btn.classList.remove("bg-white", "text-gray-900", "shadow-md");
-                btn.classList.add("bg-white/10", "text-white", "border", "border-white/20");
+                if (btn.id !== 'btn-cobertura') {
+                    btn.classList.remove("bg-white", "text-slate-900", "shadow-lg");
+                    btn.classList.add("bg-white/10", "text-white", "border", "border-white/20");
+                }
             });
 
             const activeBtn = document.getElementById(`btn-${mode}`);
-            if (activeBtn) {
+            if (activeBtn && mode !== 'cobertura') {
                 activeBtn.classList.remove("bg-white/10", "text-white", "border", "border-white/20");
-                activeBtn.classList.add("bg-white", "text-gray-900", "shadow-md");
+                activeBtn.classList.add("bg-white", "text-slate-900", "shadow-lg");
             }
 
-            // Ocultamos el bloque de finanzas si se cambia a otra pestaña
             document.getElementById("payment-form-container").classList.add("hidden");
 
             const statusLabel = document.getElementById("chat-status");
             if (mode === "ventas") {
-                statusLabel.innerText = "Lia Asistente Comercial";
-                if (triggerChatInteraction) openChatWithContext("Hola Lia, quiero conocer las velocidades del catálogo de fibra óptica.", "ventas");
+                statusLabel.innerText = "Lia Inteligencia Comercial";
+                if (triggerChatInteraction) openChatWithContext("Hola Lia, bríndame los precios actualizados del catálogo de velocidades de fibra.", "ventas");
             } else if (mode === "soporte") {
                 statusLabel.innerText = "Lia Soporte Técnico Interno";
-                if (triggerChatInteraction) openChatWithContext("Hola Lia, requiero abrir un hilo de asistencia técnica por inconvenientes de navegación.", "soporte");
-            } else if (mode === "cobertura") {
-                statusLabel.innerText = "Lia Diagnóstico de Zona";
-                if (triggerChatInteraction) openChatWithContext("Hola Lia, verifiquemos si mi sector posee cobertura activa.", "cobertura");
+                if (triggerChatInteraction) openChatWithContext("Hola Lia, reporto inconvenientes en mi velocidad. Requiero asistencia en línea.", "soporte");
             }
         }
 
@@ -483,11 +545,8 @@
             sendMessage();
         }
 
-        // Despliegue EXCLUSIVO e INDEPENDIENTE del Reporte de Pagos Financieros
         function triggerPaymentFormDeployment() {
             document.getElementById("form-container").classList.add("hidden");
-            
-            // Cerramos o minimizamos el chat para priorizar el formulario completo delicado
             closeChatWindow();
             
             const container = document.getElementById("payment-form-container");
@@ -509,50 +568,29 @@
             const typingId = appendTypingIndicator();
             const upperText = text.toUpperCase();
             
-            // 1. Manejo Geográfico (Mini Mapas Inyectados)
-            if (currentMode === "cobertura" || upperText.includes("COBERTURA") || upperText.includes("ZONAS") || upperText.includes("SECTOR")) {
+            // 1. Redirección de Cobertura Exclusiva a la Página
+            if (upperText.includes("COBERTURA") || upperText.includes("ZONAS") || upperText.includes("SECTOR") || upperText.includes("TELARES") || upperText.includes("PINEDA")) {
                 setTimeout(() => {
                     document.getElementById(typingId)?.remove();
+                    appendSystemMessage(`<b>Lia:</b> ¡Perfecto! He desplegado e iluminado de forma directa nuestra sección del <b>Mapa de Cobertura en la página principal</b>. Allí puedes validar los sectores operativos (Ruiz Pineda, Los Telares) y las zonas proyectadas por cubrir.`);
                     
-                    const mapaHTML = `
-                    <div class="bg-white border border-gray-200 text-gray-800 text-xs p-3 rounded-2xl rounded-tl-none shadow-sm space-y-3 w-full">
-                        <p class="font-bold text-[#00a896]"><i class="fa-solid fa-map-location-dot mr-1"></i> Cobertura Satelital Litium</p>
-                        <p>Nuestra central se encuentra en Maracay y operamos en ejes específicos seleccionados de Caracas.</p>
-                        
-                        <div class="flex gap-1 text-[10px] font-bold p-1 bg-gray-100 rounded">
-                            <button id="tab-map-mcy" onclick="toggleMapCity('maracay')" class="flex-1 bg-[#00a896] text-white py-1 rounded text-center">Maracay (Central)</button>
-                            <button id="tab-map-ccs" onclick="toggleMapCity('caracas')" class="flex-1 bg-gray-200 text-gray-700 py-1 rounded text-center">Caracas</button>
-                        </div>
-
-                        <div id="map-maracay" class="map-container grid-bg h-28 rounded relative border border-gray-300">
-                            <div class="absolute inset-0 bg-emerald-500/10 flex items-center justify-center font-bold text-emerald-700 text-[10px]">COBERTURA TOTAL ARAGUA</div>
-                            <span class="absolute top-8 left-12 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white lia-pulse"></span>
-                            <span class="absolute top-16 left-24 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white lia-pulse"></span>
-                        </div>
-
-                        <div id="map-caracas" class="map-container grid-bg h-28 rounded relative border border-gray-300 hidden">
-                            <span class="absolute top-4 left-6 text-[9px] bg-emerald-500 text-white px-1 rounded font-bold">Ruiz Pineda - Cubierto</span>
-                            <span class="absolute top-12 left-24 text-[9px] bg-emerald-500 text-white px-1 rounded font-bold">Los Telares - Cubierto</span>
-                            <span class="absolute top-20 left-12 text-[9px] bg-amber-500 text-white px-1 rounded font-bold">Ejes Centrales - Parcial</span>
-                        </div>
-                    </div>`;
+                    // Bajamos al mapa en la interfaz web principal
+                    scrollToCoberturaSection();
                     
-                    document.getElementById("chat-messages").insertAdjacentHTML("beforeend", `<div class="flex gap-2 max-w-[90%]">${mapaHTML}</div>`);
-                    scrollChatToBottom();
                     inputEl.disabled = false; sendBtn.disabled = false; inputEl.focus();
                 }, 1000);
                 return;
             }
 
-            // 2. Catálogo de Precios Corregido y Limpio
+            // 2. Catálogo de Precios Limpio MultiKAP
             if (currentMode === "ventas" && (upperText.includes("PRECIO") || upperText.includes("CATALOGO") || upperText.includes("PLANES") || upperText.includes("VELOCIDAD"))) {
-                let respuestaPrecios = `Catálogo de Fibra Óptica Litium:<br><br>`;
+                let respuestaPrecios = `<b>Catálogo Oficial Litium:</b><br><br>`;
                 for (let key in planesLitium) {
                     let p = planesLitium[key];
                     let costoBs = p.usd * bcvRateGlobal;
-                    respuestaPrecios += `• <b>Plan ${p.nombre}</b> (${key} Mbps): $${p.usd} / Al cambio BCV: Bs. ${costoBs.toFixed(2)}<br>`;
+                    respuestaPrecios += `• <b>Plan ${p.nombre}</b> (${key} Mbps): <b>$${p.usd}</b> | Al cambio oficial: Bs. ${costoBs.toFixed(2)}<br>`;
                 }
-                respuestaPrecios += `<br>Navegación 100% simétrica sin caídas. ¿Cuál plan prefieres instalar en tu locación?`;
+                respuestaPrecios += `<br>Navegación simétrica con soporte 24/7. ¿Cuál plan te gustaría instalar?`;
                 
                 setTimeout(() => {
                     document.getElementById(typingId)?.remove();
@@ -562,18 +600,18 @@
                 return;
             }
 
-            // 3. Soporte Técnico Directo Autónomo con Lia
+            // 3. Modulo Asistencia Técnica Directa
             if (currentMode === "soporte" || upperText.includes("SOPORTE") || upperText.includes("AVERIA") || upperText.includes("FALLA") || upperText.includes("LENTO")) {
                 setTimeout(() => {
                     document.getElementById(typingId)?.remove();
-                    appendSystemMessage(`Lia Soporte Técnico:<br><br>Entendido. He verificado los nodos principales y tu central física se encuentra activa. Para asignarte un ticket técnico inmediato en la grilla de operaciones, por favor completa el formulario técnico desplegado abajo.`);
-                    triggerFormDeployment("Solicitud de Ticket de Soporte Técnico", "Ingresa tus datos operativos para agendar revisión técnica.", text);
+                    appendSystemMessage(`<b>Lia Soporte:</b> Comprendido. Los nodos troncales muestran conectividad, por lo que parece un detalle puntual en tu acometida. He desplegado el formulario técnico en pantalla para procesar tu ticket técnico en cuadrilla.`);
+                    triggerFormDeployment("Apertura de Ticket de Soporte Técnico", "Ingresa los datos del titular para agendar la revisión técnica presencial.", text);
                     inputEl.disabled = false; sendBtn.disabled = false; inputEl.focus();
                 }, 1200);
                 return;
             }
 
-            // Respaldo de API
+            // Integración Limpia con el Backend en Render
             try {
                 const response = await fetch(`${BACKEND_URL}/api/chat`, {
                     method: "POST",
@@ -591,7 +629,7 @@
             } catch (error) {
                 console.error(error);
                 document.getElementById(typingId)?.remove();
-                appendSystemMessage("Estoy aquí para darte soporte. Detállame un poco más tu requerimiento para ayudarte de inmediato.");
+                appendSystemMessage("Hola. Sigo activa para apoyarte. Detállame tu requerimiento o selección de velocidades para procesarlo.");
             } finally {
                 inputEl.disabled = false; sendBtn.disabled = false; inputEl.focus();
             }
@@ -601,7 +639,7 @@
             const container = document.getElementById("chat-messages");
             container.insertAdjacentHTML("beforeend", `
                 <div class="flex justify-end max-w-[85%] ml-auto">
-                    <div class="bg-[#00a896] text-white text-xs p-3 rounded-2xl rounded-tr-none leading-relaxed">${text}</div>
+                    <div class="bg-[#00a896] text-white text-xs p-3.5 rounded-2xl rounded-tr-none leading-relaxed shadow-sm">${text}</div>
                 </div>`);
             scrollChatToBottom();
         }
@@ -610,7 +648,7 @@
             const container = document.getElementById("chat-messages");
             container.insertAdjacentHTML("beforeend", `
                 <div class="flex gap-2 max-w-[85%]">
-                    <div class="bg-white border border-gray-200 text-gray-800 text-xs p-3 rounded-2xl rounded-tl-none leading-relaxed shadow-sm">${text}</div>
+                    <div class="bg-white border border-slate-200 text-slate-800 text-xs p-3.5 rounded-2xl rounded-tl-none leading-relaxed shadow-sm">${text}</div>
                 </div>`);
             scrollChatToBottom();
         }
@@ -618,8 +656,8 @@
         function appendTypingIndicator() {
             const id = "typing-" + Date.now();
             document.getElementById("chat-messages").insertAdjacentHTML("beforeend", `
-                <div id="${id}" class="text-gray-400 text-[11px] pl-2 flex items-center gap-1">
-                    <i class="fa-solid fa-circle-notch animate-spin text-[#00a896]"></i> Lia está procesando...
+                <div id="${id}" class="text-slate-400 text-[11px] pl-2 flex items-center gap-1.5">
+                    <i class="fa-solid fa-circle-notch animate-spin text-[#00a896]"></i> Lia está respondiendo...
                 </div>`);
             scrollChatToBottom();
             return id;
@@ -644,7 +682,7 @@
             
             setTimeout(() => {
                 document.getElementById(typingId)?.remove();
-                appendSystemMessage("<b>Lia:</b> ¡Excelente! Tu ticket técnico de soporte ha sido generado con éxito en nuestro sistema de asignación de cuadrillas. Te contactaremos en breve vía telefónica.");
+                appendSystemMessage("<b>Lia:</b> ¡Perfecto! He cargado los datos operativos en nuestra base de datos. Un asesor comercial o técnico se pondrá en contacto contigo a la brevedad.");
                 document.getElementById("litium-lead-form").reset();
             }, 1200);
         }
@@ -656,13 +694,12 @@
             
             document.getElementById("payment-form-container").classList.add("hidden");
             
-            // Reabrimos el chat de Lia para confirmar la recepción
             toggleChat();
             const typingId = appendTypingIndicator();
             
             setTimeout(() => {
                 document.getElementById(typingId)?.remove();
-                appendSystemMessage(`<b>Módulo Financiero Recibido:</b><br><br>Tu reporte de pago por un monto de $${usdAmount} (Referencia: ${refNum}) ha entrado exitosamente en nuestra cola de validación automática. Tu servicio se mantendrá activo y estable.`);
+                appendSystemMessage(`<b>Módulo de Finanzas:</b> Reporte por un monto de $${usdAmount} (Ref: ${refNum}) recibido con éxito. El sistema de conciliación validará el capture para asegurar la vigencia de tu mensualidad.`);
                 document.getElementById("litium-payment-form").reset();
             }, 1500);
         }
