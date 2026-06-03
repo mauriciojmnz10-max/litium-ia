@@ -107,10 +107,10 @@
     <!-- ========================================== -->
     <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
         
-        <!-- Ventana del Chat (Oculta por defecto) -->
-        <div id="chat-window" class="hidden w-[360px] sm:w-[400px] h-[520px] bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col overflow-hidden mb-4 animate-fade-in">
+        <!-- Ventana del Chat -->
+        <div id="chat-window" class="hidden w-[360px] sm:w-[400px] h-[520px] bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col overflow-hidden mb-4 relative animate-fade-in">
             <!-- Encabezado del Chat -->
-            <div class="bg-white border-b border-slate-100 p-4 flex items-center justify-between">
+            <div class="bg-white border-b border-slate-100 p-4 flex items-center justify-between z-10 shadow-sm">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-teal-50 border border-teal-100 rounded-full flex items-center justify-center text-[#00A896]">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -127,16 +127,16 @@
                 </button>
             </div>
 
-            <!-- Cuerpo de Mensajes -->
-            <div id="chat-body" class="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50 custom-scrollbar text-sm">
+            <!-- Cuerpo de Mensajes: Con padding-bottom estricto para evitar solapamientos -->
+            <div id="chat-body" class="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50 custom-scrollbar text-sm pb-[65px]">
                 <!-- Mensaje de Bienvenida -->
                 <div class="bg-white border border-slate-100 p-3.5 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] text-slate-700">
                     ¡Hola! Soy Lia. Estoy aquí para asistirte con la fibra óptica de Litium. ¿Qué plan o gestión deseas realizar el día de hoy?
                 </div>
             </div>
 
-            <!-- Área de Entrada de Texto -->
-            <div class="p-3 bg-white border-t border-slate-100 flex items-center gap-2">
+            <!-- Área de Entrada de Texto Flotante con diseño integrado -->
+            <div class="absolute bottom-3 left-3 right-3 p-2 bg-white/90 backdrop-blur-md border border-slate-100 rounded-2xl flex items-center gap-2 shadow-lg shadow-slate-200/60 z-20">
                 <input type="text" id="chat-input" placeholder="Escribe un mensaje..." class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#00A896] transition-colors" onkeydown="if(event.key === 'Enter') enviarMensajeUsuario()">
                 <button onclick="enviarMensajeUsuario()" class="bg-[#00A896] text-white p-2.5 rounded-xl hover:bg-[#009282] transition-colors shadow-md shadow-teal-100">
                     <svg class="w-4 h-4 fill-current transform rotate-45" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
@@ -168,7 +168,6 @@
             </div>
 
             <!-- Inputs del Formulario -->
-            <!-- Vinculación estricta a la función procesarEnvioFormulario -->
             <form id="litium-lead-form" onsubmit="procesarEnvioFormulario(event)" class="p-5 space-y-4">
                 <input type="hidden" id="form-context-hidden" value="General">
                 <div>
@@ -198,10 +197,9 @@
     <!-- NÚCLEO DE LÓGICA JAVASCRIPT (FRONTEND) -->
     <!-- ========================================== -->
     <script>
-        // Dirección de desarrollo local explícita
-        const BACKEND_URL = "http://127.0.0.1:8000"; 
+        // URL vinculada exactamente a tu servidor activo en Render según image_129679.png
+        const BACKEND_URL = "https://litium-backend-d2pb.onrender.com"; 
 
-        // Captura robusta de la tasa oficial del BCV al iniciar la carga
         document.addEventListener("DOMContentLoaded", cargarTasaOficial);
 
         async function cargarTasaOficial() {
@@ -213,9 +211,8 @@
                 contenedorTasa.innerText = `Bs. ${data.tasa.toFixed(2)}`;
             } catch (error) {
                 console.error("Error cargando tasa:", error);
-                // Fallback elegante para no romper el aspecto visual si el backend está apagado
-                contenedorTasa.innerText = "Bs. 46.85 (Modo Local)";
-                contenedorTasa.className = "text-slate-400 font-bold";
+                contenedorTasa.innerText = "Bs. 46.85";
+                contenedorTasa.className = "text-slate-500 font-bold";
             }
         }
 
@@ -228,14 +225,12 @@
             document.getElementById("form-container").classList.add("hidden");
         }
 
-        // Acciones automáticas desde la botonera de la Landing
         async function activarFlujoLia(modo, mensajeSimulado) {
             appendUserMessage(mensajeSimulado);
             if (document.getElementById("chat-window").classList.contains("hidden")) { toggleChat(); }
             await consultarLiaAPI(mensajeSimulado, modo);
         }
 
-        // Acción al presionar el botón de contratación del Plan
         async function solicitarPlan(nombrePlan) {
             const msg = `Hola, me interesa el ${nombrePlan}`;
             appendUserMessage(msg);
@@ -243,7 +238,6 @@
             await consultarLiaAPI(msg, "ventas");
         }
 
-        // Envío manual desde la caja de texto del chat
         async function enviarMensajeUsuario() {
             const input = document.getElementById("chat-input");
             const msg = input.value.trim();
@@ -284,7 +278,6 @@
             return id;
         }
 
-        // Consulta al motor conversacional de la IA
         async function consultarLiaAPI(mensaje, modo) {
             const typingId = appendTypingIndicator();
             try {
@@ -299,7 +292,6 @@
 
                 appendSystemMessage(data.response);
 
-                // Si la intención requiere cualificación, despliega el modal flotante
                 if (data.show_form) {
                     document.getElementById("form-header-title").innerText = data.form_title || "Validación Técnica";
                     document.getElementById("form-header-subtitle").innerText = data.form_subtitle || "Introduce tu ubicación.";
@@ -313,7 +305,6 @@
             }
         }
 
-        // PROCESADOR DEL FORMULARIO DE COBERTURA: Envía al endpoint de filtro geográfico técnico
         async function procesarEnvioFormulario(event) {
             event.preventDefault();
             
@@ -322,7 +313,6 @@
             const location = document.getElementById("form-location").value;
             const context = document.getElementById("form-context-hidden").value;
             
-            // Ocultamos el modal con suavidad
             cerrarFormulario();
             const typingId = appendTypingIndicator();
             
@@ -337,23 +327,20 @@
                 const data = await response.json();
                 document.getElementById(typingId)?.remove();
 
-                // Lia imprime el veredicto del filtro geográfico en el chat
                 appendSystemMessage(`🤖 **Lia:**\n\n${data.response}`);
 
-                // SI TIENE COBERTURA: Renderiza el botón de salto directo a WhatsApp con el asesor humano
                 if (data.cobertura && data.whatsapp_link) {
                     inyectarBotonWhatsApp(data.whatsapp_link);
                 }
             } catch (error) {
                 console.error("Error al despachar el lead:", error);
                 document.getElementById(typingId)?.remove();
-                appendSystemMessage("⚠️ Hubo un detalle al procesar la factibilidad geográfica en tiempo real. Por favor, reintenta en unos instantes.");
+                appendSystemMessage("⚠️ Hubo un detalle al procesar la factibilidad geográfica en tiempo real.");
             } finally {
                 document.getElementById("litium-lead-form").reset();
             }
         }
 
-        // Renderiza el botón comercial de redirección directa (Filtro aprobado -> Traspaso a Humano)
         function inyectarBotonWhatsApp(url) {
             const chatBody = document.getElementById("chat-body");
             const btnContainer = document.createElement("div");
