@@ -3,146 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Litium IA - MultiKAP Suite</title>
-    <!-- Tailwind CSS para desarrollo rápido y sin peso en disco -->
+    <title>Litium - Energía que te Conecta</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Paleta e Identidad Visual MultiKAP */
-        .bg-multikap-gradient {
-            background: linear-gradient(135deg, #06b6d4 0%, #1e3a8a 100%);
-        }
+        /* Paleta de colores extraída de los flyers oficiales de Litium */
+        .brand-cyan { color: #00bfa5; }
+        .bg-brand-cyan { background-color: #00bfa5; }
+        .border-brand-cyan { border-color: #00bfa5; }
+        
+        .brand-yellow { color: #ffcc00; }
+        .bg-brand-yellow { background-color: #ffcc00; }
+        
+        .brand-dark { color: #0a2540; }
+        .bg-brand-dark { background-color: #0a2540; }
+
         /* REGLA INQUEBRANTABLE: Espacio inferior para que el input flotante no tape los mensajes */
         .chat-messages-container {
-            padding-bottom: 55px;
+            padding-bottom: 65px;
             scroll-behavior: smooth;
         }
-        /* Custom scrollbar minimalista */
+        
+        /* Scrollbar sutil y limpia */
         .chat-messages-container::-webkit-scrollbar {
-            width: 4px;
+            width: 5px;
+        }
+        .chat-messages-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
         }
         .chat-messages-container::-webkit-scrollbar-thumb {
-            background-color: rgba(6, 182, 212, 0.3);
-            border-radius: 4px;
+            background-color: #00bfa5;
+            border-radius: 10px;
         }
-        /* Animación bounce para el indicador de escritura */
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-4px); }
+        
+        /* Animación de puntos suspensivos para el indicador de escritura */
+        .dot {
+            animation: wave 1.2s infinite ease-in-out;
         }
-        .animate-bounce {
-            animation: bounce 0.6s infinite;
+        .dot:nth-child(1) { animation-delay: 0s; }
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes wave {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+        
+        /* Mejoras visuales adicionales */
+        .transition-smooth {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+        }
+        
+        /* Ocultar spinner de número en Chrome */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button {
+            opacity: 0.5;
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-100 font-sans min-h-screen flex flex-col">
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
 
-    <!-- BARRA SUPERIOR / DASHBOARD DE TELEMETRÍA -->
-    <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-50">
+    <header class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50 p-4">
         <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <div class="h-4 w-4 rounded-full bg-cyan-400 animate-pulse"></div>
-                <h1 class="text-xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">LITIUM IA // CORE</h1>
+            <div class="flex items-center gap-2">
+                <div class="bg-brand-cyan p-2 rounded-lg text-white font-black text-xl tracking-tighter flex items-center justify-center h-10 w-10 shadow-md">
+                    Li
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black text-[#0a2540] tracking-tight">Litium</h1>
+                    <p class="text-[10px] font-bold text-gray-400 tracking-widest uppercase -mt-1">Energía que te conecta</p>
+                </div>
             </div>
             
-            <!-- MONITOR DE TELEMETRÍA POR POLLING INTELIGENTE -->
-            <div class="flex gap-4 text-xs bg-slate-900/80 p-2.5 rounded-lg border border-slate-700/50 w-full md:w-auto justify-around">
-                <div><span class="text-gray-400 block font-mono">NODO ACTIVE:</span> <span id="telemetry-nodo" class="text-cyan-400 font-semibold">ruiz_pineda</span></div>
-                <div><span class="text-gray-400 block font-mono">LATENCIA:</span> <span id="telemetry-latencia" class="text-green-400 font-semibold">-- ms</span></div>
-                <div><span class="text-gray-400 block font-mono">SEÑAL:</span> <span id="telemetry-senal" class="text-green-400 font-semibold">-- dB</span></div>
-                <div><span class="text-gray-400 block font-mono">ANCHO BANDA:</span> <span id="telemetry-bandwidth" class="text-cyan-400 font-semibold">-- Mbps</span></div>
+            <div class="flex gap-4 text-xs bg-gray-900 text-gray-100 p-2.5 rounded-xl border border-gray-800 w-full md:w-auto justify-around shadow-inner font-mono">
+                <div><span class="text-gray-400 block text-[9px]">NODO ACTIVE:</span> <span id="telemetry-nodo" class="text-[#00bfa5] font-bold">ruiz_pineda</span></div>
+                <div><span class="text-gray-400 block text-[9px]">LATENCIA:</span> <span id="telemetry-latencia" class="text-green-400 font-bold">-- ms</span></div>
+                <div><span class="text-gray-400 block text-[9px]">SEÑAL:</span> <span id="telemetry-senal" class="text-green-400 font-bold">-- dB</span></div>
+                <div><span class="text-gray-400 block text-[9px]">ANCHO BANDA:</span> <span id="telemetry-bandwidth" class="text-[#00bfa5] font-bold">-- Mbps</span></div>
             </div>
         </div>
     </header>
 
-    <!-- CUERPO PRINCIPAL -->
     <main class="flex-1 max-w-6xl w-full mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
-        <!-- SECCIÓN IZQUIERDA: FORMULARIOS (DINÁMICOS Y COMPROBANTE) -->
         <div class="lg:col-span-7 space-y-6">
             
-            <!-- FORMULARIO DE REQUISICIÓN / LEAD (Aparece cuando Lia lo activa) -->
-            <div id="form-lead-container" class="hidden bg-slate-800/80 border border-cyan-500/30 rounded-xl p-5 shadow-lg shadow-cyan-950/20 transition-all duration-300">
-                <h3 id="lead-title" class="text-lg font-bold text-cyan-400"></h3>
-                <p id="lead-subtitle" class="text-xs text-gray-400 mb-4"></p>
+            <!-- FORMULARIO DE LEADS (Aparece cuando Lia lo activa) -->
+            <div id="form-lead-container" class="hidden bg-white border-2 border-[#00bfa5] rounded-2xl p-5 shadow-xl transition-all duration-300">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="bg-brand-yellow text-slate-950 text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider">Acción Requerida</span>
+                    <h3 id="lead-title" class="text-lg font-black text-[#0a2540]"></h3>
+                </div>
+                <p id="lead-subtitle" class="text-xs text-gray-500 mb-4"></p>
                 
                 <form id="form-lead" class="space-y-3">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <input type="text" id="lead-name" placeholder="Tu Nombre" required class="bg-slate-900 border border-slate-700 p-2 rounded text-sm focus:outline-none focus:border-cyan-500">
-                        <input type="text" id="lead-phone" placeholder="WhatsApp (Ej: 584120000000)" required class="bg-slate-900 border border-slate-700 p-2 rounded text-sm focus:outline-none focus:border-cyan-500">
+                        <input type="text" id="lead-name" placeholder="Nombre y Apellido" required class="bg-gray-50 border border-gray-300 p-2.5 rounded-lg text-sm focus:ring-2 focus:ring-[#00bfa5] transition-smooth text-gray-900">
+                        <input type="text" id="lead-phone" placeholder="WhatsApp (Ej: 584120000000)" required class="bg-gray-50 border border-gray-300 p-2.5 rounded-lg text-sm focus:ring-2 focus:ring-[#00bfa5] transition-smooth text-gray-900">
                     </div>
-                    <input type="text" id="lead-location" placeholder="Sector / Ubicación (Ej: Ruiz Pineda)" required class="bg-slate-900 border border-slate-700 w-full p-2 rounded text-sm focus:outline-none focus:border-cyan-500">
+                    <input type="text" id="lead-location" placeholder="Sector / Ubicación exacta (Ej: Ruiz Pineda, Los Telares o Cumaná)" required class="bg-gray-50 border border-gray-300 w-full p-2.5 rounded-lg text-sm focus:ring-2 focus:ring-[#00bfa5] transition-smooth text-gray-900">
                     <input type="hidden" id="lead-context">
-                    <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 text-sm font-bold p-2 rounded transition-colors">
-                        Validar Información con Consultor
+                    <button type="submit" class="w-full bg-brand-yellow hover:bg-yellow-400 text-slate-950 text-sm font-black py-3 rounded-xl shadow-md transition-all uppercase tracking-wide">
+                        Validar Cobertura con Consultor Especializado
                     </button>
                 </form>
-                <div id="lead-response" class="mt-3 text-xs p-2.5 rounded bg-slate-900/50 hidden"></div>
+                <div id="lead-response" class="mt-3 text-xs p-3 rounded-lg bg-gray-50 border border-gray-200 hidden"></div>
             </div>
 
-            <!-- FORMULARIO DE VALIDACIÓN DE PAGOS (Subida directa a Nube) -->
-            <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-xl">
-                <h3 class="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 mb-1">Registro de Pago Expreso</h3>
-                <p class="text-xs text-gray-400 mb-4">Sube tu soporte de pago. Procesamiento directo en la nube sin almacenamiento local.</p>
+            <!-- FORMULARIO DE PAGOS -->
+            <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-md">
+                <div class="border-l-4 border-[#00bfa5] pl-3 mb-3">
+                    <h3 class="text-lg font-black text-[#0a2540]">Reportar Pago de Servicio</h3>
+                    <p class="text-xs text-gray-500">Cancela antes de los 5 de cada mes para mantenerte full conectado.</p>
+                </div>
                 
                 <form id="form-pago" class="space-y-3" enctype="multipart/form-data">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <input type="text" name="cedula" placeholder="Cédula de Identidad" required class="bg-slate-900 border border-slate-700 p-2 rounded text-sm focus:outline-none focus:border-cyan-500">
-                        <input type="text" name="nombre" placeholder="Nombre del Titular" required class="bg-slate-900 border border-slate-700 p-2 rounded text-sm focus:outline-none focus:border-cyan-500">
+                        <input type="text" name="cedula" placeholder="Cédula de Identidad (Ej: V-12345678)" required class="bg-gray-50 border border-gray-300 p-2.5 rounded-lg text-sm focus:ring-2 focus:ring-[#00bfa5] transition-smooth text-gray-900">
+                        <input type="text" name="nombre" placeholder="Nombre Completo del Titular" required class="bg-gray-50 border border-gray-300 p-2.5 rounded-lg text-sm focus:ring-2 focus:ring-[#00bfa5] transition-smooth text-gray-900">
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <input type="text" name="banco" placeholder="Banco Emisor" required class="bg-slate-900 border border-slate-700 p-2 rounded text-sm focus:outline-none focus:border-cyan-500">
-                        <input type="text" name="referencia" placeholder="N° Referencia" required class="bg-slate-900 border border-slate-700 p-2 rounded text-sm focus:outline-none focus:border-cyan-500">
-                        <input type="number" step="0.01" name="monto_usd" placeholder="Monto ($ USD)" required class="bg-slate-900 border border-slate-700 p-2 rounded text-sm focus:outline-none focus:border-cyan-500">
+                        <input type="text" name="banco" placeholder="Banco Emisor / Pago Móvil" required class="bg-gray-50 border border-gray-300 p-2.5 rounded-lg text-sm focus:ring-2 focus:ring-[#00bfa5] transition-smooth text-gray-900">
+                        <input type="text" name="referencia" placeholder="N° de Referencia (Últimos 6 dígitos)" required class="bg-gray-50 border border-gray-300 p-2.5 rounded-lg text-sm focus:ring-2 focus:ring-[#00bfa5] transition-smooth text-gray-900">
+                        <input type="number" step="0.01" name="monto_usd" placeholder="Monto Declarado ($ USD)" required class="bg-gray-50 border border-gray-300 p-2.5 rounded-lg text-sm focus:ring-2 focus:ring-[#00bfa5] transition-smooth text-gray-900">
                     </div>
-                    <div>
-                        <label class="block text-xs font-mono text-gray-400 mb-1">COMPROBANTE (IMAGEN):</label>
-                        <input type="file" name="comprobante" accept="image/*" required class="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-cyan-950 file:text-cyan-400 hover:file:bg-cyan-900 cursor-pointer">
+                    <div class="bg-gray-50 p-3 rounded-lg border border-dashed border-gray-300">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Adjuntar Capture o Comprobante:</label>
+                        <input type="file" name="comprobante" accept="image/*" required class="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-teal-50 file:text-[#00bfa5] hover:file:bg-teal-100 cursor-pointer transition-smooth">
                     </div>
-                    <button type="submit" id="btn-pago" class="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 text-sm font-bold p-2.5 rounded hover:opacity-90 transition-opacity">
-                        Procesar y Validar Pago
+                    <button type="button" id="btn-pago" class="w-full bg-[#0a2540] hover:bg-slate-800 text-white text-sm font-bold py-3 rounded-xl shadow-md transition-all uppercase tracking-wider">
+                        Validar Transacción Inmediata
                     </button>
                 </form>
-                <div id="pago-response" class="mt-3 text-xs p-2.5 rounded bg-slate-900/50 hidden"></div>
+                <div id="pago-response" class="mt-3 text-xs p-3 rounded-lg bg-gray-50 border border-gray-200 hidden"></div>
             </div>
         </div>
 
-        <!-- SECCIÓN DERECHA: INTERFAZ DE CONVERSACIÓN (CHAT FLOTANTE MULTIKAP) -->
-        <div class="lg:col-span-5 bg-slate-800 border border-slate-700 rounded-xl h-[520px] flex flex-col relative overflow-hidden shadow-2xl">
-            <!-- Header Chat -->
-            <div class="bg-slate-900/80 p-3 border-b border-slate-700/50 flex justify-between items-center">
+        <!-- CHAT FLOTANTE -->
+        <div class="lg:col-span-5 bg-white border border-gray-200 rounded-2xl h-[530px] flex flex-col relative overflow-hidden shadow-xl">
+            <div class="bg-[#0a2540] p-3.5 text-white flex justify-between items-center shadow-sm">
                 <div class="flex items-center gap-2">
-                    <div class="h-2 w-2 rounded-full bg-cyan-400 animate-pulse"></div>
-                    <span class="text-sm font-bold tracking-wide">CHAT CON LIA</span>
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-xs font-black tracking-widest uppercase text-gray-100">Lia Asistente Operativo</span>
                 </div>
-                <!-- Selector de modo -->
-                <select id="chat-mode" class="bg-slate-800 border border-slate-700 text-xs rounded p-1 text-cyan-400 font-mono focus:outline-none">
-                    <option value="ventas">MODO: VENTAS</option>
+                <select id="chat-mode" class="bg-slate-800/80 border border-slate-700 text-[10px] rounded px-2 py-1 text-[#00bfa5] font-mono focus:outline-none transition-smooth">
+                    <option value="ventas">MODO: COMERCIAL</option>
                     <option value="soporte">MODO: SOPORTE</option>
                 </select>
             </div>
 
-            <!-- Contenedor de mensajes con padding inferior estricto -->
-            <div id="chat-box" class="flex-1 p-4 overflow-y-auto space-y-3 chat-messages-container">
+            <div id="chat-box" class="flex-1 p-4 overflow-y-auto space-y-3 chat-messages-container bg-slate-50/50">
                 <div class="flex justify-start">
-                    <div class="bg-slate-700/50 text-xs rounded-lg p-2.5 max-w-[85%] text-gray-300">
-                        ¡Hola! Soy Lia, la inteligencia operativa de Litium IA. ¿En qué puedo ayudarte hoy?
+                    <div class="bg-white border border-gray-200 text-xs rounded-2xl rounded-tl-none p-3 max-w-[85%] text-gray-700 shadow-sm leading-relaxed">
+                        ¡Hola! Soy <strong>Lia</strong>, tu asistente de Litium. ¿Quieres conocer nuestros planes de alta velocidad o reportar algún inconveniente técnico? ¡Dime!
                     </div>
                 </div>
             </div>
 
-            <!-- INPUT FLOTANTE MULTIKAP (Fijado abajo del contenedor) -->
-            <div class="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-slate-800 via-slate-800 to-transparent">
-                <form id="form-chat" class="flex items-center gap-1.5 bg-slate-900 border border-slate-700/80 rounded-lg p-1" onsubmit="event.preventDefault(); return false;">
-                    <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." required class="flex-1 bg-transparent text-xs p-2 focus:outline-none text-gray-100">
+            <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-white via-white/95 to-transparent">
+                <form id="form-chat" class="flex items-center gap-2 bg-white border-2 border-gray-200 rounded-xl p-1 shadow-md focus-within:border-[#00bfa5] transition-colors">
+                    <input type="text" id="chat-input" placeholder="Escribe tu consulta aquí..." required class="flex-1 bg-transparent text-xs p-2.5 focus:outline-none text-gray-800 font-medium">
                     
-                    <!-- Botón de Voz por Web Speech API -->
-                    <button type="button" id="btn-voice" class="p-1.5 rounded text-gray-400 hover:text-cyan-400 transition-colors" title="Hablar">
+                    <button type="button" id="btn-voice" class="p-2 rounded-lg text-gray-400 hover:text-[#00bfa5] hover:bg-gray-50 transition-colors" title="Hablar">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                         </svg>
                     </button>
                     
-                    <button type="button" id="chat-send-btn" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 p-1.5 rounded transition-colors">
+                    <button type="button" id="btn-send-chat" class="bg-[#00bfa5] hover:bg-teal-500 text-white p-2 rounded-lg shadow-sm transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                         </svg>
@@ -152,17 +187,16 @@
         </div>
     </main>
 
-    <!-- FOOTER MÍNIMO -->
-    <footer class="p-3 text-center text-[10px] text-gray-500 font-mono border-t border-slate-800/60 bg-slate-950/30">
-        LITIUM BACKEND CORE VER. 3.0-MINIMAL // POWERED BY MULTIKAP INTERFACES
+    <footer class="p-3 text-center text-[10px] text-gray-400 font-mono border-t border-gray-200 bg-white">
+        LITIUM PLATAFORMA AUTÓNOMA // DISEÑO PREMIUM COMPATIBLE CON MULTIKAP SUITE
     </footer>
 
-    <!-- LÓGICA JAVASCRIPT CONEXIÓN BACKEND -->
     <script>
+        // Endpoint centralizado en el servidor en la nube de Render
         const API_BASE = "https://litium-backend-d2pb.onrender.com";
 
-        // ============ 1. POLLING DE TELEMETRÍA ============
-        async function fetchTelemetry() {
+        // ============ 1. TELEMETRÍA ============
+        async function actualizarTelemetria() {
             try {
                 const res = await fetch(`${API_BASE}/api/metrics/ruiz_pineda`);
                 if (!res.ok) return;
@@ -172,24 +206,25 @@
                 document.getElementById('telemetry-senal').innerText = `${data.senal_db} dB`;
                 document.getElementById('telemetry-bandwidth').innerText = `${data.ancho_banda_mbps} Mbps`;
             } catch (e) {
-                console.log("Telemetry interface sleeping...");
+                console.log("Servidor en reposo o verificando conexión...");
             }
         }
-        setInterval(fetchTelemetry, 8000);
-        fetchTelemetry();
+        setInterval(actualizarTelemetria, 8000);
+        actualizarTelemetria();
 
-        // ============ 2. FUNCIONES DEL CHAT ============
+        // ============ 2. CHAT ============
+        const chatInput = document.getElementById('chat-input');
         const chatBox = document.getElementById('chat-box');
         const chatMode = document.getElementById('chat-mode');
 
-        function appendMessage(text, isUser = false) {
+        function agregarMensajeUI(text, isUser = false) {
             const wrapper = document.createElement('div');
             wrapper.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
             
             const msg = document.createElement('div');
             msg.className = isUser 
-                ? 'bg-cyan-950 text-cyan-200 border border-cyan-800 text-xs rounded-lg p-2.5 max-w-[85%]' 
-                : 'bg-slate-700/40 text-xs rounded-lg p-2.5 max-w-[85%] text-gray-200';
+                ? 'bg-[#00bfa5] text-white text-xs rounded-2xl rounded-tr-none p-3 max-w-[85%] shadow-sm font-medium' 
+                : 'bg-white border border-gray-200 text-xs rounded-2xl rounded-tl-none p-3 max-w-[85%] text-gray-700 shadow-sm leading-relaxed';
             msg.innerText = text;
             
             wrapper.appendChild(msg);
@@ -197,48 +232,41 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        function showTypingIndicator() {
-            const indicatorId = 'typing-indicator';
-            if (document.getElementById(indicatorId)) return;
+        function toggleTypingIndicator(show) {
+            const id = 'typing-indicator-wrapper';
+            const existente = document.getElementById(id);
             
-            const wrapper = document.createElement('div');
-            wrapper.id = indicatorId;
-            wrapper.className = 'flex justify-start';
-            wrapper.innerHTML = `
-                <div class="bg-slate-700/40 text-xs rounded-lg p-2.5 flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce" style="animation-delay: 0s"></span>
-                    <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
-                    <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></span>
-                    <span class="text-gray-400 text-[10px] ml-1">Lia está escribiendo...</span>
-                </div>
-            `;
-            chatBox.appendChild(wrapper);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        function hideTypingIndicator() {
-            const indicator = document.getElementById('typing-indicator');
-            if (indicator) indicator.remove();
-        }
-
-        function speakText(text) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'es-VE';
-                utterance.rate = 1.0;
-                window.speechSynthesis.speak(utterance);
+            if (!show && existente) {
+                existente.remove();
+                return;
+            }
+            
+            if (show && !existente) {
+                const wrapper = document.createElement('div');
+                wrapper.id = id;
+                wrapper.className = 'flex justify-start';
+                wrapper.innerHTML = `
+                    <div class="bg-gray-200/60 text-xs rounded-2xl rounded-tl-none p-3 max-w-[85%] text-gray-500 shadow-sm flex items-center gap-1">
+                        <span>Lia está pensando</span>
+                        <span class="flex gap-0.5 ml-1">
+                            <span class="h-1 w-1 bg-gray-500 rounded-full dot"></span>
+                            <span class="h-1 w-1 bg-gray-500 rounded-full dot"></span>
+                            <span class="h-1 w-1 bg-gray-500 rounded-full dot"></span>
+                        </span>
+                    </div>
+                `;
+                chatBox.appendChild(wrapper);
+                chatBox.scrollTop = chatBox.scrollHeight;
             }
         }
 
-        async function sendChatMessage() {
-            const inputEl = document.getElementById('chat-input');
-            const text = inputEl.value.trim();
+        async function enviarMensajeChat() {
+            const text = chatInput.value.trim();
             if (!text) return;
 
-            appendMessage(text, true);
-            inputEl.value = '';
-            showTypingIndicator();
+            agregarMensajeUI(text, true);
+            chatInput.value = '';
+            toggleTypingIndicator(true);
 
             try {
                 const res = await fetch(`${API_BASE}/api/chat`, {
@@ -246,66 +274,84 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: text, mode: chatMode.value })
                 });
-                
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
                 
-                hideTypingIndicator();
-                appendMessage(data.response);
-                
+                toggleTypingIndicator(false);
+                agregarMensajeUI(data.response);
+
                 if (data.show_form) {
-                    document.getElementById('form-lead-container').classList.remove('hidden');
+                    const container = document.getElementById('form-lead-container');
+                    container.classList.remove('hidden');
                     document.getElementById('lead-title').innerText = data.form_title;
                     document.getElementById('lead-subtitle').innerText = data.form_subtitle;
                     document.getElementById('lead-context').value = data.form_context;
+                    
+                    // Scroll suave al formulario
+                    container.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
-                
-                speakText(data.response);
-                
+
+                reproducirVoz(data.response);
+
             } catch (err) {
-                hideTypingIndicator();
-                appendMessage("⚠️ Error de conexión con el servidor. Intenta de nuevo.");
+                toggleTypingIndicator(false);
+                agregarMensajeUI("⚠️ Error de enlace con el Core del Servidor. Intenta de nuevo.");
                 console.error(err);
             }
         }
 
         // Event listeners del chat
-        document.getElementById('chat-send-btn').addEventListener('click', sendChatMessage);
-        document.getElementById('chat-input').addEventListener('keypress', function(e) {
+        document.getElementById('btn-send-chat').addEventListener('click', enviarMensajeChat);
+        chatInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                sendChatMessage();
+                enviarMensajeChat();
             }
         });
 
-        // ============ 3. RECONOCIMIENTO DE VOZ ============
+        // ============ 3. VOZ ============
+        function reproducirVoz(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'es-VE';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
         const btnVoice = document.getElementById('btn-voice');
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             const recognition = new SpeechRecognition();
             recognition.lang = 'es-VE';
+            recognition.continuous = false;
+            recognition.interimResults = false;
             
             btnVoice.addEventListener('click', () => {
                 recognition.start();
-                btnVoice.classList.add('text-cyan-400');
+                btnVoice.classList.add('text-[#00bfa5]');
             });
 
             recognition.onresult = (event) => {
                 const text = event.results[0][0].transcript;
-                document.getElementById('chat-input').value = text;
-                btnVoice.classList.remove('text-cyan-400');
+                chatInput.value = text;
+                btnVoice.classList.remove('text-[#00bfa5]');
+                // Opcional: enviar automáticamente después de reconocer
+                // enviarMensajeChat();
             };
 
-            recognition.onerror = () => btnVoice.classList.remove('text-cyan-400');
-            recognition.onend = () => btnVoice.classList.remove('text-cyan-400');
+            recognition.onerror = () => btnVoice.classList.remove('text-[#00bfa5]');
+            recognition.onend = () => btnVoice.classList.remove('text-[#00bfa5]');
         } else {
-            btnVoice.style.display = 'none';
+            if (btnVoice) btnVoice.style.display = 'none';
         }
 
         // ============ 4. FORMULARIO DE LEADS ============
         document.getElementById('form-lead').addEventListener('submit', async (e) => {
             e.preventDefault();
             const divRes = document.getElementById('lead-response');
+            divRes.classList.remove('hidden');
+            divRes.innerHTML = '<span class="text-gray-500">Validando cobertura...</span>';
             
             const payload = {
                 name: document.getElementById('lead-name').value,
@@ -322,31 +368,38 @@
                 });
                 const data = await res.json();
 
-                divRes.classList.remove('hidden', 'text-green-400', 'text-yellow-400');
-                divRes.classList.add(data.cobertura ? 'text-green-400' : 'text-yellow-400');
+                divRes.classList.remove('hidden', 'text-green-600', 'text-amber-600');
                 
                 if (data.cobertura && data.whatsapp_link) {
-                    divRes.innerHTML = `${data.response} <br><a href="${data.whatsapp_link}" target="_blank" class="underline block mt-2 text-xs font-bold font-mono">👉 IR A WHATSAPP 👈</a>`;
+                    divRes.classList.add('text-green-600');
+                    divRes.innerHTML = `${data.response} <br><a href="${data.whatsapp_link}" target="_blank" class="inline-block mt-3 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg text-[11px] shadow transition-all">🚀 ABRIR WHATSAPP ASESOR</a>`;
                 } else {
-                    divRes.innerText = data.response;
+                    divRes.classList.add('text-amber-600');
+                    divRes.innerHTML = data.response;
                 }
             } catch (err) {
                 console.error(err);
-                divRes.classList.remove('hidden');
-                divRes.classList.add('text-red-400');
-                divRes.innerText = "Error de conexión con el servidor.";
+                divRes.classList.add('text-red-600');
+                divRes.innerHTML = "Error de conexión. Intenta de nuevo más tarde.";
             }
         });
 
-        // ============ 5. FORMULARIO DE PAGOS (Cloudinary) ============
-        const formPago = document.getElementById('form-pago');
+        // ============ 5. FORMULARIO DE PAGOS ============
         const btnPago = document.getElementById('btn-pago');
+        const formPago = document.getElementById('form-pago');
         const divPagoRes = document.getElementById('pago-response');
 
-        formPago.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            btnPago.innerText = "Subiendo Comprobante Directo a Nube...";
+        async function enviarPago() {
+            if (!formPago.checkValidity()) {
+                formPago.reportValidity();
+                return;
+            }
+
+            btnPago.innerText = "📤 Subiendo comprobante a la nube...";
             btnPago.disabled = true;
+            divPagoRes.classList.remove('hidden');
+            divPagoRes.innerHTML = '<span class="text-gray-500">Procesando...</span>';
+            divPagoRes.classList.remove('text-green-600', 'text-red-600');
 
             const formData = new FormData(formPago);
 
@@ -357,24 +410,25 @@
                 });
                 const data = await res.json();
 
-                divPagoRes.classList.remove('hidden', 'text-red-400', 'text-green-400');
                 if (res.ok) {
-                    divPagoRes.classList.add('text-green-400');
-                    divPagoRes.innerHTML = `✅ <strong>Éxito:</strong> ${data.message}.<br><span class="text-[10px] break-all">📎 URL Nube: ${data.url}</span>`;
+                    divPagoRes.classList.add('text-green-600');
+                    divPagoRes.innerHTML = `✅ <strong>¡Pago Reportado Exitosamente!</strong><br>${data.message}<br><span class="text-[10px] text-gray-400 break-all">📎 ${data.url}</span>`;
                     formPago.reset();
                 } else {
-                    divPagoRes.classList.add('text-red-400');
-                    divPagoRes.innerText = `❌ Error: ${data.detail || 'Error desconocido'}`;
+                    divPagoRes.classList.add('text-red-600');
+                    divPagoRes.innerHTML = `❌ Error: ${data.detail || 'Error desconocido'}`;
                 }
             } catch (err) {
-                divPagoRes.classList.remove('hidden');
-                divPagoRes.classList.add('text-red-400');
-                divPagoRes.innerText = "❌ Error crítico de red en pasarela de pagos.";
+                divPagoRes.classList.add('text-red-600');
+                divPagoRes.innerHTML = "❌ Error crítico de conexión con la pasarela financiera.";
+                console.error(err);
             } finally {
-                btnPago.innerText = "Procesar y Validar Pago";
+                btnPago.innerText = "Validar Transacción Inmediata";
                 btnPago.disabled = false;
             }
-        });
+        }
+
+        btnPago.addEventListener('click', enviarPago);
     </script>
 </body>
 </html>
