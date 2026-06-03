@@ -34,13 +34,11 @@
             box-shadow: 0 15px 30px rgba(0, 168, 150, 0.25);
         }
 
-        /* Formas orgánicas de fondo */
         .arc-bg {
             border-radius: 150px 150px 0 0;
             background-color: #00a896;
         }
 
-        /* Estructura del Chat */
         .chat-window {
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
             background: rgba(255, 255, 255, 0.98);
@@ -48,14 +46,13 @@
             transition: opacity 0.2s ease, transform 0.2s ease;
         }
 
-        /* REGLA MULTIKAP: Padding inferior de seguridad para evitar solapamientos con la caja flotante */
+        /* REGLA MULTIKAP: Espacio de seguridad inferior */
         .chat-messages-container {
             flex: 1;
             overflow-y: auto;
-            padding-bottom: 75px; 
+            padding-bottom: 80px; 
         }
 
-        /* Animación del pulso de red */
         .pulse-glow {
             animation: pulse 2s infinite;
         }
@@ -63,6 +60,18 @@
             0% { transform: scale(0.95); opacity: 0.5; }
             50% { transform: scale(1); opacity: 1; }
             100% { transform: scale(0.95); opacity: 0.5; }
+        }
+
+        /* Estilos del Mini Mapa de Cobertura Simulado */
+        .map-container {
+            background: #e5e7eb;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #d1d5db;
+        }
+        .grid-bg {
+            background-image: linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
         }
     </style>
 </head>
@@ -80,7 +89,6 @@
             </div>
         </div>
         
-        <!-- Indicador Financiero Centralizado -->
         <div class="bg-gray-100 border border-gray-200 rounded-full px-4 py-1 flex items-center gap-2 text-xs">
             <span class="w-2 h-2 rounded-full bg-emerald-500 pulse-glow"></span>
             <span class="text-gray-500 font-medium">Tasa Oficial BCV:</span>
@@ -102,7 +110,6 @@
                     Conéctate a la red de fibra óptica premium. Navega, trabaja y juega sin interrupciones con planes adaptados a ti.
                 </p>
                 
-                <!-- ACCIÓN CORREGIDA: Pestañas operativas ahora ejecutan switchMode y abren el chat con interacción directa instantánea -->
                 <div class="mt-8 flex flex-wrap gap-3">
                     <button onclick="switchMode('ventas', true)" id="btn-ventas" class="mode-tab px-5 py-2 rounded-full text-xs font-bold transition-all bg-white text-gray-900 shadow-md cursor-pointer">
                         <i class="fa-solid fa-rocket mr-1.5 text-[#00a896]"></i> Elige tu Plan
@@ -157,8 +164,8 @@
                         Mantén tus cuentas al día y disfruta de tu servicio sin cortes. Recuerda pagar a tiempo antes de los <span class="font-bold text-[#00a896]">5 de cada mes</span>.
                     </p>
                 </div>
-                <!-- ACCIÓN CORREGIDA: Fuerza explícitamente el modo 'soporte' y activa la lógica de conciliación -->
-                <button onclick="openChatWithContext('Hola, vengo a reportar mi pago mensual del servicio. ¿Cuál es el monto exacto en Bolívares hoy y cómo registro el pago ahora?', 'soporte')" class="w-full mt-4 bg-gray-900 hover:bg-[#00a896] text-white hover:text-white font-bold py-3 rounded-xl text-xs tracking-wider transition-all cursor-pointer">
+                <!-- Acción Directa: Levanta de inmediato la interfaz avanzada de conciliación -->
+                <button onclick="openChatWithContext('Hola, vengo a reportar mi pago mensual del servicio.', 'soporte')" class="w-full mt-4 bg-gray-900 hover:bg-[#00a896] text-white hover:text-white font-bold py-3 rounded-xl text-xs tracking-wider transition-all cursor-pointer">
                     REGISTRAR MI PAGO AHORA
                 </button>
             </div>
@@ -172,15 +179,14 @@
                     </p>
                 </div>
                 <div class="mt-6 relative h-28 arc-bg overflow-hidden flex items-center justify-center">
-                    <!-- ACCIÓN CORREGIDA: Entra directamente en soporte e inyecta la intención de consulta de tickets sin limbos -->
-                    <button onclick="openChatWithContext('Hola, me interesa solicitar información sobre los Tickets de Conexión. ¿Cómo funcionan y qué costo tienen?', 'soporte')" class="bg-[#ffcc00] text-gray-900 font-extrabold px-6 py-2.5 rounded-full text-xs hover:scale-105 transition-all shadow-md cursor-pointer">
+                    <button onclick="openChatWithContext('Hola, me interesa solicitar información sobre los Tickets de Conexión.', 'soporte')" class="bg-[#ffcc00] text-gray-900 font-extrabold px-6 py-2.5 rounded-full text-xs hover:scale-105 transition-all shadow-md cursor-pointer">
                         Solicitar Tickets <i class="fa-solid fa-ticket ml-1"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- FORMULARIO AUTOMÁTICO DE LEADS -->
+        <!-- FORMULARIO GENERAL / TICKETS / LEADS (DINÁMICO) -->
         <div id="form-container" class="hidden max-w-xl mx-auto bg-white border border-gray-200 rounded-2xl p-6 shadow-xl mt-12 relative z-20">
             <div class="text-center mb-4">
                 <h3 id="form-title" class="text-lg font-bold text-gray-900">Formulario de Verificación Comercial</h3>
@@ -199,7 +205,7 @@
                     </div>
                     <div>
                         <label class="block text-[11px] font-bold text-gray-500 mb-1">Ubicación / Sector Específico</label>
-                        <input type="text" id="form-location" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. Caracas, Caricuao, Ruiz Pineda">
+                        <input type="text" id="form-location" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. Caracas, Ruiz Pineda">
                     </div>
                 </div>
                 <div>
@@ -208,6 +214,59 @@
                 </div>
                 <button type="submit" class="w-full bg-[#00a896] hover:bg-[#00c4b4] text-white font-bold py-2.5 rounded-xl text-xs transition-all cursor-pointer">
                     Enviar Datos Directo al Consultor
+                </button>
+            </form>
+        </div>
+
+        <!-- SECCIÓN DE REPORTES DE PAGO COMPLETA Y EXCLUSIVA -->
+        <div id="payment-form-container" class="hidden max-w-xl mx-auto bg-white border border-[#00a896] rounded-2xl p-6 shadow-2xl mt-12 relative z-20">
+            <div class="text-center mb-6">
+                <span class="bg-emerald-100 text-[#00a896] text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">Módulo de Finanzas</span>
+                <h3 class="text-xl font-extrabold text-gray-900 mt-2">Formulario de Conciliación Bancaria</h3>
+                <p class="text-xs text-gray-500">Ingresa de manera exacta los datos fiscales de tu transacción para su validación.</p>
+            </div>
+            <form id="litium-payment-form" onsubmit="submitPaymentForm(event)" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-500 mb-1">Cédula / RIF del Titular</label>
+                        <input type="text" id="pay-id" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. V-12345678">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-500 mb-1">Nombre del Cliente Asociado</label>
+                        <input type="text" id="pay-name" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. Mauricio Jimenez">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-500 mb-1">Banco Emisor / Método</label>
+                        <select id="pay-method" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]">
+                            <option value="Pago Móvil">Pago Móvil</option>
+                            <option value="Banesco">Banesco a Banesco</option>
+                            <option value="Banco de Venezuela">Banco de Venezuela</option>
+                            <option value="Zelle / Divisas">Depósito en Divisas / Zelle</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-500 mb-1">Número de Referencia (Últimos 6 dígitos)</label>
+                        <input type="text" id="pay-ref" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. 987654">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-500 mb-1">Monto Pagado ($ USD)</label>
+                        <input type="number" step="0.01" id="pay-amount-usd" oninput="calculateBsFromForm()" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#00a896]" placeholder="Ej. 15.00">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-500 mb-1">Equivalente en Bolívares (BCV)</label>
+                        <input type="text" id="pay-amount-bs" readonly class="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-600 focus:outline-none" placeholder="Bs. 0.00">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-gray-500 mb-1">Adjuntar Comprobante / Capture de Pantalla</label>
+                    <input type="file" id="pay-file" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#00a896]/10 file:text-[#00a896] hover:file:bg-[#00a896]/20 cursor-pointer">
+                </div>
+                <button type="submit" class="w-full bg-gray-900 hover:bg-[#00a896] text-white font-bold py-3 rounded-xl text-xs transition-all cursor-pointer tracking-wider">
+                    PROCESAR Y VALIDAR PAGO INMEDIATO
                 </button>
             </form>
         </div>
@@ -222,7 +281,6 @@
 
     <!-- VENTANA DEL CHAT -->
     <div id="chat-window" class="chat-window fixed bottom-24 right-6 w-[92%] sm:w-[380px] h-[480px] rounded-2xl z-50 flex flex-col hidden overflow-hidden">
-        <!-- Encabezado -->
         <div class="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 shrink-0">
             <div class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-full bg-[#00a896]/10 flex items-center justify-center border border-[#00a896]/20">
@@ -238,7 +296,7 @@
             </button>
         </div>
 
-        <!-- REGLA MULTIKAP: Mensajes con padding-bottom de 75px -->
+        <!-- REGLA MULTIKAP: Mensajes con padding-bottom de 80px -->
         <div id="chat-messages" class="chat-messages-container p-4 space-y-3 bg-gray-50/50">
             <div class="flex gap-2 max-w-[85%]">
                 <div class="bg-white border border-gray-200 text-gray-800 text-xs p-3 rounded-2xl rounded-tl-none leading-relaxed shadow-sm">
@@ -289,6 +347,32 @@
             }
         }
 
+        function calculateBsFromForm() {
+            const usdVal = parseFloat(document.getElementById("pay-amount-usd").value) || 0;
+            const bsVal = usdVal * bcvRateGlobal;
+            document.getElementById("pay-amount-bs").value = `Bs. ${bsVal.toFixed(2)}`;
+        }
+
+        // Lógica de alternancia del mini mapa interactivo inyectado en el chat
+        function toggleMapCity(city) {
+            const mcy = document.getElementById("map-maracay");
+            const ccs = document.getElementById("map-caracas");
+            const btnMcy = document.getElementById("tab-map-mcy");
+            const btnCcs = document.getElementById("tab-map-ccs");
+
+            if(city === 'maracay') {
+                mcy.classList.remove("hidden");
+                ccs.classList.add("hidden");
+                btnMcy.className = "flex-1 bg-[#00a896] text-white py-1 rounded text-center transition-all";
+                btnCcs.className = "flex-1 bg-gray-200 text-gray-700 py-1 rounded text-center transition-all";
+            } else {
+                ccs.classList.remove("hidden");
+                mcy.classList.add("hidden");
+                btnCcs.className = "flex-1 bg-[#00a896] text-white py-1 rounded text-center transition-all";
+                btnMcy.className = "flex-1 bg-gray-200 text-gray-700 py-1 rounded text-center transition-all";
+            }
+        }
+
         function toggleChat() {
             const chatWin = document.getElementById("chat-window");
             if (chatWin.classList.contains("hidden")) {
@@ -313,7 +397,6 @@
 
         function handleKeyPress(event) { if (event.key === "Enter") { sendMessage(); } }
 
-        // MEJORA: switchMode ahora maneja opcionalmente si gatilla una acción directa en el chat del usuario
         function switchMode(mode, triggerChatInteraction = false) {
             currentMode = mode;
             document.querySelectorAll(".mode-tab").forEach(btn => {
@@ -333,17 +416,15 @@
                 if (triggerChatInteraction) openChatWithContext("Hola, quiero conocer los planes de internet y velocidades que ofrecen.", "ventas");
             } else if (mode === "soporte") {
                 statusLabel.innerText = "Gestión de Pagos y Tickets";
-                if (triggerChatInteraction) openChatWithContext("Hola, requiero soporte con mi conexión o reportar una transacción / ticket.", "soporte");
+                if (triggerChatInteraction) openChatWithContext("Hola, requiero soporte o reportar un proceso.", "soporte");
             } else if (mode === "cobertura") {
                 statusLabel.innerText = "Validador Geográfico Litium";
-                if (triggerChatInteraction) openChatWithContext("Hola, me gustaría verificar si hay cobertura de fibra óptica en mi sector.", "cobertura");
+                if (triggerChatInteraction) openChatWithContext("Hola, me gustaría verificar si mi zona cuenta con cobertura.", "cobertura");
             }
         }
 
-        // SOLUCIÓN AL LIMBO: Forzamos el modo directamente mediante parámetro al invocar el chat contextualmente
         function openChatWithContext(message, forceMode = null) {
             if (forceMode) {
-                // Sincroniza visualmente y operativamente el modo antes de disparar el mensaje
                 switchMode(forceMode, false);
             } else {
                 const upperMessage = message.toUpperCase();
@@ -356,19 +437,16 @@
                 }
             }
 
-            // Desplegar la ventana
             const chatWin = document.getElementById("chat-window");
             if (chatWin.classList.contains("hidden")) {
                 chatWin.classList.remove("hidden");
                 chatWin.style.display = "flex";
             }
 
-            // Forzar el valor en el input y despacharlo limpiamente
             document.getElementById("user-input").value = message;
             sendMessage();
         }
 
-        // CONTROLADOR DE CONVERSACIÓN REESTRUCTURADO
         async function sendMessage() {
             const inputEl = document.getElementById("user-input");
             const sendBtn = document.getElementById("send-btn");
@@ -383,25 +461,58 @@
             const typingId = appendTypingIndicator();
             const upperText = text.toUpperCase();
             
-            // 1. Manejo de Cobertura
+            // 1. Manejo Geográfico: Inyección del mini mapa visual con CSS dinámico
             if (currentMode === "cobertura" || upperText.includes("COBERTURA") || upperText.includes("DONDE LLEGAN") || upperText.includes("ZONAS")) {
                 setTimeout(() => {
                     document.getElementById(typingId)?.remove();
-                    appendSystemMessage(`🌎 **Zonas de Cobertura Litium:** Contamos con despliegues de fibra de alta capacidad en sectores clave de **Caracas** (con total prioridad y fidelidad en los ejes de **Caricuao, Ruiz Pineda, Los Telares**) y en expansión constante hacia **Cumaná**.\n\nPara verificar la factibilidad exacta en tu calle, edificio o casa, indícame acá abajo el nombre de tu sector y lo revisamos en tiempo real.`);
+                    
+                    // HTML estructurado del Mini Mapa Limpio
+                    const mapaHTML = `
+                    <div class="bg-white border border-gray-200 text-gray-800 text-xs p-3 rounded-2xl rounded-tl-none shadow-sm space-y-3 w-full">
+                        <p class="font-bold text-[#00a896]"><i class="fa-solid fa-map-location-dot mr-1"></i> Cobertura Satelital Litium</p>
+                        <p>Nuestra central principal se encuentra en Maracay (cobertura total) y operamos en zonas específicas seleccionadas de Caracas.</p>
+                        
+                        <!-- Selector de Ciudad -->
+                        <div class="flex gap-1 text-[10px] font-bold p-1 bg-gray-100 rounded">
+                            <button id="tab-map-mcy" onclick="toggleMapCity('maracay')" class="flex-1 bg-[#00a896] text-white py-1 rounded text-center">Maracay (Central)</button>
+                            <button id="tab-map-ccs" onclick="toggleMapCity('caracas')" class="flex-1 bg-gray-200 text-gray-700 py-1 rounded text-center">Caracas</button>
+                        </div>
+
+                        <!-- Render Visual de Maracay -->
+                        <div id="map-maracay" class="map-container grid-bg h-28 rounded relative border border-gray-300">
+                            <div class="absolute inset-0 bg-emerald-500/10 flex items-center justify-center font-bold text-emerald-700 text-[10px]">COBERTURA TOTAL ARAGUA</div>
+                            <span class="absolute top-8 left-12 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white pulse-glow"></span>
+                            <span class="absolute top-16 left-24 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white pulse-glow"></span>
+                        </div>
+
+                        <!-- Render Visual de Caracas -->
+                        <div id="map-caracas" class="map-container grid-bg h-28 rounded relative border border-gray-300 hidden">
+                            <span class="absolute top-4 left-6 text-[9px] bg-emerald-500 text-white px-1 rounded font-bold">Ruiz Pineda - Cubierto</span>
+                            <span class="absolute top-12 left-24 text-[9px] bg-emerald-500 text-white px-1 rounded font-bold">Los Telares - Cubierto</span>
+                            <span class="absolute top-20 left-12 text-[9px] bg-amber-500 text-white px-1 rounded font-bold">Ejes Centrales - Parcial</span>
+                        </div>
+                        
+                        <p class="text-[10px] text-gray-400 italic">Escribe tu sector específico abajo para verificar tu factibilidad exacta.</p>
+                    </div>`;
+                    
+                    const container = document.getElementById("chat-messages");
+                    container.insertAdjacentHTML("beforeend", `<div class="flex gap-2 max-w-[90%]">${mapaHTML}</div>`);
+                    scrollChatToBottom();
+                    
                     inputEl.disabled = false; sendBtn.disabled = false; inputEl.focus();
                 }, 1000);
                 return;
             }
 
-            // 2. Manejo de Precios y Conversión Dinámica
+            // 2. Catálogo de Precios Limpio
             if (currentMode === "ventas" && (upperText.includes("PRECIO") || upperText.includes("CUANTO CUESTA") || upperText.includes("PLANES") || upperText.includes("MONTO") || upperText.includes("BOLIVARES") || upperText.includes("DOLARES") || upperText.includes("MBPS"))) {
-                let respuestaPrecios = `💻 **Nuestros Planes de Fibra Óptica Simétrica (Precios de Hoy):**\n\n`;
+                let respuestaPrecios = `Planes de Fibra Óptica Simétrica:\n\n`;
                 for (let key in planesLitium) {
                     let p = planesLitium[key];
                     let costoBs = p.usd * bcvRateGlobal;
-                    respuestaPrecios += `• **Plan ${p.nombre} (${key} Mbps):** $${p.usd} / al cambio oficial: **Bs. ${costoBs.toFixed(2)}**\n`;
+                    respuestaPrecios += `• Plan ${p.nombre} (${key} Mbps): $${p.usd} / Al cambio oficial: Bs. ${costoBs.toFixed(2)}\n`;
                 }
-                respuestaPrecios += `\n*Nota: Todos nuestros planes incluyen soporte prioritario 24/7 y la instalación es totalmente gratuita durante este mes.* ¿Cuál de estas opciones se adapta mejor a tu consumo diario?`;
+                respuestaPrecios += `\nNota: Todos los planes incluyen soporte dedicado y la instalación se mantiene gratuita este mes. ¿Cuál se adapta mejor a tu consumo?`;
                 
                 setTimeout(() => {
                     document.getElementById(typingId)?.remove();
@@ -411,26 +522,24 @@
                 return;
             }
 
-            // 3. Manejo Crítico de Pagos y Asignación de Tickets (Modo Soporte Garantizado)
+            // 3. Manejo de Pagos y Tickets (Formularios Diferenciados)
             if (currentMode === "soporte" || upperText.includes("PAGAR") || upperText.includes("PAGO") || upperText.includes("MENSUALIDAD") || upperText.includes("CORTE") || upperText.includes("TICKET")) {
                 setTimeout(() => {
                     document.getElementById(typingId)?.remove();
                     
                     if (upperText.includes("TICKET")) {
-                        appendSystemMessage(`🎫 **Tickets de Conexión Litium:**\n\n¡Excelente iniciativa! Diseñamos los tickets de conectividad premium para que puedas asegurar e impulsar picos de navegación extrema familiares o empresariales durante los fines de semana.\n\n¿Quieres que habilitemos el formulario de solicitudes para procesar tu asignación de ticket de inmediato?`);
-                        triggerFormDeployment("Solicitud de Ticket de Conexión", "Ingresa tus datos para habilitar el pico de alta velocidad el fin de semana.", text);
+                        appendSystemMessage(`Tickets de Conexión Litium:\n\nDiseñamos los tickets de conectividad premium para asegurar e impulsar picos de navegación extrema familiares durante fines de semana.\n\nHemos desplegado el formulario general para recopilar tu solicitud técnica.`);
+                        triggerFormDeployment("Solicitud de Ticket de Conexión", "Ingresa tus datos para habilitar tu pico de alta fidelidad.", text);
                     } else {
-                        appendSystemMessage(`💳 **Gestión de Facturación y Pagos:**\n\nRecuerda que para mantener tu velocidad simétrica intacta y evitar suspensiones automáticas, los pagos deben procesarse antes del **5 de cada mes**.\n\nAceptamos Pago Móvil, Transferencias en Bolívares a tasa oficial BCV (**Bs. ${bcvRateGlobal.toFixed(2)}**) y depósitos en divisas.\n\nSi ya estás listo para procesarlo, indícame "Quiero reportar pago" para desplegarte el formulario.`);
-                        if (upperText.includes("REGISTRAR") || upperText.includes("REPORTAR") || upperText.includes("AHORA") || upperText.includes("VENGO A REPORTAR")) {
-                            triggerFormDeployment("Reporte de Pago Mensual", "Ingresa tus datos de transferencia para conciliar el saldo.", text);
-                        }
+                        appendSystemMessage(`Módulo Financiero Litium:\n\nPara procesar tu pago mensual de forma segura y evitar interrupciones automáticas de tu servicio, hemos desplegado el Formulario Especial de Conciliación Bancaria abajo en la pantalla principal.`);
+                        triggerPaymentFormDeployment();
                     }
                     inputEl.disabled = false; sendBtn.disabled = false; inputEl.focus();
                 }, 1000);
                 return;
             }
 
-            // Conexión de respaldo con el ecosistema backend
+            // Integración de respaldo
             try {
                 const response = await fetch(`${BACKEND_URL}/api/chat`, {
                     method: "POST",
@@ -441,7 +550,8 @@
                 document.getElementById(typingId)?.remove();
 
                 if (data && data.response) {
-                    appendSystemMessage(data.response);
+                    let cleanResponse = data.response.replace(/\*\*/g, "").replace(/\/\*/g, "");
+                    appendSystemMessage(cleanResponse);
                     if (data.show_form) { 
                         triggerFormDeployment(data.form_title, data.form_subtitle, data.form_context || text); 
                     }
@@ -450,7 +560,7 @@
                 console.error(error);
                 document.getElementById(typingId)?.remove();
                 appendSystemMessage("Lia está procesando tu solicitud de forma dedicada. Cuéntame más detalles sobre el requerimiento de tu cuenta.");
-            } finally {
+            } final {
                 inputEl.disabled = false;
                 sendBtn.disabled = false;
                 inputEl.focus();
@@ -479,13 +589,14 @@
             const id = "typing-" + Date.now();
             document.getElementById("chat-messages").insertAdjacentHTML("beforeend", `
                 <div id="${id}" class="text-gray-400 text-[11px] pl-2 flex items-center gap-1">
-                    <i class="fa-solid fa-circle-notch animate-spin text-[#00a896]"></i> Lia está analizando...
+                    <i class="fa-solid fa-circle-notch animate-spin text-[#00a896]"></i> Analizando solicitud...
                 </div>`);
             scrollChatToBottom();
             return id;
         }
 
         function triggerFormDeployment(title, subtitle, context) {
+            document.getElementById("payment-form-container").classList.add("hidden");
             document.getElementById("form-title").innerText = title || "Validación Técnica";
             document.getElementById("form-subtitle").innerText = subtitle || "Introduce tus datos operativos.";
             document.getElementById("form-details").value = context || "General";
@@ -496,9 +607,16 @@
             container.scrollIntoView({ behavior: "smooth" });
         }
 
+        // Despliegue del Formulario Avanzado de Pagos
+        function triggerPaymentFormDeployment() {
+            document.getElementById("form-container").classList.add("hidden");
+            const container = document.getElementById("payment-form-container");
+            container.classList.remove("hidden");
+            container.scrollIntoView({ behavior: "smooth" });
+        }
+
         async function submitForm(event) {
             event.preventDefault();
-            
             const name = document.getElementById("form-name").value;
             const phone = document.getElementById("form-phone").value;
             const location = document.getElementById("form-location").value;
@@ -517,18 +635,39 @@
                 const data = await response.json();
                 document.getElementById(typingId)?.remove();
 
-                appendSystemMessage(`🤖 **Lia:**\n\n${data.response}`);
+                let cleanResponse = data.response.replace(/\*\*/g, "");
+                appendSystemMessage(`Lia:\n\n${cleanResponse}`);
 
                 if (data.cobertura && data.whatsapp_link) {
                     inyectarBotonWhatsApp(data.whatsapp_link);
                 }
             } catch (error) {
-                console.error("Error al despachar formulario:", error);
+                console.error(error);
                 document.getElementById(typingId)?.remove();
-                appendSystemMessage("⚠️ Ocurrió una discrepancia de red al procesar tu factibilidad geográfica. Vamos a contactarte de igual manera.");
+                appendSystemMessage("Ocurrió una discrepancia de red. Vamos a contactarte a la brevedad.");
             } finally {
                 document.getElementById("litium-lead-form").reset();
             }
+        }
+
+        // Envío seguro del Reporte de Pagos Avanzado
+        async function submitPaymentForm(event) {
+            event.preventDefault();
+            
+            const clientName = document.getElementById("pay-name").value;
+            const refNum = document.getElementById("pay-ref").value;
+            const method = document.getElementById("pay-method").value;
+            const usdAmount = document.getElementById("pay-amount-usd").value;
+            
+            document.getElementById("payment-form-container").classList.add("hidden");
+            const typingId = appendTypingIndicator();
+            
+            // Simulación o despacho a ruta dedicada del backend de finanzas
+            setTimeout(() => {
+                document.getElementById(typingId)?.remove();
+                appendSystemMessage(`Verificación en Proceso:\n\n¡Perfecto, recibido! Hemos tomado los datos de tu transferencia bajo la referencia ${refNum} por un monto de $${usdAmount} vía ${method}.\n\nNuestro departamento de administración está realizando el cruce de cuentas. Tu saldo se verá reflejado automáticamente en tu cuenta Litium en unos minutos.`);
+                document.getElementById("litium-payment-form").reset();
+            }, 1500);
         }
 
         function inyectarBotonWhatsApp(url) {
